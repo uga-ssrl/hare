@@ -2,4 +2,4 @@
 source_root_dir = "/home/jackson/Development/HARE/src"
 whitelisted_packages = "".split(';') if "" != "" else []
 blacklisted_packages = "".split(';') if "" != "" else []
-underlay_workspaces = "/opt/ros/kinetic".split(';') if "/opt/ros/kinetic" != "" else []
+underlay_workspaces = "/home/jackson/Development/HARE/devel;/opt/ros/kinetic".split(';') if "/home/jackson/Development/HARE/devel;/opt/ros/kinetic" != "" else []

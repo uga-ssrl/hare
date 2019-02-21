@@ -7,7 +7,6 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/jackson/Development/HARE/devel:$CMAKE_PREFIX_PATH"
+export PKG_CONFIG_PATH="/opt/ros/kinetic/lib/pkgconfig:/opt/ros/kinetic/lib/x86_64-linux-gnu/pkgconfig"
 export PWD="/home/jackson/Development/HARE/build"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/jackson/Development/HARE/devel/share/common-lisp"
-export ROS_PACKAGE_PATH="/home/jackson/Development/HARE/src:$ROS_PACKAGE_PATH"
+export PYTHONPATH="/opt/ros/kinetic/lib/python2.7/dist-packages"

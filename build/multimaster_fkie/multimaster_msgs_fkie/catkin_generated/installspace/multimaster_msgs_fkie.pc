@@ -1,0 +1,8 @@
+prefix=/home/jackson/Development/HARE/install
+
+Name: multimaster_msgs_fkie
+Description: Description of multimaster_msgs_fkie
+Version: 0.8.9
+Cflags: -I/home/jackson/Development/HARE/install/include
+Libs: -L/home/jackson/Development/HARE/install/lib 
+Requires: message_runtime std_msgs

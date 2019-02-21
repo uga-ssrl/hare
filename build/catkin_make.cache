@@ -1,2 +1,2 @@
-
+multimaster_fkie/default_cfg_fkie:multimaster_fkie/master_discovery_fkie:multimaster_fkie/master_sync_fkie:multimaster_fkie/multimaster_fkie:multimaster_fkie/multimaster_msgs_fkie:multimaster_fkie/node_manager_fkie
 -DCATKIN_DEVEL_PREFIX=/home/jackson/Development/HARE/devel -DCMAKE_INSTALL_PREFIX=/home/jackson/Development/HARE/install -G Unix Makefiles

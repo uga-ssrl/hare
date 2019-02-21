@@ -117,6 +117,12 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/jackson/Development/HARE/build/gtest/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/multimaster_fkie/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/multimaster_msgs_fkie/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/default_cfg_fkie/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/master_discovery_fkie/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/master_sync_fkie/cmake_install.cmake")
+  include("/home/jackson/Development/HARE/build/multimaster_fkie/node_manager_fkie/cmake_install.cmake")
 
 endif()
 
