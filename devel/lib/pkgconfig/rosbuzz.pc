@@ -1,0 +1,8 @@
+prefix=/home/jackson/Development/HARE/devel
+
+Name: rosbuzz
+Description: Description of rosbuzz
+Version: 0.1.0
+Cflags: -I/home/jackson/Development/HARE/devel/include -I/home/jackson/Development/HARE/src/rosbuzz/include
+Libs: -L/home/jackson/Development/HARE/devel/lib 
+Requires: roscpp std_msgs mavros_msgs sensor_msgs message_runtime

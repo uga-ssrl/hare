@@ -7,6 +7,5 @@
 # new environment variables
 
 # modified environment variables
-export PKG_CONFIG_PATH="/opt/ros/kinetic/lib/pkgconfig:/opt/ros/kinetic/lib/x86_64-linux-gnu/pkgconfig"
+export PATH="/home/jackson/Development/HARE/devel/bin:$PATH"
 export PWD="/home/jackson/Development/HARE/build"
-export PYTHONPATH="/opt/ros/kinetic/lib/python2.7/dist-packages"

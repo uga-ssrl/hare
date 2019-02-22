@@ -220,6 +220,9 @@ GTEST_MAIN_LIBRARY:FILEPATH=GTEST_MAIN_LIBRARY-NOTFOUND
 //Path to a library.
 GTEST_MAIN_LIBRARY_DEBUG:FILEPATH=GTEST_MAIN_LIBRARY_DEBUG-NOTFOUND
 
+//No help, variable specified on the command line.
+KIN:UNINITIALIZED=1
+
 //lsb_release executable was found
 LSB_FOUND:BOOL=TRUE
 
@@ -247,6 +250,9 @@ RT_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/librt.so
 //Enable debian style python package layout
 SETUPTOOLS_DEB_LAYOUT:BOOL=ON
 
+//No help, variable specified on the command line.
+SIM:UNINITIALIZED=1
+
 //LSB Distrib tag
 UBUNTU:BOOL=TRUE
 
@@ -264,6 +270,9 @@ _gtest_INCLUDES:FILEPATH=/usr/include/gtest/gtest.h
 
 //Path to a file.
 _gtest_SOURCES:FILEPATH=/usr/src/gtest/src/gtest.cc
+
+//The directory containing a CMake configuration file for actionlib_msgs.
+actionlib_msgs_DIR:PATH=/opt/ros/kinetic/share/actionlib_msgs/cmake
 
 //The directory containing a CMake configuration file for catkin.
 catkin_DIR:PATH=/opt/ros/kinetic/share/catkin/cmake
@@ -297,6 +306,12 @@ gennodejs_DIR:PATH=/opt/ros/kinetic/share/gennodejs/cmake
 
 //The directory containing a CMake configuration file for genpy.
 genpy_DIR:PATH=/opt/ros/kinetic/share/genpy/cmake
+
+//The directory containing a CMake configuration file for geographic_msgs.
+geographic_msgs_DIR:PATH=/opt/ros/kinetic/share/geographic_msgs/cmake
+
+//The directory containing a CMake configuration file for geometry_msgs.
+geometry_msgs_DIR:PATH=/opt/ros/kinetic/share/geometry_msgs/cmake
 
 //Value Computed by CMake
 gmock_BINARY_DIR:STATIC=/home/jackson/Development/HARE/build/gtest
@@ -339,7 +354,7 @@ gtest_force_shared_crt:BOOL=OFF
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //Path to a library.
-lib:FILEPATH=/opt/ros/kinetic/lib/librostime.so
+lib:FILEPATH=/opt/ros/kinetic/lib/libxmlrpcpp.so
 
 //Value Computed by CMake
 master_discovery_fkie_BINARY_DIR:STATIC=/home/jackson/Development/HARE/build/multimaster_fkie/master_discovery_fkie
@@ -355,6 +370,9 @@ master_sync_fkie_BINARY_DIR:STATIC=/home/jackson/Development/HARE/build/multimas
 
 //Value Computed by CMake
 master_sync_fkie_SOURCE_DIR:STATIC=/home/jackson/Development/HARE/src/multimaster_fkie/master_sync_fkie
+
+//The directory containing a CMake configuration file for mavros_msgs.
+mavros_msgs_DIR:PATH=/opt/ros/kinetic/share/mavros_msgs/cmake
 
 //The directory containing a CMake configuration file for message_generation.
 message_generation_DIR:PATH=/opt/ros/kinetic/share/message_generation/cmake
@@ -377,11 +395,26 @@ multimaster_msgs_fkie_DIR:PATH=/home/jackson/Development/HARE/devel/share/multim
 //Value Computed by CMake
 multimaster_msgs_fkie_SOURCE_DIR:STATIC=/home/jackson/Development/HARE/src/multimaster_fkie/multimaster_msgs_fkie
 
+//The directory containing a CMake configuration file for nav_msgs.
+nav_msgs_DIR:PATH=/opt/ros/kinetic/share/nav_msgs/cmake
+
 //Value Computed by CMake
 node_manager_fkie_BINARY_DIR:STATIC=/home/jackson/Development/HARE/build/multimaster_fkie/node_manager_fkie
 
 //Value Computed by CMake
 node_manager_fkie_SOURCE_DIR:STATIC=/home/jackson/Development/HARE/src/multimaster_fkie/node_manager_fkie
+
+//Value Computed by CMake
+rosbuzz_BINARY_DIR:STATIC=/home/jackson/Development/HARE/build/rosbuzz
+
+//Value Computed by CMake
+rosbuzz_SOURCE_DIR:STATIC=/home/jackson/Development/HARE/src/rosbuzz
+
+//The directory containing a CMake configuration file for rosconsole.
+rosconsole_DIR:PATH=/opt/ros/kinetic/share/rosconsole/cmake
+
+//The directory containing a CMake configuration file for roscpp.
+roscpp_DIR:PATH=/opt/ros/kinetic/share/roscpp/cmake
 
 //The directory containing a CMake configuration file for roscpp_serialization.
 roscpp_serialization_DIR:PATH=/opt/ros/kinetic/share/roscpp_serialization/cmake
@@ -389,14 +422,29 @@ roscpp_serialization_DIR:PATH=/opt/ros/kinetic/share/roscpp_serialization/cmake
 //The directory containing a CMake configuration file for roscpp_traits.
 roscpp_traits_DIR:PATH=/opt/ros/kinetic/share/roscpp_traits/cmake
 
+//The directory containing a CMake configuration file for rosgraph_msgs.
+rosgraph_msgs_DIR:PATH=/opt/ros/kinetic/share/rosgraph_msgs/cmake
+
+//The directory containing a CMake configuration file for roslaunch.
+roslaunch_DIR:PATH=/opt/ros/kinetic/share/roslaunch/cmake
+
 //The directory containing a CMake configuration file for rostime.
 rostime_DIR:PATH=/opt/ros/kinetic/share/rostime/cmake
+
+//The directory containing a CMake configuration file for sensor_msgs.
+sensor_msgs_DIR:PATH=/opt/ros/kinetic/share/sensor_msgs/cmake
 
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/kinetic/share/std_msgs/cmake
 
 //The directory containing a CMake configuration file for std_srvs.
 std_srvs_DIR:PATH=/opt/ros/kinetic/share/std_srvs/cmake
+
+//The directory containing a CMake configuration file for uuid_msgs.
+uuid_msgs_DIR:PATH=/opt/ros/kinetic/share/uuid_msgs/cmake
+
+//The directory containing a CMake configuration file for xmlrpcpp.
+xmlrpcpp_DIR:PATH=/opt/ros/kinetic/share/xmlrpcpp/cmake
 
 
 ########################
@@ -500,7 +548,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=4
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
