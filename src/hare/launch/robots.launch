@@ -1,6 +1,4 @@
 <launch>
-  <!-- No namespace here as we will share this description.
-       Access with slash at the beginning -->
 
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">

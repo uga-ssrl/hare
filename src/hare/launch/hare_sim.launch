@@ -1,7 +1,7 @@
 <launch>
+  <!-- include our robots -->
   <include file="$(find hare)/launch/robots.launch"/>
 
-  <!-- include worl -->
-  <include file="$(find gazebo_ros)/launch/elevator_world.launch"/>
-  <!-- include our robots -->
+  <!-- include world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
 </launch>
