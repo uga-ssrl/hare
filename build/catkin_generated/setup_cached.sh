@@ -7,5 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export PATH="/home/jackson/Development/HARE/devel/bin:$PATH"
 export PWD="/home/jackson/Development/HARE/build"

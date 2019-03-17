@@ -1,8 +1,0 @@
-prefix=/home/jackson/Development/HARE/devel
-
-Name: master_discovery_fkie
-Description: Description of master_discovery_fkie
-Version: 0.8.9
-Cflags: 
-Libs: -L/home/jackson/Development/HARE/devel/lib 
-Requires: multimaster_msgs_fkie std_srvs

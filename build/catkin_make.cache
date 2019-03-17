@@ -1,2 +1,2 @@
-rosbuzz
--DSIM=1 -DKIN=1 -DCATKIN_DEVEL_PREFIX=/home/jackson/Development/HARE/devel -DCMAKE_INSTALL_PREFIX=/home/jackson/Development/HARE/install -G Unix Makefiles
+hare:rosbuzz
+-DKIN=1 -DSIM=1 -DCATKIN_DEVEL_PREFIX=/home/jackson/Development/HARE/devel -DCMAKE_INSTALL_PREFIX=/home/jackson/Development/HARE/install -G Unix Makefiles
