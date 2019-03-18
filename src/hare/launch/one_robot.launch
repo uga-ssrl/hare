@@ -1,14 +1,23 @@
 <launch>
     <arg name="robot_name"/>
     <arg name="init_pose"/>
+    <arg name="init_longitude"/>
+    <arg name="init_latitude"/>
+    <arg name="xbee_plugged"/>
 
-    <node name="spawn_minibot_model" pkg="gazebo_ros" type="spawn_model"
-    args="$(arg init_pose) -urdf -param robot_description -model $(arg robot_name)"
-    respawn="false" output="screen" />
-
-    <node pkg="robot_state_publisher" type="robot_state_publisher"
-         name="robot_state_publisher" output="screen"/>
-
-    <!-- The odometry estimator, throttling, fake laser etc. go here -->
-    <!-- All the stuff as from usual robot launch file -->
+    <group ns="$(arg robot_name)">
+      <node name="spawn_minibot_model" pkg="gazebo_ros" type="spawn_model"
+        args="$(arg init_pose) -urdf -param robot_description -model $(arg robot_name)"
+        respawn="false" output="screen" />
+        
+    <!--launch rosbuzz-->
+    <include file="$(find rosbuzz)/launch/rosbuzz.launch">
+      <arg name="script"  value="$(find hare)/buzz_scripts/hare.bzz" />
+      <arg name="name"  value="$(arg robot_name)" />
+      <arg name="debug" value="false"/>
+      <arg name="latitude" value="$(arg init_latitude)"/>
+      <arg name="longitude" value="$(arg init_longitude)"/>
+      <arg name="xbee_plugged" value="$(arg xbee_plugged)"/>
+    </include>
+    </group>
 </launch>
