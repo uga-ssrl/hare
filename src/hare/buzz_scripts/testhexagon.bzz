@@ -1,5 +1,5 @@
 # We need this for 2D vectors
-include "include/util/vec2.bzz"
+include "utils/vec2.bzz"
 
 # Lennard-Jones parameters
 TARGET     = 283.0
