@@ -1,8 +1,0 @@
-prefix=/home/jackson/Development/HARE/install
-
-Name: hare
-Description: Description of hare
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/jackson/Development/HARE/install/lib 
-Requires: 
