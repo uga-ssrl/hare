@@ -8,6 +8,7 @@ Heterogeneous Autonomous Multirobot Exploration Ros Node
 `<param name="bzzfile_name" value="$(find rosbuzz)/buzz_scripts/$(arg script).bzz"/>`
 to
 `<param name="bzzfile_name" value="$(arg script)"/>`
+- clone https://github.com/husarion/rosbot_description within src of catkin_ws
 - gazebo
 - turtlebot_description package for launch files
 
