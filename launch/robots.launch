@@ -26,4 +26,18 @@
     <arg name="xbee_plugged" value="false"/>
   </include>
 
+  <!-- BEGIN ROBOT 3-->
+  <group ns="robot3">
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+    <param name="tf_prefix" value="robot3_tf" />
+  </group>
+  <include file="$(find hare)/launch/one_robot.launch" >
+    <arg name="init_pose" value="-x 2 -y -2 -z 0" />
+    <arg name="init_longitude" value="1"/>
+    <arg name="init_latitude" value="1"/>
+    <arg name="robot_name"  value="robot3" />
+    <arg name="xbee_plugged" value="false"/>
+  </include>
+
+
 </launch>
