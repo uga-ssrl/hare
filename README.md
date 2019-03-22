@@ -11,11 +11,15 @@ to
 
 **robot1**
 - turtlebot_description package for launch files
+
+
 **robot2**
 - clone [this](https://github.com/Spain2394/MMP30_Robot.git) repo and add the following packages to your ```~/catkin_ws/src```
 - mmp30_gazebo
 - mmp30_control
 - mmp30_description
+
+
 **robot2**
 - clone https://github.com/husarion/rosbot_description within src of catkin_ws
 - gazebo
