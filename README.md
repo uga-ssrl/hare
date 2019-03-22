@@ -8,16 +8,26 @@ Heterogeneous Autonomous Multirobot Exploration Ros Node
 `<param name="bzzfile_name" value="$(find rosbuzz)/buzz_scripts/$(arg script).bzz"/>`
 to
 `<param name="bzzfile_name" value="$(arg script)"/>`
+
+**robot1**
+- turtlebot_description package for launch files
+**robot3**
+- clone [this](https://github.com/Spain2394/MMP30_Robot.git) repo and add the following packages to your ```~/catkin_ws/src```
+- mmp30_gazebo
+- mmp30_control
+- mmp30_description
+
+**robot**
 - clone https://github.com/husarion/rosbot_description within src of catkin_ws
 - gazebo
-- turtlebot_description package for launch files
+
 
 # Compilation
 `/path/to/catkin_ws$ catkin_make -DKIN=1 -DSIM=1`
 then
 `/path/to/catkin_ws$ source devel/setup.bash`
 
-# Simuation
+# Simulation
 `roslaunch hare hare_sim.launch`
 
 # Buzz development
