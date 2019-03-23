@@ -32,3 +32,13 @@ then
 - add robots in hare/launch/robots.launch
 - create new namespace and place descriptions and include one_robot.launch
   - this can be seen in the turtlebot examples
+
+# TODOs
+**nodes to be added**
+- multirobot_map_merge
+- multi_robot_collision_avoidance
+
+**nodes to be implemented**
+- capabilities
+- hare_msgs
+- hare (actual exploration part)
