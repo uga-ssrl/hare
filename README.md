@@ -8,6 +8,7 @@ Heterogeneous Autonomous Multirobot Exploration Ros Node
 `<param name="bzzfile_name" value="$(find rosbuzz)/buzz_scripts/$(arg script).bzz"/>`
 to
 `<param name="bzzfile_name" value="$(arg script)"/>`
+- clone this repo: https://github.com/uga-ssrl/hare into ```~/catkin_ws/src```
 
 **robot1**
 - turtlebot_description package for launch files
