@@ -35,8 +35,8 @@ then
 
 # TODOs
 **nodes to be added**
-- multirobot_map_merge
-- multi_robot_collision_avoidance
+- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
+- multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 
 **nodes to be implemented**
 - capabilities
