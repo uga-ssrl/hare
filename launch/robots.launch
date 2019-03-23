@@ -13,7 +13,7 @@
 
   <!-- BEGIN ROBOT 2-->
   <group ns="robot2">
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find mmp30_description)/urdf/description.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
     <param name="tf_prefix" value="robot2_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
@@ -23,7 +23,7 @@
 
   <!-- BEGIN ROBOT 3-->
   <group ns="robot3">
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro.py $(find mmp30_description)/urdf/description.xacro"/>
     <param name="tf_prefix" value="robot3_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
