@@ -21,7 +21,7 @@ to
 - mmp30_description
 
 
-**robot2**
+**robot3**
 - clone https://github.com/husarion/rosbot_description within src of catkin_ws
 - gazebo
 
