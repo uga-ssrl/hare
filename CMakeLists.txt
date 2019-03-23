@@ -9,10 +9,14 @@ project(hare)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
-  rosbuzz
   roscpp
   rospy
   std_msgs
+  sensor_msgs
+  rosbot_description
+  mmp30_description
+  mmp30_control
+  mmp30_gazebo
 )
 
 ## System dependencies are found with CMake's conventions
