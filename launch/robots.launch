@@ -21,9 +21,9 @@
     <arg name="robot_name"  value="robot2" />
   </include>
 
-  <!-- BEGIN ROBOT 3-->
+  <!-- BEGIN ROBOT 3 -->
   <group ns="robot3">
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find mmp30_description)/urdf/description.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro.py $(find husky_description)/urdf/husky.urdf.xacro" />
     <param name="tf_prefix" value="robot3_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
