@@ -39,7 +39,7 @@
     <param name="tf_prefix" value="robot3_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 2 -y 5 -z 0" />
+    <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
     <arg name="robot_name"  value="robot3" />
   </include>
 
