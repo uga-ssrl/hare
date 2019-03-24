@@ -1,5 +1,5 @@
 # HARE
-Heterogeneous Autonomous Multirobot Exploration Ros Node
+[Heterogeneous Autonomous Multirobot Exploration Ros Node](https://github.com/uga-ssrl/hare)
 
 --------
 # Dependencies
