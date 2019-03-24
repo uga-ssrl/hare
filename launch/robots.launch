@@ -23,11 +23,23 @@
 
   <!-- BEGIN ROBOT 3 -->
   <group ns="robot3">
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find husky_description)/urdf/husky.urdf.xacro" />
+    <arg name="robot_namespace" default="/"/>
+    <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
+    <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
+    <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
+    --inorder
+    robot_namespace:=$(arg robot_namespace)
+    laser_enabled:=$(arg laser_enabled)
+    kinect_enabled:=$(arg kinect_enabled)
+    urdf_extras:=$(arg urdf_extras)
+    " />
+
     <param name="tf_prefix" value="robot3_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 2 -y 5 -z 0" />
+    <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
     <arg name="robot_name"  value="robot3" />
   </include>
 
