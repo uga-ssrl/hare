@@ -37,6 +37,8 @@ then
 **nodes to be added**
 - multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
+- explore_multirobot?
+- tuw_multi_robot?
 
 **nodes to be implemented**
 - capabilities
