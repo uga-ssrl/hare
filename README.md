@@ -6,8 +6,10 @@
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
-**mutli-robo-map-merge**
-- sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite
+**multi-robo-map-merge**
+- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
+- to install run: sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite
+
 
 **robot1**
 - turtlebot_description package for launch files
@@ -17,9 +19,6 @@
 
 **robot3**
 - To install husky packages run: ```sudo apt-get install ros-kinetic-husky-simulator```
-
-
-
 
 # Compilation
 `/path/to/catkin_ws$ catkin_make`
@@ -36,7 +35,6 @@ then
 
 # TODOs
 **nodes to be added**
-- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
 - tuw_multi_robot?
