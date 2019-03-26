@@ -1,6 +1,7 @@
 # HARE
-Heterogeneous Autonomous Multirobot Exploration Ros Node
+[Heterogeneous Autonomous Multirobot Exploration Ros Node](https://github.com/uga-ssrl/hare)
 
+--------
 # Dependencies
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
@@ -8,16 +9,13 @@ Heterogeneous Autonomous Multirobot Exploration Ros Node
 **robot1**
 - turtlebot_description package for launch files
 
-
 **robot2**
-- clone [this](https://github.com/Spain2394/MMP30_Robot.git) repo and add the following packages to your ```~/catkin_ws/src/robot/```
-- mmp30_gazebo
-- mmp30_control
-- mmp30_description
-
+- clone https://github.com/husarion/rosbot_description in ```~/catkin_ws/src/robot/```
 
 **robot3**
-- clone https://github.com/husarion/rosbot_description in ```~/catkin_ws/src/robot/```
+- To install husky packages run: ```sudo apt-get install ros-kinetic-husky-simulator```
+
+
 
 
 # Compilation
