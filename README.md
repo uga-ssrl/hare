@@ -6,6 +6,9 @@
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
+**mutli-robo-map-merge**
+- sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite
+
 **robot1**
 - turtlebot_description package for launch files
 
