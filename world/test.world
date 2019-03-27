@@ -9,8 +9,164 @@
       <uri>model://sun</uri>
     </include>
 
-    <model name="missing_corner_01">
-      <pose>3 3 0  0 0 0</pose>
+    <model name="small_x_tunnel_02">
+      <pose>4 0 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small_x_tunnel_02">
+      <pose>8 0 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large_x_tunnel_01">
+      <pose>3 4 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_70cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small_x_tunnel_03">
+      <pose>7 4 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large_y_tunnel_01">
+      <pose>0 -4 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_70cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large_y_tunnel_02">
+      <pose>0 -8 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_70cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small x tunnel">
+      <pose>-3 -11 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small y tunnel">
+      <pose>-6 -8 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large y tunnel">
+      <pose>-6 -4 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_70cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large y tunnel">
+      <pose>-6 0 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="large x tunnel">
+      <pose>-8 7 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_x_70cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small y tunnel">
+      <pose>-5 10 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="small y tunnel">
+      <pose>2 7 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://tunnel_y_30cm_hole_400cm_len.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="random block">
+      <pose>10 10 0  0 0 0</pose>
       <static>true</static>
       <link name="body">
         <visual name="visual">
@@ -21,61 +177,25 @@
       </link>
     </model>
 
-    <model name="small_x_tunnel_01">
-      <pose>3 -3 0  0 0 0</pose>
+    <model name="random block">
+      <pose>-13 8 0  0 0 0</pose>
       <static>true</static>
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://missing_50cm_corner.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
     </model>
 
-    <model name="small_x_tunnel_02">
-      <pose>6 -3 0  0 0 0</pose>
+    <model name="random block">
+      <pose>8 -8 0  0 0 0</pose>
       <static>true</static>
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-
-    <model name="small_x_tunnel_03">
-      <pose>-8 0 0  0 0 0</pose>
-      <static>true</static>
-      <link name="body">
-        <visual name="visual">
-          <geometry>
-            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-
-    <model name="small_y_tunnel_01">
-      <pose>-6 -2 0  0 0 0</pose>
-      <static>true</static>
-      <link name="body">
-        <visual name="visual">
-          <geometry>
-            <mesh><uri>model://tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
-          </geometry>
-        </visual>
-      </link>
-    </model>
-
-    <model name="small_y_tunnel_02">
-      <pose>-6 -5 0  0 0 0</pose>
-      <static>true</static>
-      <link name="body">
-        <visual name="visual">
-          <geometry>
-            <mesh><uri>model://tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://missing_50cm_corner.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
