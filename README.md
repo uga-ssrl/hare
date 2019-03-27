@@ -8,7 +8,7 @@
 
 **multi-robo-map-merge**
 - multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
-- to install run: sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite
+- to install run: ```sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite```
 
 
 **robot1**
