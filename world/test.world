@@ -15,7 +15,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/missing_50cm_corner.dae</uri></mesh>
+            <mesh><uri>model://missing_50cm_corner.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
@@ -27,7 +27,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
@@ -39,7 +39,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
@@ -51,7 +51,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://tunnel_x_40cm_hole_300cm_len.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
@@ -63,7 +63,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
@@ -75,7 +75,7 @@
       <link name="body">
         <visual name="visual">
           <geometry>
-            <mesh><uri>file:///home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
+            <mesh><uri>model://tunnel_y_40cm_hole_300cm_len.dae</uri></mesh>
           </geometry>
         </visual>
       </link>
