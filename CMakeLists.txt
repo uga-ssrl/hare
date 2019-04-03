@@ -9,14 +9,21 @@ project(hare)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
+  multimaster_msgs_fkie
+  default_cfg_fkie
+  master_discovery_fkie
+  master_sync_fkie
+  node_manager_fkie
   roscpp
   rospy
   std_msgs
   sensor_msgs
-  rosbot_description
-  mmp30_description
-  mmp30_control
-  mmp30_gazebo
+  shape_msgs
+  nav_msgs
+  geometry_msgs
+  move_base_msgs
+  behavior_tree_core
+  behavior_tree_leaves
 )
 
 ## System dependencies are found with CMake's conventions

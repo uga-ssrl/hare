@@ -3,6 +3,9 @@
 
 --------
 # Dependencies
+**multimaster_fkie**
+- sudo apt-get install ros-kinetic-multimaster-fkie
+
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
