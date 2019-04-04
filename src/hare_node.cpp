@@ -9,8 +9,8 @@
 #include <iostream>
 
 void callback(const std_msgs::StringConstPtr& str){
-  std::cout<<str->data<<std::endl;
-}
+  ROS_INFO("received %s", str->data);
+ }
 
 int main(int argc, char **argv){
   ros::init(argc, argv, "hare_node");
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
     std::string placeHolder;
     neighbor_ns.push_back(placeHolder);
     if(nh.getParam(temp,neighbor_ns[i])){
-      neighbor_ns[i] = "/" + neighbor_ns[i];
+      neighbor_ns[i] =  "/" + neighbor_ns[i];
       ROS_INFO("Got param: %s", neighbor_ns[i].c_str());
     }
     else{
@@ -53,12 +53,13 @@ int main(int argc, char **argv){
   for(int i = 0; i < numNeighbors; ++i){
     temp = neighbor_ns[i] + "/test_msg";
     ros::Subscriber sub = nh.subscribe(temp, 1, callback);
+    subs.push_back(sub);
   }
 
   std_msgs::String str;
   str.data = "my second friend is " + neighbor_ns[numNeighbors-1];
 
-  ros::Rate r(10);//10 hz
+  ros::Rate r(100);//100 hz
 
   while (ros::ok()){
     pub.publish(str);
