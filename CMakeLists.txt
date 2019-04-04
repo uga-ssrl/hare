@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   behavior_tree_core
   behavior_tree_leaves
   message_generation
+  actionlib
+  actionlib_msgs
 )
 
 ## System dependencies are found with CMake's conventions

@@ -61,6 +61,8 @@
   <build_depend>behavior_tree_core</build_depend>
   <build_depend>behavior_tree_leaves</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
 
   <build_export_depend>gazebo_ros</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
@@ -73,7 +75,8 @@
   <build_export_depend>move_base_msgs</build_export_depend>
   <build_export_depend>behavior_tree_core</build_export_depend>
   <build_export_depend>behavior_tree_leaves</build_export_depend>
-
+  <build_export_depend>actionlib</build_export_depend>
+  <build_export_depend>actionlib_msgs</build_export_depend>
 
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>roscpp</exec_depend>
@@ -87,7 +90,8 @@
   <exec_depend>behavior_tree_core</exec_depend>
   <exec_depend>behavior_tree_leaves</exec_depend>
   <exec_depend>message_runtime</exec_depend>
-
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

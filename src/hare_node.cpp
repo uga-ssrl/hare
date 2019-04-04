@@ -8,6 +8,34 @@
 #include <string>
 #include <iostream>
 
+// class CommunicationHandler{
+//   std::vector<ros::Publisher> publishers;
+//   std::vector<ros::Subscriber> subscribers;
+//
+// public:
+//
+//   CommunicationHandler();
+//
+// };
+//
+// struct Neighbor{
+//   int id;
+//   std::string ns;
+//
+// };
+//
+// class Robot{
+//
+//   CommunicationHandler* communicator;
+//
+// public:
+//
+//   std::vector<Neighbor> neighbors;
+//
+//   Robot();
+//
+// };
+
 void callback(const std_msgs::StringConstPtr& str){
   ROS_INFO("received %s", str->data);
  }
@@ -62,9 +90,22 @@ int main(int argc, char **argv){
   ros::Rate r(100);//100 hz
 
   while (ros::ok()){
+
+    //DETERMINE STATE AND SET GOALS
+      //neighbor state query
+      //mapping
+      //obstacle identification
+      //obstacle avoidance
+      //trajectory
+      //path planning
+
+    //PERFORM ACTION BASED ON GOAL AND STATE
+      //behavior tree traversal
+
+    //SEND INFORMATION TO NEIGHBORS
     pub.publish(str);
+
 		ros::spinOnce();
-		r.sleep();
   }
 
   return 0;
