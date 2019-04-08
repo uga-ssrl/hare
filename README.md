@@ -6,6 +6,13 @@
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
+**multi-robo-map-merge**
+- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
+- to install run: ```sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite```
+
+**Enviroment Variables**
+- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. 
+
 **robot1**
 - turtlebot_description package for launch files
 
@@ -30,7 +37,6 @@ then
 
 # TODOs
 **nodes to be added**
-- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
 - tuw_multi_robot?
