@@ -1,13 +1,17 @@
 <launch>
 
+  <param name="num_robots" value="3"/>
+  <rosparam file="$(find hare)/config/topics.yaml"/>
+
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
     <param name="robot_description" command="$(find xacro)/xacro.py $(find turtlebot_description)/robots/roomba_circles_kinect.urdf.xacro"/>
     <param name="tf_prefix" value="robot1_tf" />
+    <param name="neighbor1" value="robot2"/>
+    <param name="neighbor2" value="robot3"/>
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0 -y 0 -z 0" />
-
     <arg name="robot_name"  value="robot1" />
   </include>
 
@@ -15,6 +19,8 @@
   <group ns="robot2">
     <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
     <param name="tf_prefix" value="robot2_tf" />
+    <param name="neighbor1" value="robot1"/>
+    <param name="neighbor2" value="robot3"/>
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 4 -y 1 -z 0" />
@@ -23,17 +29,15 @@
 
   <!-- BEGIN ROBOT 3 -->
   <group ns="robot3">
-    <arg name="robot_namespace" default="/"/>
-    <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
-    <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
-    <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
+    <param name="neighbor1" value="robot1"/>
+    <param name="neighbor2" value="robot2"/>
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
     --inorder
-    robot_namespace:=$(arg robot_namespace)
-    laser_enabled:=$(arg laser_enabled)
-    kinect_enabled:=$(arg kinect_enabled)
-    urdf_extras:=$(arg urdf_extras)
+    robot_namespace:=robot3
+    laser_enabled:=$(optenv HUSKY_LMS1XX_ENABLED false)
+    kinect_enabled:=$(optenv HUSKY_KINECT_ENABLED false)
+    urdf_extras:=$(optenv HUSKY_URDF_EXTRAS)
     " />
 
     <param name="tf_prefix" value="robot3_tf" />
@@ -42,6 +46,5 @@
     <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
     <arg name="robot_name"  value="robot3" />
   </include>
-
 
 </launch>

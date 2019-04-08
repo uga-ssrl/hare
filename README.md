@@ -3,9 +3,6 @@
 
 --------
 # Dependencies
-**multimaster_fkie**
-- sudo apt-get install ros-kinetic-multimaster-fkie
-
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
@@ -17,9 +14,6 @@
 
 **robot3**
 - To install husky packages run: ```sudo apt-get install ros-kinetic-husky-simulator```
-
-
-
 
 # Compilation
 `/path/to/catkin_ws$ catkin_make`
@@ -40,8 +34,7 @@ then
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
 - tuw_multi_robot?
+- MULTIMASTER (POUND - see doc/pound.pdf)
 
 **nodes to be implemented**
-- capabilities
-- hare_msgs
 - hare (actual exploration part)
