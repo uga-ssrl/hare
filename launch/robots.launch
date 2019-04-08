@@ -1,6 +1,7 @@
 <launch>
 
   <param name="num_robots" value="3"/>
+  <rosparam file="$(find hare)/config/topics.yaml"/>
 
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
