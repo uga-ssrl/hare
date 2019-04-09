@@ -11,7 +11,7 @@
 - to install run: ```sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite```
 
 **Enviroment Variables**
-- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `GAZEBO_MODEL_PATH=$(pwd)`
+- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(pwd)`
 
 **robot1**
 - turtlebot_description package for launch files
