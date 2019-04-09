@@ -6,7 +6,7 @@
     <node name="spawn_minibot_model" pkg="gazebo_ros" type="spawn_model"
     args="$(arg init_pose) -urdf -param robot_description -model $(arg robot_name)"
     respawn="false" output="screen" />
-    <node name="action" pkg="behavior_tree_leaves" type="action_example" />
-    <node name="condition" pkg="behavior_tree_leaves" type="condition_example" />
+    <!-- <node name="action" pkg="behavior_tree_leaves" type="action_example" /> -->
+    <!-- <node name="condition" pkg="behavior_tree_leaves" type="condition_example" /> -->
   </group>
 </launch>

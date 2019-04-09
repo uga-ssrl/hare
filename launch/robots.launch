@@ -4,12 +4,14 @@
   <group ns="robot1">
     <param name="robot_description" command="$(find xacro)/xacro.py $(find turtlebot_description)/robots/roomba_circles_kinect.urdf.xacro"/>
     <param name="tf_prefix" value="robot1_tf" />
+
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0 -y 0 -z 0" />
 
     <arg name="robot_name"  value="robot1" />
   </include>
+
 
   <!-- BEGIN ROBOT 2-->
   <group ns="robot2">
@@ -21,12 +23,16 @@
     <arg name="robot_name"  value="robot2" />
   </include>
 
+
   <!-- BEGIN ROBOT 3 -->
   <group ns="robot3">
-    <arg name="robot_namespace" default="/"/>
+    <param name="tf_prefix" value="robot3_tf" />
+
+    <arg name="robot_namespace" default="robot3"/>
     <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
     <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
     <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
+
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
     --inorder
@@ -36,12 +42,35 @@
     urdf_extras:=$(arg urdf_extras)
     " />
 
-    <param name="tf_prefix" value="robot3_tf" />
-  </group>
-  <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
-    <arg name="robot_name"  value="robot3" />
-  </include>
+    <!-- load controller configuration -->
+    <rosparam command="load" file="$(find husky_control)/config/control.yaml" />
 
+    <!-- spawn controller -->
+    <node name="base_controller_spawner" pkg="controller_manager" type="spawner"
+        args="husky_joint_publisher husky_velocity_controller"/>
+
+    <!-- EKF node-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+      <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
+    </node>
+
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/> -->
+
+    <!-- twist mux-->
+    <!-- should this be robot3?? -->
+    <node pkg="twist_mux" type="twist_mux" name="twist_mux">
+      <rosparam command="load" file="$(find husky_control)/config/twist_mux.yaml" />
+      <remap from="cmd_vel_out" to="robot3/husky_velocity_controller/cmd_vel"/>
+    </node>
+
+    <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server" output="screen"/>
+
+
+    </group>
+    <include file="$(find hare)/launch/one_robot.launch" >
+      <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
+      <arg name="robot_name"  value="robot3" />
+
+    </include>
 
 </launch>
