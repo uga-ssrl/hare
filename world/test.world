@@ -201,5 +201,53 @@
       </link>
     </model>
 
+    <model name="ref_cube">
+      <pose>5 5 5  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://ref_cube.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="ramp_1">
+      <pose>6 -2 0  0 0 1.57079632679</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://ramp_y_500cm_z_80cm.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="ramp_2">
+      <pose>-4 -5 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://ramp_y_500cm_z_80cm.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="ramp_3">
+      <pose>-2 -5 0  0 0 0</pose>
+      <static>true</static>
+      <link name="body">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://ramp_y_500cm_z_80cm.dae</uri></mesh>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
   </world>
 </sdf>
