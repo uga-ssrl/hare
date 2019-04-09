@@ -4,7 +4,7 @@
 
   <!-- include world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="world_name" value="/home/parallels/Development/VM_Dev/catkin_ws/src/hare/world/test.world"/>
+      <arg name="world_name" value="$(find hare)/world/test.world"/>
       <arg name="use_sim_time" value="true"/>
       <arg name="gui" value="true" />
   </include>
