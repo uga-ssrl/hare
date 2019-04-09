@@ -23,7 +23,7 @@
     <param name="neighbor2" value="robot3"/>
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 4 -y 1 -z 0" />
+    <arg name="init_pose" value="-x 0 -y 1 -z 0" />
     <arg name="robot_name"  value="robot2" />
   </include>
 
@@ -43,7 +43,7 @@
     <param name="tf_prefix" value="robot3_tf" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
+    <arg name="init_pose" value="-x 0 -y 3 -z 0" />
     <arg name="robot_name"  value="robot3" />
   </include>
 

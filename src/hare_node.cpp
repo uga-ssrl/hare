@@ -6,6 +6,6 @@ int main(int argc, char **argv){
   ros::NodeHandle nh;
 
   hare::Robot robot = hare::Robot(nh);
-
+  robot.run();
   return 0;
 }

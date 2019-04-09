@@ -10,7 +10,7 @@ float32 turn_radius
 
 float32 weight
 
-#find better way to define this
+#find better way to define this for incline 
 string drive
 
 bool flying

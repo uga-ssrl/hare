@@ -40,7 +40,6 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->type = ROBOT;
   this->findNeighbors();
   this->initComms(500);
-  this->run();
 }
 hare::Robot::~Robot(){
 
