@@ -1,9 +1,12 @@
 <launch>
+  <!-- include world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(find hare)/world/test.world"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="gui" value="true" />
+  </include>
 
-  <arg name="use_sim_time" value="true"/>
   <!-- include our robots -->
   <include file="$(find hare)/launch/robots.launch"/>
-  <!-- include world -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
 
 </launch>

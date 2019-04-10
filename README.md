@@ -11,7 +11,7 @@
 - to install run: ```sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite```
 
 **Enviroment Variables**
-- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. 
+- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(pwd)`
 
 **robot1**
 - turtlebot_description package for launch files
@@ -40,8 +40,7 @@ then
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
 - tuw_multi_robot?
+- MULTIMASTER (POUND - see doc/pound.pdf)
 
 **nodes to be implemented**
-- capabilities
-- hare_msgs
 - hare (actual exploration part)
