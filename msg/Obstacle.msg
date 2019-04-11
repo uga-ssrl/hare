@@ -1,10 +1,16 @@
 #This message is used to define an obstacle characteristics
 
-uint8 id
+#uint8 id1
+#uint8 id2
 
-float32[] centroid
+#float32[] centroid
 
-uint8 type
+uint8 type1
+uint8 type2
+
+geometry_msgs/Point location1
+geometry_msgs/Point location2
+
 #types
 uint8 WALL=0
 uint8 RAMP=1
@@ -14,9 +20,16 @@ uint8 SPHERE=4
 uint8 CYLINDER=5
 uint8 TUNNEL_CYLINDER=6
 uint8 CONE=7
+uint8 SMALL_TUNNEL_ENTRANCE=8
+uint8 LARGE_TUNNEL_ENTRANCE=9
+uint8 RAMP_ENTRANCE=10
+uint8 SMALL_TUNNEL_EXIT=11
+uint8 LARGE_TUNNEL_EXIT=12
+uint8 RAMP_EXIT=13
+uint8 NONE=14
 
 
-float32[] dimensions
+#float32[] dimensions
 #index on how to access dimensions for different shapes
 
 uint8 WALL_X=0

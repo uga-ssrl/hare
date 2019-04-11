@@ -82,6 +82,7 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   shape_msgs
+  geometry_msgs
 )
 
 ################################################
