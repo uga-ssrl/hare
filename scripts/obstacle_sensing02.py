@@ -69,10 +69,25 @@ Obst_Info_DB = [
 ]
 
 
-
 def getObstacleIds(x,y,z):
+    dat_list = []
     tup = [14,14,(69,69,69),(69,69,69)] # default empty obstacles
-
+    for obst in Obst_Info_DB:
+        x_1 = obst[0][0]
+        x_2 = obst[0][1]
+        y_1 = obst[0][2]
+        y_2 = obst[0][3]
+        if (x >= x_1 and x <= x_2 and y >= y_1 and y <= y_2):
+            x_c = (x_1 + x_2)/2
+            y_c = (y_1 + y_2)/2
+            guy = [obst[1],(x_c,y_c,0.0)]
+            dat_list.append(guy)
+    if (len(dat_list) > 0):
+        tup[0] = guy[0]
+        tup[2] = guy[2]
+    if (len(dat_list) > 1):
+        tup[1] = guy[1]
+        tup[3] = guy[3]
     return tup
 
 # Subscriber callback
