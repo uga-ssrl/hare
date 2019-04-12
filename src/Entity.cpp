@@ -33,6 +33,7 @@ hare::Robot::Robot(){
   this->ns = "/";
   this->type = ROBOT;
 }
+//set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
   this->nh = nh;
   this->ns = nh.getNamespace();
@@ -45,6 +46,7 @@ hare::Robot::Robot(ros::NodeHandle nh){
 hare::Robot::~Robot(){
 
 }
+//must add capabilities here if you add them to yaml file
 void hare::Robot::loadCapabilties(){
   bool received = true;
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
@@ -158,6 +160,7 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
   }
   return success;
 }
+//add publishers and subscribers in here
 void hare::Robot::initComms(uint32_t queue_size){
   //add pubs and subs
   std::string test_topic;
