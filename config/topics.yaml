@@ -1,2 +1,4 @@
-robots_sub_pub:
+sub_and_pub:
   test: test_msg
+  odometry: nav_msgs/odom
+  obstacle: obstacle_sensing
