@@ -46,39 +46,63 @@ hare::Robot::~Robot(){
 
 }
 void hare::Robot::loadCapabilties(){
-
+  bool received = true;
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
     ROS_ERROR("Failed to get param turnRadius");
+    received = false;
   }
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/weight", this->description.weight)){
     ROS_ERROR("Failed to get param weight");
+    received = false;
   }
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/torque", this->description.torque)){
     ROS_ERROR("Failed to get param torque");
+    received = false;
   }
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/canFly", this->description.canFly)){
     ROS_ERROR("Failed to get param canFly");
+    received = false;
   }
-  // if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", this->description.turnRadius)){
-  //   ROS_ERROR("Failed to get param '%s'", currentTopic);
-  // }
+  if(received){
+    ROS_INFO("Successfuly loaded capabilities from yaml file");
+  }
+  std::vector<float> temp;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", temp)){
+    ROS_ERROR("Failed to get param boundingBox");
+  }
+  this->description.boundingBox.x = temp[0];
+  this->description.boundingBox.y = temp[1];
+  this->description.boundingBox.z = temp[2];
 
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+    received = true;
+    std::vector<float> neighborTemp;
     if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/turnRadius", (*neighbor).description.turnRadius)){
       ROS_ERROR("Failed to get param turnRadius");
+      received = false;
     }
     if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/weight", (*neighbor).description.weight)){
       ROS_ERROR("Failed to get param weight");
+      received = false;
     }
     if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/torque", (*neighbor).description.torque)){
       ROS_ERROR("Failed to get param torque");
+      received = false;
     }
     if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/canFly", (*neighbor).description.canFly)){
       ROS_ERROR("Failed to get param canFly");
+      received = false;
     }
-    // if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", (*neighbor).description.turnRadius)){
-    //   ROS_ERROR("Failed to get param '%s'", currentTopic);
-    // }
+    if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", neighborTemp)){
+      ROS_ERROR("Failed to get param boundingBox");
+      received = false;
+    }
+    (*neighbor).description.boundingBox.x = neighborTemp[0];
+    (*neighbor).description.boundingBox.y = neighborTemp[1];
+    (*neighbor).description.boundingBox.z = neighborTemp[2];
+    if(received){
+      ROS_INFO("Successfully loaded capabilities of %s", (*neighbor).ns.c_str());
+    }
   }
 }
 void hare::Robot::findNeighbors(){
@@ -155,7 +179,7 @@ void hare::Robot::initComms(uint32_t queue_size){
 }
 
 void hare::Robot::callback(const std_msgs::StringConstPtr& str){
-  //ROS_INFO("received %s", str->data);
+  //ROS_INFO("received %s", str->data.c_str());
 }
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);

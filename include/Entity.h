@@ -84,7 +84,7 @@ namespace hare{
   template <typename T>
   void Robot::publish(T message, std::string topic){
     if(this->publisherMap.find(topic) == this->publisherMap.end()){
-      ROS_ERROR("There is no publisher for the given topic %s", topic);
+      ROS_ERROR("There is no publisher for the given topic %s", topic.c_str());
     }
     this->publishers[this->publisherMap[topic]].publish(message);
   }
