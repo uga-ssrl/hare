@@ -81,6 +81,7 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   shape_msgs
+  geometry_msgs
 )
 
 ################################################
@@ -169,7 +170,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
+#install(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
