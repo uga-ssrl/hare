@@ -5,6 +5,9 @@
   <!-- descriptions of all robots capabilities, shape, etc -->
   <rosparam file="$(find hare)/config/hare_descriptions.yaml"/>
 
+  <!-- temporary obstacle sensing nodes -->
+  <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/>
+
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
     <param name="robot_description" command="$(find xacro)/xacro.py $(find turtlebot_description)/robots/roomba_circles_kinect.urdf.xacro"/>

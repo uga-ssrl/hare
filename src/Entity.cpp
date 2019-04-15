@@ -163,26 +163,23 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
 //add publishers and subscribers in here
 void hare::Robot::initComms(uint32_t queue_size){
   //add pubs and subs
-  std::string test_topic;
-  if(this->nh.getParam("/sub_and_pub/test", test_topic)){
-    ROS_INFO("Got param: %s", test_topic.c_str());
-  }
-  else{
-    ROS_ERROR("Failed to get param 'test'");
-  }
-
-  ros::Publisher test_pub = this->nh.advertise<std_msgs::String>(test_topic, queue_size);
+  ros::Publisher test_pub = this->nh.advertise<std_msgs::String>("test_msg", queue_size);
   this->addPublisher(test_pub);
+  ros::Subscriber obst_sub = this->nh.subscribe<hare::Obstacle>("obstacle_sensing", queue_size, &hare::Robot::callback, this);
+  this->addSubscriber(obst_sub);
 
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    std::string topic = (*neighbor).ns + "/" + test_topic;
+    std::string topic = (*neighbor).ns + "/test_msg";
     ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, queue_size, &hare::Robot::callback, this);
     this->addSubscriber(test_sub);
   }
 }
 
-void hare::Robot::callback(const std_msgs::StringConstPtr& str){
-  //ROS_INFO("received %s", str->data.c_str());
+void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
+  //ROS_INFO("received %s", msg->data.c_str());
+}
+void hare::Robot::callback(const hare::ObstacleConstPtr& msg){
+
 }
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);

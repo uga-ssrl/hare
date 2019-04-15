@@ -4,6 +4,7 @@
 #include "common_includes.h"
 #include "utility.h"
 #include <ros/callback_queue.h>
+#include <hare/Obstacle.h>
 
 namespace hare{
 
@@ -72,7 +73,8 @@ namespace hare{
     void initComms(uint32_t queue_size);
 
     //TODO implement all callbacks
-    void callback(const std_msgs::StringConstPtr& str);
+    void callback(const std_msgs::StringConstPtr& msg);
+    void callback(const hare::ObstacleConstPtr& msg);
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
     void run();

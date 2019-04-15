@@ -23,11 +23,6 @@ namespace hare{
   enum SpinnerType {SINGLE, MULTITHREADED, ASYNCRONOUS};
 
   //custom messages
-  ROS_DECLARE_MESSAGE(Description);
-  // template<class ContainerAllocator> struct Description_;
-  // typedef MyMeDescription_<std::allocator<void> > Description;
-  // typedef boost::shared_ptr<Description> DescriptionPtr;
-  // typedef boost::shared_ptr<Description const> DescriptionConstPtr;
   ROS_DECLARE_MESSAGE(Obstacle);
   // template<class ContainerAllocator> struct Obstacle_;
   // typedef Obstacle_<std::allocator<void> > Obstacle;

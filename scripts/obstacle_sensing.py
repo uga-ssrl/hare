@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import rospy
-from hare.msg import Description
 from hare.msg import Obstacle
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 from nav_msgs.msg import Odometry
@@ -68,6 +67,8 @@ Obst_Info_DB = [
     ([   -7,   -5, -6.5,   -6], 8) # MIXED
 ]
 
+pub = []
+sub = []
 
 def getObstacleIds(x,y,z):
     dat_list = []
@@ -90,8 +91,9 @@ def getObstacleIds(x,y,z):
         tup[3] = guy[3]
     return tup
 
+# NOTE MUST ADD CALLBACK WHEN ADDING ROBOT
 # Subscriber callback
-def callback(msg): # callback which is called everytime there is a message
+def callback_robot1(msg): # callback which is called everytime there is a message
     x = msg.pose.pose.position.x
     y = msg.pose.pose.position.y
     z = msg.pose.pose.position.z
@@ -112,14 +114,62 @@ def callback(msg): # callback which is called everytime there is a message
     my_guy.location2.y = tup[3][1]
     my_guy.location2.z = tup[3][2]
 
-    pub = rospy.Publisher('/robot2/obstacle_sensing', Obstacle)
-    pub.publish(my_guy)
+    pub[0].publish(my_guy)
+
+def callback_robot2(msg): # callback which is called everytime there is a message
+    x = msg.pose.pose.position.x
+    y = msg.pose.pose.position.y
+    z = msg.pose.pose.position.z
+
+    # the x,y,z location of the bot
+    print (x,y,z)
+    tup = getObstacleIds(x,y,z)
+
+    my_guy = Obstacle()
+    my_guy.type1 = tup[0]
+    my_guy.type2 = tup[1]
+
+    my_guy.location1.x = tup[2][0]
+    my_guy.location1.y = tup[2][1]
+    my_guy.location1.z = tup[2][2]
+
+    my_guy.location2.x = tup[3][0]
+    my_guy.location2.y = tup[3][1]
+    my_guy.location2.z = tup[3][2]
+
+    pub[1].publish(my_guy)
+
+def callback_robot3(msg): # callback which is called everytime there is a message
+    x = msg.pose.pose.position.x
+    y = msg.pose.pose.position.y
+    z = msg.pose.pose.position.z
+
+    # the x,y,z location of the bot
+    print (x,y,z)
+    tup = getObstacleIds(x,y,z)
+
+    my_guy = Obstacle()
+    my_guy.type1 = tup[0]
+    my_guy.type2 = tup[1]
+
+    my_guy.location1.x = tup[2][0]
+    my_guy.location1.y = tup[2][1]
+    my_guy.location1.z = tup[2][2]
+
+    my_guy.location2.x = tup[3][0]
+    my_guy.location2.y = tup[3][1]
+    my_guy.location2.z = tup[3][2]
+
+    pub[2].publish(my_guy)
 
 # Publisher
-
-
 # entry point in node
 if __name__ == "__main__":
     rospy.init_node('obstacle_sensing')
-    rospy.Subscriber('/robot2/odom', Odometry, callback)
+    sub.append(rospy.Subscriber('/robot1/odom', Odometry, callback_robot1))
+    sub.append(rospy.Subscriber('/robot2/odom', Odometry, callback_robot2))
+    sub.append(rospy.Subscriber('/robot3/odom', Odometry, callback_robot3))
+    pub.append(rospy.Publisher('/robot1/obstacle_sensing', Obstacle))
+    pub.append(rospy.Publisher('/robot2/obstacle_sensing', Obstacle))
+    pub.append(rospy.Publisher('/robot3/obstacle_sensing', Obstacle))
     rospy.spin()
