@@ -10,10 +10,57 @@
 
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
+
     <param name="robot_description" command="$(find xacro)/xacro.py $(find turtlebot_description)/robots/roomba_circles_kinect.urdf.xacro"/>
-    <param name="tf_prefix" value="robot1_tf" />
+    <param name="tf_prefix" value="robot1_tf"/>
     <param name="neighbor1" value="robot2"/>
     <param name="neighbor2" value="robot3"/>
+
+    <!-- publishes transformations: /base_link -> /base_link
+    /base_footprint -> /base_link
+    /odom -> base_footprint
+    publishes: /odom, /base_scan, /base_pose_ground_truth
+    uses base_watchdog_timeout: time(s) after recieving last cmd vel before stopping-->
+    <!-- required to run amcl for occupancy grid described in map yaml file-->
+    <node pkg="stage_ros" type="stageros" name="stageros" args="TURTLEBOT_STAGE_WORLD_FILE">
+      <param name="base_watchdog_timeout" value="0.5"/>
+      <remap from="odom" to="odom"/>
+      <remap from="base_pose_ground_truth" to="base_pose_ground_truth"/>
+      <remap from="cmd_vel" to="mobile_base/commands/velocity"/>
+      <remap from="base_scan" to="scan"/>
+    </node>
+
+    <!-- do we need joint state?-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+      <param name="use_gui" value="true"/>
+    </node>
+
+    <!--command velocity mulitplexer-->
+    <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+    <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+      <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
+      <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
+    </node>
+    <!-- Navigation -->
+    <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
+
+
+    <!-- Maps-->
+    <!-- <node name="map_server" pkg="map_server" type="map_server" args="/opt/ros/kinetic/share/turtlebot_stage/maps/maze.yaml">
+      <param name="frame_id" value="robot1/map"/>
+    </node> -->
+
+    <!--amcl localization-->
+    <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
+      <arg name="scan_topic" value="scan"/>
+      <arg name="use_map_topic" value="true"/>
+      <arg name="initial_pose_x" value="0"/>
+      <arg name="initial_pose_y" value="0"/>
+      <arg name="initial_pose_a" value="0"/>
+    </include>
+
+
+
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0 -y 0 -z 0" />
@@ -29,7 +76,7 @@
     <param name="neighbor2" value="robot3"/>
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 4 -y 1 -z 0.05" />
+    <arg name="init_pose" value="-x 0 -y 2 -z 0.05" />
     <arg name="robot_name"  value="robot2" />
   </include>
 
@@ -80,7 +127,7 @@
 
     </group>
     <include file="$(find hare)/launch/one_robot.launch" >
-      <arg name="init_pose" value="-x 2 -y 5 -z 0.2" />
+      <arg name="init_pose" value="-x 0 -y 4 -z 0.1" />
       <arg name="robot_name"  value="robot3" />
 
     </include>
