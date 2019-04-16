@@ -33,18 +33,80 @@ hare::Robot::Robot(){
   this->ns = "/";
   this->type = ROBOT;
 }
+//set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
   this->nh = nh;
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
   this->findNeighbors();
+  this->loadCapabilties();
   this->initComms(500);
 }
 hare::Robot::~Robot(){
 
 }
+//must add capabilities here if you add them to yaml file
+void hare::Robot::loadCapabilties(){
+  bool received = true;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
+    ROS_ERROR("Failed to get param turnRadius");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/weight", this->description.weight)){
+    ROS_ERROR("Failed to get param weight");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/torque", this->description.torque)){
+    ROS_ERROR("Failed to get param torque");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/canFly", this->description.canFly)){
+    ROS_ERROR("Failed to get param canFly");
+    received = false;
+  }
+  if(received){
+    ROS_INFO("Successfuly loaded capabilities from yaml file");
+  }
+  std::vector<float> temp;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", temp)){
+    ROS_ERROR("Failed to get param boundingBox");
+  }
+  this->description.boundingBox.x = temp[0];
+  this->description.boundingBox.y = temp[1];
+  this->description.boundingBox.z = temp[2];
 
+  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+    received = true;
+    std::vector<float> neighborTemp;
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/turnRadius", (*neighbor).description.turnRadius)){
+      ROS_ERROR("Failed to get param turnRadius");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/weight", (*neighbor).description.weight)){
+      ROS_ERROR("Failed to get param weight");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/torque", (*neighbor).description.torque)){
+      ROS_ERROR("Failed to get param torque");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/canFly", (*neighbor).description.canFly)){
+      ROS_ERROR("Failed to get param canFly");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", neighborTemp)){
+      ROS_ERROR("Failed to get param boundingBox");
+      received = false;
+    }
+    (*neighbor).description.boundingBox.x = neighborTemp[0];
+    (*neighbor).description.boundingBox.y = neighborTemp[1];
+    (*neighbor).description.boundingBox.z = neighborTemp[2];
+    if(received){
+      ROS_INFO("Successfully loaded capabilities of %s", (*neighbor).ns.c_str());
+    }
+  }
+}
 void hare::Robot::findNeighbors(){
   int numNeighbors = 0;
   std::string param_name;
@@ -74,40 +136,50 @@ void hare::Robot::findNeighbors(){
     }
   }
 }
-void hare::Robot::initComms(uint32_t queue_size){
-  //add pubs and subs
-  std::string test_topic;
-  if(this->nh.getParam("/robots_sub_pub/test", test_topic)){
-    ROS_INFO("Got param: %s", test_topic.c_str());
-  }
-  else{
-    ROS_ERROR("Failed to get param 'test'");
-  }
-
-  ros::Publisher pub = this->nh.advertise<std_msgs::String>(test_topic, queue_size);
+bool hare::Robot::addPublisher(ros::Publisher &pub){
+  bool success = true;
   if(!pub){
     ROS_ERROR("failed attempt to add bad publisher");
+    success = false;
   }
   else{
     this->publishers.push_back(pub);
-    this->publisherMap.insert(std::make_pair(test_topic, this->publishers.size() - 1));
+    this->publisherMap.insert(std::make_pair(pub.getTopic(), this->publishers.size() - 1));
   }
 
+  return success;
+}
+bool hare::Robot::addSubscriber(ros::Subscriber &sub){
+  bool success = true;
+  if(!sub){
+    ROS_ERROR("failed attempt to add bad subscriber");
+    success = false;
+  }
+  else{
+    this->subscribers.push_back(sub);
+  }
+  return success;
+}
+//add publishers and subscribers in here
+void hare::Robot::initComms(uint32_t queue_size){
+  //add pubs and subs
+  ros::Publisher test_pub = this->nh.advertise<std_msgs::String>("test_msg", queue_size);
+  this->addPublisher(test_pub);
+  ros::Subscriber obst_sub = this->nh.subscribe<hare::Obstacle>("obstacle_sensing", queue_size, &hare::Robot::callback, this);
+  this->addSubscriber(obst_sub);
+
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    std::string topic = (*neighbor).ns + "/" + test_topic;
-    ros::Subscriber sub = this->nh.subscribe<std_msgs::String>(topic, queue_size, &hare::Robot::callback, this);
-    if(!sub){
-      ROS_ERROR("failed attempt to add bad subscriber");
-      return;
-    }
-    else{
-      this->subscribers.push_back(sub);
-    }
+    std::string topic = (*neighbor).ns + "/test_msg";
+    ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, queue_size, &hare::Robot::callback, this);
+    this->addSubscriber(test_sub);
   }
 }
 
-void hare::Robot::callback(const std_msgs::StringConstPtr& str){
-  ROS_INFO("received %s", str->data);
+void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
+  //ROS_INFO("received %s", msg->data.c_str());
+}
+void hare::Robot::callback(const hare::ObstacleConstPtr& msg){
+
 }
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
@@ -119,7 +191,7 @@ void hare::Robot::run(){
 
   //set spinner here if using anything but SingleSpinner
   std::string test_topic;
-  if(nh.getParam("/robots_sub_pub/test", test_topic)){
+  if(nh.getParam("/sub_and_pub/test", test_topic)){
     ROS_INFO("Got param for publishing: %s", test_topic.c_str());
   }
   else{

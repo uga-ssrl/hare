@@ -22,6 +22,13 @@ namespace hare{
   //Comms stuff
   enum SpinnerType {SINGLE, MULTITHREADED, ASYNCRONOUS};
 
+  //custom messages
+  ROS_DECLARE_MESSAGE(Obstacle);
+  // template<class ContainerAllocator> struct Obstacle_;
+  // typedef Obstacle_<std::allocator<void> > Obstacle;
+  // typedef boost::shared_ptr<Obstacle> ObstaclePtr;
+  // typedef boost::shared_ptr<Obstacle const> ObstacleConstPtr;
+
 }
 
 #endif /* COMMON_INCLUDES_H */
