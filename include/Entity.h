@@ -6,6 +6,7 @@
 #include <ros/callback_queue.h>
 #include <hare/Obstacle.h>
 #include <hare/HareUpdate.h>
+#include "Map.h"
 
 namespace hare{
 
@@ -49,6 +50,8 @@ namespace hare{
   };
 
   class Robot : public Entity{
+
+    Map* map;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
