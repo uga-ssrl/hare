@@ -39,8 +39,11 @@ then
 **nodes to be added**
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
-- tuw_multi_robot?
+- tuw_multi_robot?  
 - MULTIMASTER (POUND - see doc/pound.pdf)
+- rosbot localization
+- Odom in global frame to use obstacle sensing
+- path planning (meander or command based)
 
 **nodes to be implemented**
 - hare (actual exploration part)
