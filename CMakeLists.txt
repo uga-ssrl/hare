@@ -61,6 +61,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
    FILES
    Obstacle.msg
+   HareUpdate.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -82,6 +83,7 @@ generate_messages(
   DEPENDENCIES
   shape_msgs
   geometry_msgs
+  nav_msgs
 )
 
 ################################################

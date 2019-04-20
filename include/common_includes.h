@@ -24,10 +24,8 @@ namespace hare{
 
   //custom messages
   ROS_DECLARE_MESSAGE(Obstacle);
-  // template<class ContainerAllocator> struct Obstacle_;
-  // typedef Obstacle_<std::allocator<void> > Obstacle;
-  // typedef boost::shared_ptr<Obstacle> ObstaclePtr;
-  // typedef boost::shared_ptr<Obstacle const> ObstacleConstPtr;
+  ROS_DECLARE_MESSAGE(HareUpdate);
+
 
 }
 
