@@ -2,6 +2,6 @@ sub_and_pub:
   test: test_msg
   odometry: nav_msgs/odom
   obstacle: obstacle_sensing
-#robot1_odom: robot1/nav_msgs/odom
-#robot2_odom: robot2/odom
-#robot3_odom: robot3/
+  robot1_odom: robot1/odom
+  robot2_odom: robot2/odom
+  robot3_odom: robot3/husky_velocity_controller/odom

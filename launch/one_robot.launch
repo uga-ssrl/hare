@@ -1,24 +1,23 @@
 <launch>
   <arg name="robot_name"/>
   <arg name="init_pose"/>
+  <!-- <arg name="model" default="robot_name"/> -->
 
   <group ns="$(arg robot_name)">
-
-
-    <!--spawn robots-->
+    <!-- spawn robots -->
     <node name="spawn_minibot_model" pkg="gazebo_ros" type="spawn_model"
     args="$(arg init_pose) -urdf -param robot_description -model $(arg robot_name)"
     respawn="false" output="screen" />
 
-    <!-- add nodes to be run by each robots-->
-    <!--  robot state publishes state of robot-->
+    <!-- COMMON NODES -->
+    <!--  robot state publishes state of robot -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
       <!-- set the rate at which the state is updated-->
-      <!-- <param name="publish_frequency" type="double" value="30.0"/> -->
+      <param name="publish_frequency" type="double" value="30.0"/>
     </node>
 
-    <node name="hare_node" pkg="hare" type="hare_node"/>
-    <node name="action" pkg="behavior_tree_leaves" type="action_example" />
-    <node name="condition" pkg="behavior_tree_leaves" type="condition_example" />
+    <!-- <node name="hare_node" pkg="hare" type="hare_node"/> -->
+    <!-- <node name="action" pkg="behavior_tree_leaves" type="action_example" /> -->
+    <!-- <node name="condition" pkg="behavior_tree_leaves" type="condition_example" /> -->
   </group>
 </launch>

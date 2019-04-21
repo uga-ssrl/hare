@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="robot_namespace" default="robot3"/>
+  <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
+  <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
+  <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
+
+  <!-- <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" /> -->
+  <group ns="robot3">
+
+    <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
+    --inorder
+    robot_namespace:=robot3
+    laser_enabled:=$(optenv HUSKY_LMS1XX_ENABLED false)
+    kinect_enabled:=$(optenv HUSKY_KINECT_ENABLED false)
+    urdf_extras:=$(optenv HUSKY_URDF_EXTRAS)
+    " />
+    <!-- load controller configuration -->
+    <rosparam command="load" file="$(find hare)/config/husky_control.yaml" />
+
+    <!-- spawn controller -->
+    <node name="base_controller_spawner" pkg="controller_manager" type="spawner"
+        args="husky_joint_publisher husky_velocity_controller"/>
+
+    <!-- EKF node-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+      <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
+    </node>
+
+    <!-- twist mux-->
+    <!-- should this be robot3?? -->
+    <node pkg="twist_mux" type="twist_mux" name="twist_mux">
+      <rosparam command="load" file="$(find husky_control)/config/twist_mux.yaml" />
+      <remap from="cmd_vel_out" to="robot3/husky_velocity_controller/cmd_vel"/>
+    </node>
+
+    <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server" output="screen"/>
+  </group>
+
+  <include file="$(find hare)/launch/one_robot.launch" >
+    <arg name="init_pose" value="-x 0.0 -y 5.0 -z 0.0" />
+    <arg name="robot_name"  value="robot3" />
+    <!-- <arg name="model" value="youbot"/> -->
+  </include>
+
+</launch>

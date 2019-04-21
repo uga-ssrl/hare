@@ -1,94 +1,67 @@
 <launch>
 
   <param name="num_robots" value="3"/>
-  <rosparam file="$(find hare)/config/topics.yaml"/>
+  <!-- <rosparam file="$(find hare)/config/topics.yaml"/> -->
   <!-- descriptions of all robots capabilities, shape, etc -->
-  <rosparam file="$(find hare)/config/hare_descriptions.yaml"/>
+  <!-- <rosparam file="$(find hare)/config/hare_descriptions.yaml"/> -->
 
   <!-- temporary obstacle sensing nodes -->
-  <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/>
+  <!-- <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/> -->
 
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
 
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find turtlebot_description)/robots/roomba_circles_kinect.urdf.xacro"/>
-    <param name="tf_prefix" value="robot1_tf"/>
+    <param name="tf_prefix" value="robot1_tf" />
     <param name="neighbor1" value="robot2"/>
     <param name="neighbor2" value="robot3"/>
 
-    <!-- publishes transformations: /base_link -> /base_link
-    /base_footprint -> /base_link
-    /odom -> base_footprint
-    publishes: /odom, /base_scan, /base_pose_ground_truth
-    uses base_watchdog_timeout: time(s) after recieving last cmd vel before stopping-->
-    <!-- required to run amcl for occupancy grid described in map yaml file-->
-    <node pkg="stage_ros" type="stageros" name="stageros" args="TURTLEBOT_STAGE_WORLD_FILE">
-      <param name="base_watchdog_timeout" value="0.5"/>
-      <remap from="odom" to="odom"/>
-      <remap from="base_pose_ground_truth" to="base_pose_ground_truth"/>
-      <remap from="cmd_vel" to="mobile_base/commands/velocity"/>
-      <remap from="base_scan" to="scan"/>
-    </node>
+    <param name="robot_description" command="$(find xacro)/xacro.py $(find youbot_description)/robots/youbot_base_only.urdf.xacro" />
 
-    <!-- do we need joint state?-->
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-      <param name="use_gui" value="true"/>
-    </node>
+    <!-- launch joint state controller -->
+    <rosparam file="$(find hare)/config/youbot_joint_state_controller.yaml" command="load"/>
 
-    <!--command velocity mulitplexer-->
-    <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
-    <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
-      <param name="yaml_cfg_file" value="$(find turtlebot_bringup)/param/mux.yaml"/>
-      <remap from="cmd_vel_mux/output" to="mobile_base/commands/velocity"/>
-    </node>
-    <!-- Navigation -->
-    <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
+    <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
 
-    <!-- Maps-->
-    <!-- <node name="map_server" pkg="map_server" type="map_server" args="/opt/ros/kinetic/share/turtlebot_stage/maps/maze.yaml">
-      <param name="frame_id" value="robot1/map"/>
-    </node> -->
-
-    <!--amcl localization-->
-    <include file="$(find turtlebot_navigation)/launch/includes/amcl/amcl.launch.xml">
-      <arg name="scan_topic" value="scan"/>
-      <arg name="use_map_topic" value="true"/>
-      <arg name="initial_pose_x" value="0"/>
-      <arg name="initial_pose_y" value="0"/>
-      <arg name="initial_pose_a" value="0"/>
-    </include>
-
+    <node name="Move_You" pkg="kuka_kickass_kalman" type="Move_You.py" />
+    <node name="sensor_model" pkg="kuka_kickass_kalman" type="sensor_model.py" />
+    <node name="kf_node" pkg="kuka_kickass_kalman" type="kf_node.py" />
 
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 0 -y 0 -z 0" />
+    <arg name="init_pose" value="-x 0.0 -y 0.0 -z 0.07" />
     <arg name="robot_name"  value="robot1" />
+    <!-- <arg name="model" value="youbot"/> -->
   </include>
 
 
   <!-- BEGIN ROBOT 2-->
   <group ns="robot2">
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
+
     <param name="tf_prefix" value="robot2_tf" />
     <param name="neighbor1" value="robot1"/>
     <param name="neighbor2" value="robot3"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
+    <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
+
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 0 -y 2 -z 0.05" />
+    <arg name="init_pose" value="-x 0.0 -y 2.0 -z 0.05" />
     <arg name="robot_name"  value="robot2" />
   </include>
 
 
   <!-- BEGIN ROBOT 3 -->
+  <!-- <arg name="robot_namespace" default="robot3"/> -->
+  <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
+  <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
+  <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
+
   <group ns="robot3">
     <param name="tf_prefix" value="robot3_tf" />
     <param name="neighbor1" value="robot1"/>
     <param name="neighbor2" value="robot2"/>
-
-    <arg name="robot_namespace" default="robot3"/>
-    <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
-    <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
-    <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
 
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
@@ -100,7 +73,7 @@
     " />
 
     <!-- load controller configuration -->
-    <rosparam command="load" file="$(find husky_control)/config/control.yaml" />
+    <rosparam command="load" file="$(find hare)/config/husky_control.yaml" />
 
     <!-- spawn controller -->
     <node name="base_controller_spawner" pkg="controller_manager" type="spawner"
@@ -111,8 +84,6 @@
       <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
     </node>
 
-    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/> -->
-
     <!-- twist mux-->
     <!-- should this be robot3?? -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux">
@@ -121,13 +92,12 @@
     </node>
 
     <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server" output="screen"/>
+  </group>
 
-
-    </group>
-    <include file="$(find hare)/launch/one_robot.launch" >
-      <arg name="init_pose" value="-x 0 -y 4 -z 0.1" />
-      <arg name="robot_name"  value="robot3" />
-
-    </include>
+  <include file="$(find hare)/launch/one_robot.launch" >
+    <arg name="init_pose" value="-x 0.0 -y 5.0 -z 0.1" />
+    <arg name="robot_name"  value="robot3" />
+    <!-- <arg name="model" value="youbot"/> -->
+  </include>
 
 </launch>
