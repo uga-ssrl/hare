@@ -5,6 +5,8 @@
 #include "utility.h"
 #include <ros/callback_queue.h>
 #include <hare/Obstacle.h>
+#include <hare/HareUpdate.h>
+#include "Map.h"
 
 namespace hare{
 
@@ -49,6 +51,8 @@ namespace hare{
 
   class Robot : public Entity{
 
+    Map* map;
+
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
     std::vector<ros::Publisher> publishers;
@@ -75,6 +79,7 @@ namespace hare{
     //TODO implement all callbacks
     void callback(const std_msgs::StringConstPtr& msg);
     void callback(const hare::ObstacleConstPtr& msg);
+    void callback(const hare::HareUpdateConstPtr& msg);
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
     void run();

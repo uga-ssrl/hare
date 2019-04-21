@@ -61,6 +61,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
    FILES
    Obstacle.msg
+   HareUpdate.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -82,6 +83,7 @@ generate_messages(
   DEPENDENCIES
   shape_msgs
   geometry_msgs
+  nav_msgs
 )
 
 ################################################
@@ -144,7 +146,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/hare_node.cpp src/Entity.cpp)
+add_executable(${PROJECT_NAME}_node src/hare_node.cpp src/Map.cpp src/Entity.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

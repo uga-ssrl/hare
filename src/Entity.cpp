@@ -181,6 +181,9 @@ void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
 void hare::Robot::callback(const hare::ObstacleConstPtr& msg){
 
 }
+void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
+
+}
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
