@@ -44,7 +44,6 @@
     <!-- Navigation -->
     <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
 
-
     <!-- Maps-->
     <!-- <node name="map_server" pkg="map_server" type="map_server" args="/opt/ros/kinetic/share/turtlebot_stage/maps/maze.yaml">
       <param name="frame_id" value="robot1/map"/>
@@ -58,7 +57,6 @@
       <arg name="initial_pose_y" value="0"/>
       <arg name="initial_pose_a" value="0"/>
     </include>
-
 
 
   </group>

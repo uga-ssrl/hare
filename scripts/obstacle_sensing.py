@@ -166,9 +166,9 @@ def callback_robot3(msg): # callback which is called everytime there is a messag
 # entry point in node
 if __name__ == "__main__":
     rospy.init_node('obstacle_sensing')
-    sub.append(rospy.Subscriber('/robot1/odom', Odometry, callback_robot1))
+    sub.append(rospy.Subscriber('/robot1/nav_msgs/odom', Odometry, callback_robot1))
     sub.append(rospy.Subscriber('/robot2/odom', Odometry, callback_robot2))
-    sub.append(rospy.Subscriber('/robot3/odom', Odometry, callback_robot3))
+    sub.append(rospy.Subscriber('/robot3/nav_msgs/odom', Odometry, callback_robot3))
     pub.append(rospy.Publisher('/robot1/obstacle_sensing', Obstacle))
     pub.append(rospy.Publisher('/robot2/obstacle_sensing', Obstacle))
     pub.append(rospy.Publisher('/robot3/obstacle_sensing', Obstacle))
