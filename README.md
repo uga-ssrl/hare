@@ -19,6 +19,9 @@
 **robot1**
 - turtlebot_description package for launch files
 
+**(youbot variant)**
+-[Install](http://www.youbot-store.com/wiki/index.php/Gazebo_simulation) KUKA model robot, and robot drivers.
+
 **robot2**
 - clone https://github.com/husarion/rosbot_description in ```~/catkin_ws/src/robot/```
 
@@ -37,6 +40,22 @@ then
 - add robots in hare/launch/robots.launch
 - create new namespace and place descriptions and include one_robot.launch
   - this can be seen in the turtlebot examples
+
+#ERROR <LegaceModeNS> mitigation for gazebo plugin
+- go into your ```.gazebo``` in each robot description, i.e: for youbot go into: ```youbot_description/controller/r
+- ros_controller.urdf.xacro``` and add the following snippet:
+
+```<gazebo>
+<static>false</static>
+
+<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+  <robotNamespace>\robotNamespace</robotNamespace>
+  <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+  <legacyModeNS>true</legacyModeNS>
+</plugin>
+</gazebo>
+```
+- Where robotNamespace is the robot you are talking about
 
 # TODOs
 **nodes to be added**
