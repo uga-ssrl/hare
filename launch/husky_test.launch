@@ -7,6 +7,13 @@
   <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
 
   <!-- <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" /> -->
+  <!-- launch world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find hare)/world/test.world"/>
+      <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true" />
+  </include>
+
   <group ns="robot3">
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
