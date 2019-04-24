@@ -22,8 +22,8 @@
 
     <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
 
-    <node name="Move_You" pkg="hare" type="Move_You.py" />
-    <node name="sensor_model" pkg="hare" type="sensor_model.py" />
+    <!-- <node name="Move_You" pkg="hare" type="Move_You.py" /> -->
+    <!-- <node name="sensor_model" pkg="hare" type="sensor_model.py" /> -->
     <node name="kf_node" pkg="hare" type="kf_node.py" />
 
   </group>
@@ -41,14 +41,16 @@
     <param name="neighbor1" value="robot1"/>
     <param name="neighbor2" value="robot3"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find rosbot_description)/urdf/rosbot.xacro"/>
     <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
     <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
 
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 0.0 -y 2.0 -z 0.05" />
+    <arg name="init_pose" value="-x 0.0 -y 3.0 -z 0.0" />
     <arg name="robot_name"  value="robot2" />
+    <!-- <arg name="model" value="youbot"/> -->
   </include>
 
 
