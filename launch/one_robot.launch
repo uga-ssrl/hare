@@ -17,8 +17,8 @@
       <param name="publish_frequency" type="double" value="100.0"/>
     </node>
 
-    <!-- <node name="hare_node" pkg="hare" type="hare_node"/> -->
-    <!-- <node name="action" pkg="behavior_tree_leaves" type="action_example" /> -->
-    <!-- <node name="condition" pkg="behavior_tree_leaves" type="condition_example" /> -->
+    <node name="hare_node" pkg="hare" type="hare_node"/>
+    <node name="action" pkg="behavior_tree_leaves" type="action_example" />
+    <node name="condition" pkg="behavior_tree_leaves" type="condition_example" />
   </group>
 </launch>
