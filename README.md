@@ -42,8 +42,7 @@ then
   - this can be seen in the turtlebot examples
 
 #ERROR <LegaceModeNS> mitigation for gazebo plugin
-- go into your ```.gazebo``` in each robot description, i.e: for youbot go into: ```youbot_description/controller/r
-- ros_controller.urdf.xacro``` and add the following snippet:
+- go into your ```.gazebo``` in each robot description, i.e: for youbot go into: ```youbot_description/controller/ros_controller.urdf.xacro``` and add the following snippet:
 
 ```<gazebo>
 <static>false</static>
