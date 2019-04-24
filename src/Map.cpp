@@ -42,6 +42,7 @@ void hare::Map::setRobot(short b){
 // Greedy heuristic algorithm
 // returns linear spline path
 // We assume only up, down, left, right movements
+// https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
 std::vector<pq_node> hare::Map::getPath(uint8_t* capabilities, float2 _start, float2 _goal){
   int2 goal;
   int2 start;
