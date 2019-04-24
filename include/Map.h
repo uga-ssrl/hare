@@ -32,14 +32,17 @@
 #define NONE 14
 #define UKNOWN 15 // only for map, not used in messages
 
-
 namespace hare{
   class Map{
 
     std::string ns;//parent namespace
 
     // see ../msg/Obstacle.msg for details about short values mapping
-    uint8_t knownMap[MAP_X][MAP_Y];
+    map_node knownMap[MAP_X][MAP_Y];
+
+    short bot;
+    std::vector<pq_node> frontier;
+    std::vector<pq_node> from;
 
   public:
 
@@ -52,7 +55,26 @@ namespace hare{
 
     // updates the map at each timestep or tick or whatever
     void updateMap(float2 location, uint8_t discription);
-    
+
+    void setRobot(short bot);
+
+    // A* algorithm
+    // returns linear spline path
+    std::vector<pq_node> getPath(uint8_t* capabilities, float2 _start, float2 _goal);
+
+  private:
+
+    // float
+    float euclid(float2 a, float2 b);
+
+    // insert sorted by priority
+    void insert_pq(pq_node n, float h);
+
+    // grabs neightbors of node n
+    std::vector<pq_node> getNeighbors(pq_node n);
+
+    // see if a node is in the priority queue
+    bool isIn(pq_node n);
 
   };
 }

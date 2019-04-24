@@ -7,10 +7,11 @@
 #include <time.h>
 #include <ros/ros.h>
 #include <vector>
+#include <array>
 #include <string>
 #include <iostream>
+#include <math.h>
 #include <std_msgs/String.h>
-
 
 namespace hare{
 
