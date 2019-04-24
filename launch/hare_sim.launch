@@ -1,9 +1,7 @@
 <launch>
   <!-- include world -->
-  <!--  I believe this makes it so we can change the map on the fly-->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="world_name" value="$(find hare)/world/test.world"/>
-          <arg name="use_sim_time" value="true"/>
+      <arg name="use_sim_time" value="true"/>
       <arg name="gui" value="true" />
   </include>
 

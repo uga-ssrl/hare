@@ -6,7 +6,8 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
 def Move_You():
-    pub = rospy.Publisher('/robot3/husky_velocity_controller/cmd_vel',Twist, queue_size=10)
+    #get namespace and append to cmd_vel
+    pub = rospy.Publisher('/cmd_vel',Twist, queue_size=10)
     rospy.init_node('Move_You', anonymous=True)
     rate = rospy.Rate(1) # 1hz
 

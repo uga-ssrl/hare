@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- launch world -->
+  <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" />
+
+  <group ns="robot2">
+    <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
+
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+
+  </group>
+  <include file="$(find hare)/launch/one_robot.launch" >
+    <arg name="init_pose" value="-x 0.0 -y 3.0 -z 0.0" />
+    <arg name="robot_name"  value="robot2" />
+    <!-- <arg name="model" value="youbot"/> -->
+  </include>
+
+</launch>

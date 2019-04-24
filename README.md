@@ -13,6 +13,9 @@
 **Enviroment Variables**
 - The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(pwd)`
 
+**Turtlebot-Navigation**
+- Just need to install `sudo apt-get install ros-kinetic-turtlebot-navigation`
+
 **robot1**
 - turtlebot_description package for launch files
 
@@ -39,7 +42,7 @@ then
 **nodes to be added**
 - multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
 - explore_multirobot?
-- tuw_multi_robot?  
+- tuw_multi_robot?
 - MULTIMASTER (POUND - see doc/pound.pdf)
 - rosbot localization
 - Odom in global frame to use obstacle sensing
