@@ -2,6 +2,7 @@
 #define COMMON_INCLUDES_H
 
 #include <climits>
+#include <cstdint>
 #include <stdlib.h>
 #include <time.h>
 #include <ros/ros.h>
