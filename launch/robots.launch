@@ -14,17 +14,7 @@
     <param name="neighbor1" value="robot2"/>
     <param name="neighbor2" value="robot3"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro.py $(find youbot_description)/robots/youbot_base_only.urdf.xacro" />
-
-    <!-- launch joint state controller -->
-    <rosparam file="$(find hare)/config/youbot_joint_state_controller.yaml" command="load"/>
-
-    <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
-
-    <!-- <node name="Move_You" pkg="hare" type="Move_You.py" /> -->
-    <node name="sensor_model" pkg="hare" type="sensor_model.py" />
-    <node name="kf_node" pkg="hare" type="kf_node.py" />
-
+    <include file="$(find hare)/launch/youbot_test.launch" />
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0.0 -y 0.0 -z 0.07" />
@@ -82,6 +72,7 @@
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
       <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
     </node>
+
 
     <!-- twist mux-->
     <!-- should this be robot3?? -->

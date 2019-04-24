@@ -3,6 +3,7 @@
   <arg name="init_pose"/>
   <!-- <arg name="model" default="robot_name"/> -->
 
+  <group ns ="$(arg robot_name)">
     <!-- spawn robots -->
     <node name="spawn_minibot_model" pkg="gazebo_ros" type="spawn_model"
     args="$(arg init_pose) -urdf -param robot_description -model $(arg robot_name)"
@@ -12,6 +13,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
       <param name="publish_frequency" type="double" value="30.0"/>
     </node>
+  </group>
 
     <!-- <node name="hare_node" pkg="hare" type="hare_node"/> -->
     <!-- <node name="action" pkg="behavior_tree_leaves" type="action_example" /> -->
