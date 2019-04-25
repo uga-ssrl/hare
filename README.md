@@ -21,8 +21,7 @@
 
 
 **(youbot variant)**
--[Install](http://www.youbot-store.com/wiki/index.php/Gazebo_simulation) KUKA model robot, and robot drivers.
-
+-[Install](https://github.com/youbot/youbot_simulation) for youbot simulation *&* [Install](https://github.com/youbot/youbot_description) the youbot platform
 **robot2**
 - clone https://github.com/husarion/rosbot_description in ```~/catkin_ws/src/robot/```
 
