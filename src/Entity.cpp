@@ -226,7 +226,7 @@ void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
 
-std::vector<map_node> hare::Robot::sense(float range){
+std::vector<hare::cellPtr> hare::Robot::sense(float range){
   std::vector<int2> cells;
   int2 minBound = {floor(this->pos.x-range),floor(this->pos.y-range)};
   int2 maxBound = {floor(this->pos.x+range),floor(this->pos.y+range)};

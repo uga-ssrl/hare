@@ -69,7 +69,7 @@ namespace hare{
     void initPublishers();
     void initSubscribers();
 
-    std::vector<map_node> sense(float range);//range in cell count
+    std::vector<hare::cellPtr> sense(float range);//range in cell count
 
   public:
 
