@@ -35,16 +35,6 @@ typedef struct int4{
   int w;
 } int4;
 
-typedef struct map_node{
-  uint8_t obstacle;
-  bool explored;
-  bool traversable;
-  int4 walls;
-} map_node;
-typedef struct pq_node{
-  int x;
-  int y;
-  float h; // heuristic priority
-} pq_node;
+
 
 #endif /* UTILITY_H */

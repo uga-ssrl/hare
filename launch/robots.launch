@@ -1,9 +1,5 @@
 <launch>
 
-  <!-- temporary obstacle sensing nodes -->
-  <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/>
-
-
   <param name="num_robots" value="3"/>
   <rosparam file="$(find hare)/config/topics.yaml"/>
   <!-- descriptions of all robots capabilities, shape, etc -->
@@ -15,6 +11,10 @@
     <param name="tf_prefix" value="robot1_tf" />
     <param name="neighbor1" value="robot2"/>
     <param name="neighbor2" value="robot3"/>
+    <param name="init_x"  value="0.0"/>
+    <param name="init_y"  value="0.0"/>
+    <param name="init_z"  value="0.07"/>
+
 
     <param name="robot_description" command="$(find xacro)/xacro.py $(find youbot_description)/robots/youbot_base_only.urdf.xacro" />
 
@@ -41,7 +41,9 @@
     <param name="tf_prefix" value="robot2_tf" />
     <param name="neighbor1" value="robot1"/>
     <param name="neighbor2" value="robot3"/>
-
+    <param name="init_x"  value="0.0"/>
+    <param name="init_y"  value="3.0"/>
+    <param name="init_z"  value="0.07"/>
 
     <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
     <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
@@ -64,7 +66,9 @@
     <param name="tf_prefix" value="robot3_tf" />
     <param name="neighbor1" value="robot1"/>
     <param name="neighbor2" value="robot2"/>
-
+    <param name="init_x"  value="0.0"/>
+    <param name="init_y"  value="5.0"/>
+    <param name="init_z"  value="0.1"/>
 
     <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find husky_description)/urdf/husky.urdf.xacro'
     robot_namespace:=robot3

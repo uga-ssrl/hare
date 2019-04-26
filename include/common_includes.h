@@ -25,7 +25,6 @@ namespace hare{
   enum SpinnerType {SINGLE, MULTITHREADED, ASYNCRONOUS};
 
   //custom messages
-  ROS_DECLARE_MESSAGE(Obstacle);
   ROS_DECLARE_MESSAGE(HareUpdate);
 
 

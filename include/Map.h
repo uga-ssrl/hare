@@ -3,6 +3,7 @@
 
 #include "common_includes.h"
 #include "utility.h"
+#include "HareMap.h"
 
 // Map size
 #define MAP_X 200
@@ -80,10 +81,6 @@ namespace hare{
 }
 
 #endif /* MAP_H */
-
-
-
-
 
 
 
