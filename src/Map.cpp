@@ -29,9 +29,9 @@ void hare::Map::updateMap(float2 location, uint8_t discription){
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
   knownMap[insert.x][insert.y].obstacle = discription;
-  knownMap[insert.x][insert.y].explored = false;
+  knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
-  knownMap[insert.x][insert.y].traversable = true;
+  knownMap[insert.x][insert.y].traversable = true; //check if traversable
 }
 
 // set the robot
@@ -43,6 +43,7 @@ void hare::Map::setRobot(short b){
 // returns linear spline path
 // We assume only up, down, left, right movements
 // https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
+// description is the same as capabilities
 std::vector<pq_node> hare::Map::getPath(uint8_t* capabilities, float2 _start, float2 _goal){
   int2 goal;
   int2 start;

@@ -69,26 +69,25 @@ Obst_Info_DB = [
 
 pub = []
 sub = []
+height =
+width =
 
 def getObstacleIds(x,y,z):
     dat_list = []
     tup = [14,14,(69,69,69),(69,69,69)] # default empty obstacles
+    cells = a
+
     for obst in Obst_Info_DB:
         x_1 = obst[0][0]
-        x_2 = obst[0][1]
+        x_2 = obst[0][1] #
         y_1 = obst[0][2]
         y_2 = obst[0][3]
-        if (x >= x_1 and x <= x_2 and y >= y_1 and y <= y_2):
-            x_c = (x_1 + x_2)/2
-            y_c = (y_1 + y_2)/2
-            guy = [obst[1],(x_c,y_c,0.0)]
-            dat_list.append(guy)
-    if (len(dat_list) > 0):
-        tup[0] = guy[0]
-        tup[2] = guy[2]
-    if (len(dat_list) > 1):
-        tup[1] = guy[1]
-        tup[3] = guy[3]
+        draw_up = True if x_1 < x_2 else False
+        draw_right = True if y_1 < y_2 else False
+
+        while x_1 != x_2:
+            if draw_up and down:
+
     return tup
 
 # NOTE MUST ADD CALLBACK WHEN ADDING ROBOT
@@ -145,7 +144,7 @@ def callback_robot3(msg): # callback which is called everytime there is a messag
     z = msg.pose.pose.position.z
 
     # the x,y,z location of the bot
-    print (x,y,z)
+
     tup = getObstacleIds(x,y,z)
 
     my_guy = Obstacle()
@@ -168,7 +167,8 @@ if __name__ == "__main__":
     rospy.init_node('obstacle_sensing')
     sub.append(rospy.Subscriber('/robot1/nav_msgs/odom', Odometry, callback_robot1))
     sub.append(rospy.Subscriber('/robot2/odom', Odometry, callback_robot2))
-    sub.append(rospy.Subscriber('/robot3/nav_msgs/odom', Odometry, callback_robot3))
+    # sub.append(rospy.Subscriber('/robot3/nav_msgs/odom', Odometry, callback_robot3))
+    sub.append(rospy.Subscriber('/robot3/husky_velocity_controller/odom', Odometry, callback_robot3))
     pub.append(rospy.Publisher('/robot1/obstacle_sensing', Obstacle))
     pub.append(rospy.Publisher('/robot2/obstacle_sensing', Obstacle))
     pub.append(rospy.Publisher('/robot3/obstacle_sensing', Obstacle))

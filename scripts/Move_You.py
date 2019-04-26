@@ -7,7 +7,11 @@ from geometry_msgs.msg import Twist
 
 def Move_You():
     #get namespace and append to cmd_vel
-    pub = rospy.Publisher('/cmd_vel',Twist, queue_size=10)
+    # id = rospy.get_caller_id
+
+
+    # print("namespace: ",resolved_name)
+    pub = rospy.Publisher("robot3/cmd_vel", Twist, queue_size=10)
     rospy.init_node('Move_You', anonymous=True)
     rate = rospy.Rate(1) # 1hz
 

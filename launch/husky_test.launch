@@ -7,6 +7,12 @@
   <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
 
   <!-- <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" /> -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(find hare)/world/test.world"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="gui" value="true" />
+  </include>
+
   <group ns="robot3">
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
@@ -32,11 +38,11 @@
     <!-- should this be robot3?? -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux">
       <rosparam command="load" file="$(find husky_control)/config/twist_mux.yaml" />
-      <remap from="cmd_vel_out" to="robot3/husky_velocity_controller/cmd_vel"/>
+      <remap from="cmd_vel_out" to="husky_velocity_controller/cmd_vel"/>
     </node>
-
     <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server" output="screen"/>
   </group>
+
 
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0.0 -y 5.0 -z 0.0" />

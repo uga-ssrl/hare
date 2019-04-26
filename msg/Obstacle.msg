@@ -29,7 +29,7 @@ uint8 RAMP_EXIT=13
 uint8 NONE=14
 
 # this is only used in the mapping portion and SHOULD NOT be used for obstacle messages
-# this is included here for code clarity in MAP.cpp 
+# this is included here for code clarity in MAP.cpp
 uint8 UNKNOWN=15
 
 
