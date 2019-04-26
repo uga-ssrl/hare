@@ -2,7 +2,7 @@
 
 uint8 robot_id
 
-hare/Obstacle[] foundObstacles
+cell[] cellUpdate
 
 nav_msgs/Odometry robot_odom
 

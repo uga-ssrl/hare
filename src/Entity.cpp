@@ -39,6 +39,9 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
+  this->nh.getParam("init_x", this->pos.x);
+  this->nh.getParam("init_y", this->pos.y);
+  this->nh.getParam("init_z", this->pos.z);
 }
 hare::Robot::~Robot(){
 
@@ -163,9 +166,10 @@ void hare::Robot::initPublishers(){
   this->addPublisher(test_pub);
 }
 void hare::Robot::initSubscribers(){
-  ros::Subscriber obst_sub = this->nh.subscribe<hare::Obstacle>("obstacle_sensing", this->queue_size, &hare::Robot::callback, this);
-  this->addSubscriber(obst_sub);
+  //single point subscriptions
 
+
+  //per neighbor subscriptions
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     std::string topic = (*neighbor).ns + "/test_msg";
     ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, this->queue_size, &hare::Robot::callback, this);
@@ -186,14 +190,19 @@ void hare::Robot::init(){
 void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
   //ROS_INFO("received %s", msg->data.c_str());
 }
-void hare::Robot::callback(const hare::ObstacleConstPtr& msg){
-
-}
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
 
 }
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
+}
+
+
+std::vector<map_node> hare::Robot::sense(float range){
+  std::vector<int2> cells;
+  int2 minBound = {floor(this->pos.x-range),floor(this->pos.y-range)};
+  int2 maxBound = {floor(this->pos.x+range),floor(this->pos.y+range)};
+
 }
 
 void hare::Robot::run(){
