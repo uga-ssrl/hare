@@ -1,8 +1,8 @@
 #include "Map.h"
 
 
-hare::Map::Map(){
-
+hare::Map::Map(std::string ns){
+  this->ns = ns;
 }
 
 hare::Map::~Map(){
@@ -15,7 +15,7 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      knownMap[i][j].chracteristic = UNKNOWN;
+      knownMap[i][j].characteristic = UNKNOWN;
       knownMap[i][j].explored = false;
       knownMap[i][j].traversable = false; //only valid if expored is true
     }
@@ -28,16 +28,33 @@ void hare::Map::updateMap(float2 location, int description){
   int2 insert;
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
-  knownMap[insert.x][insert.y].chracteristic = description;
+  knownMap[insert.x][insert.y].walls = {description,description,description,description};
 
   knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
   knownMap[insert.x][insert.y].traversable = true; //check if traversable
 }
+void hare::Map::updateMap(int2 location, hare::map_node* mnode){
+  knownMap[location.x][location.y] = *mnode;
+}
+void hare::Map::updateMap(hare::cellConstPtr cell){
+  int2 loc = {cell->x,cell->y};
+  knownMap[loc.x][loc.y].explored = cell->explored;
+  knownMap[loc.x][loc.y].traversable = cell->traversable;
+  knownMap[loc.x][loc.y].walls = {cell->wallLeft,cell->wallUp,cell->wallDown,cell->wallRight};
+}
+void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
+  for(auto cell = cells.begin(); cell != cells.end(); ++cell){
+    int2 loc = {(*cell)->x,(*cell)->y};
+    knownMap[loc.x][loc.y].explored = (*cell)->explored;
+    knownMap[loc.x][loc.y].traversable = (*cell)->traversable;
+    knownMap[loc.x][loc.y].walls = {(*cell)->wallLeft,(*cell)->wallUp,(*cell)->wallDown,(*cell)->wallRight};
+  }
+}
 
 // set the robot
-void hare::Map::setRobot(short b){
-  bot = b;
+void hare::Map::setNamespace(std::string ns){
+  this->ns = ns;
 }
 
 // Greedy heuristic algorithm
@@ -45,7 +62,7 @@ void hare::Map::setRobot(short b){
 // We assume only up, down, left, right movements
 // https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
 // description is the same as capabilities
-std::vector<pq_node> hare::Map::getPath(uint8_t* capabilities, float2 _start, float2 _goal){
+std::vector<hare::pq_node> hare::Map::getPath(uint8_t* capabilities, float2 _start, float2 _goal){
   int2 goal;
   int2 start;
   goal.x  = (int) (ODOM_TO_MAP * _goal.x);
@@ -95,7 +112,7 @@ float hare::Map::euclid(float2 a, float2 b){
 
 
 // insert into priority queue
-void hare::Map::insert_pq(pq_node n, float h){
+void hare::Map::insert_pq(hare::pq_node n, float h){
   pq_node elem;
   int pos = -1;
   // find where to insert
@@ -109,7 +126,7 @@ void hare::Map::insert_pq(pq_node n, float h){
 }
 
 // get the neighbors of a pq_node
-std::vector<pq_node> hare::Map::getNeighbors(pq_node n){
+std::vector<hare::pq_node> hare::Map::getNeighbors(hare::pq_node n){
   std::vector<pq_node> neighbors;
   // TODO potentially use explored?
   if (knownMap[n.x][n.y + 1].traversable) {
@@ -144,7 +161,7 @@ std::vector<pq_node> hare::Map::getNeighbors(pq_node n){
 }
 
 // see if n is in from
-bool hare::Map::isIn(pq_node n){
+bool hare::Map::isIn(hare::pq_node n){
   for (int i = 0; i < from.size(); i++){
     if (from[i].x == n.x && from[i].y == n.y){ return true; }
   }

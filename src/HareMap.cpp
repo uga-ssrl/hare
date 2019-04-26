@@ -1,6 +1,5 @@
 #include "HareMap.h"
-
-std::vector<std::vector<map_node>> fullMap{
+hare::map_node hare::fullMap[MAP_X][MAP_Y] {
   {
   	(map_node){-1,true,true,(int4){0,0,0,0}},
   	(map_node){-1,true,true,(int4){0,0,0,0}},

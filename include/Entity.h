@@ -27,7 +27,8 @@ namespace hare{
 
   public:
     EntityDescription description;
-    float3 pos;
+    nav_msgs::Odometry odom;
+    std::string state_indicator;
     std::string ns;
     int id;
     EntityType type;
@@ -42,7 +43,6 @@ namespace hare{
   public:
     RobotDescription description;
     float velocity;
-    nav_msgs::Odometry neighbor_odom;
 
     Neighbor();
     Neighbor(std::string ns);
@@ -69,7 +69,7 @@ namespace hare{
     void initPublishers();
     void initSubscribers();
 
-    std::vector<hare::cellPtr> sense(float range);//range in cell count
+    std::vector<hare::cellPtr> sense(float range = 1.0f);//range in cell count
 
   public:
 
