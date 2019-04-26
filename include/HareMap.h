@@ -4,7 +4,7 @@
 #include "common_includes.h"
 
 typedef struct map_node{
-  int obstacle;
+  int chracteristic;
   bool explored;
   bool traversable;
   int4 walls;

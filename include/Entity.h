@@ -4,6 +4,7 @@
 #include "common_includes.h"
 #include "utility.h"
 #include <ros/callback_queue.h>
+#include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include "Map.h"
 
@@ -66,6 +67,8 @@ namespace hare{
 
     void initPublishers();
     void initSubscribers();
+
+    std::vector<map_node> sense(float range);//range in cell count
 
   public:
 

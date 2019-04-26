@@ -15,7 +15,7 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      knownMap[i][j].obstacle = UNKNOWN;
+      knownMap[i][j].chracteristic = UNKNOWN;
       knownMap[i][j].explored = false;
       knownMap[i][j].traversable = false; //only valid if expored is true
     }
@@ -28,7 +28,7 @@ void hare::Map::updateMap(float2 location, uint8_t discription){
   int2 insert;
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
-  knownMap[insert.x][insert.y].obstacle = discription;
+  knownMap[insert.x][insert.y].chracteristic = discription;
   knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
   knownMap[insert.x][insert.y].traversable = true; //check if traversable
