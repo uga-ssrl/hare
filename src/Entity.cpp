@@ -23,6 +23,7 @@ hare::Neighbor::Neighbor(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
+  this->velocity = 0.0;
 }
 hare::Neighbor::~Neighbor(){
 
@@ -32,6 +33,8 @@ hare::Robot::Robot(){
   this->id = -1;
   this->ns = "/";
   this->type = ROBOT;
+  this->linear.x = 0.0;
+  this->linear.y = 0.0;
 }
 //set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
@@ -47,6 +50,7 @@ hare::Robot::~Robot(){
 
 }
 //must add capabilities here if you add them to yaml file
+// Add to publisher stack
 void hare::Robot::loadCapabilties(){
   bool received = true;
   if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
@@ -160,20 +164,39 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
   }
   return success;
 }
+
+//add publishers and subscribers in these method
+// EDITIBALE METHOD
 void hare::Robot::initPublishers(){
   ros::Publisher test_pub = this->nh.advertise<std_msgs::String>("test_msg", this->queue_size);
-  std::cout<<test_pub.getTopic()<<std::endl;
   this->addPublisher(test_pub);
+  std::string ns = this->ns;
+  // ros::Publisher cmd_vel = this->nh.advertise<geometry_msgs::Twist>("cmd_vel", this->queue_size);
+  // this->addPublisher(cmd_vel);
+  // change me
+  ros::Publisher twist_pub = this->nh.advertise<geometry_msgs::Twist>("goal", this->queue_size);
+  this->addPublisher(twist_pub);
+
 }
+<<<<<<< Updated upstream
 void hare::Robot::initSubscribers(){
   //single point subscriptions
 
 
   //per neighbor subscriptions
+=======
+
+void hare::Robot::initSubscribers(){
+>>>>>>> Stashed changes
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    std::string topic = (*neighbor).ns + "/test_msg";
-    ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, this->queue_size, &hare::Robot::callback, this);
+    std::string neighbor_ns = (*neighbor).ns;
+    ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(neighbor_ns + "/test_msg", this->queue_size, &hare::Robot::callback, this);
     this->addSubscriber(test_sub);
+    ros::Subscriber odom = this->nh.subscribe<nav_msgs::Odometry>(neighbor_ns + "/odom", this->queue_size, &hare::Robot::callback, this);
+    this->addSubscriber(odom);
+    ros::Subscriber nav_subs = this->nh.subscribe<hare::HareUpdate>(neighbor_ns + "/HARE", this->queue_size, &hare::Robot::callback, this);
+    this->addSubscriber(nav_subs);
+
   }
 }
 void hare::Robot::setQueueSize(uint32_t queue_size){
@@ -190,13 +213,28 @@ void hare::Robot::init(){
 void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
   //ROS_INFO("received %s", msg->data.c_str());
 }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
+  //this->robot_id = msg->robot_id
+  //this->walls = msg->walls
+  //this->odom = msg->robot_odom
+  //this->tree_state = msg->tree_state
 
 }
+
+void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
+
+
+}
+
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
 
+<<<<<<< Updated upstream
 
 std::vector<map_node> hare::Robot::sense(float range){
   std::vector<int2> cells;
@@ -205,9 +243,30 @@ std::vector<map_node> hare::Robot::sense(float range){
 
 }
 
+=======
+// Edit me to run
+>>>>>>> Stashed changes
 void hare::Robot::run(){
   std_msgs::String str;
-  str.data = "hi from " + this->id;
+  hare::HareUpdate neighbor_states;
+  hare::HareUpdate my_state;
+  // float2 goal;
+  // float2 start;
+
+  geometry_msgs::Twist goal = geometry_msgs::Twist();
+  geometry_msgs::Twist start = geometry_msgs::Twist();
+
+  // start.x = 0;
+  // start.y = 0;
+  //
+  // goal.x = 0;
+  // goal.y = 0;
+
+
+  std::vector<float2>trajectory;
+
+  //this->my_state = my_state;
+  //this->neighbor_states = neighbor_states;
 
   //set spinner here if using anything but SingleSpinner
   std::string test_topic;
@@ -218,7 +277,6 @@ void hare::Robot::run(){
     ROS_ERROR("Failed to get param 'test'");
   }
   while (ros::ok()){
-
     //DETERMINE STATE AND SET GOALS
       //neighbor state query
       //mapping
@@ -226,12 +284,39 @@ void hare::Robot::run(){
       //obstacle avoidance
       //trajectory
       //path planning
+    //this->map = sense();
+    for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor)
+    {
+          std::string neighbor_ns = (*neighbor).ns;
+          // ros::Subscriber sub = this->nh.subscribe<hare::HareUpdate>(neighbor_ns + "", this->queue_size, &hare::Robot::callback, this);
+    }
+    //TODO
+    // this subscriber will update the class
+    //
 
     //PERFORM ACTION BASED ON GOAL AND STATE
-      //behavior tree traversal
+    geometry_msgs::Twist msg;
+    // hare::HareUpdate information_state;
+    switch(this->tree_state)
+    {
+      case 1:
+        //DFS();
+        break;
+      case 2:
+        //msg = getPath(this->description, start, goal);
+        break;
+      case 3:
+        //DFS();
+        break;
+      default:
+        break;
+    }
+
 
     //SEND INFORMATION TO NEIGHBORS
-    this->publish<std_msgs::String>(str,test_topic);
+    this->publish<geometry_msgs::Twist>(goal,"goal");
+    // this->publish<geometry_msgs::Twist>(msg,"/cmd_vel");
+    // this->publish<hare::HareUpdate>(information_state,"/HARE");
     ros::spinOnce();
   }
 }

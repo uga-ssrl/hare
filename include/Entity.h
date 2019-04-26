@@ -6,6 +6,7 @@
 #include <ros/callback_queue.h>
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
+#include <nav_msgs/Odometry.h>
 #include "Map.h"
 
 namespace hare{
@@ -41,7 +42,7 @@ namespace hare{
   public:
     RobotDescription description;
     float velocity;
-    float3 orientation;
+    nav_msgs::Odometry neighbor_odom;
 
     Neighbor();
     Neighbor(std::string ns);
@@ -75,6 +76,9 @@ namespace hare{
     RobotDescription description;
     float velocity;
     float3 orientation;
+    int tree_state;
+    int4 linear;
+
 
     std::vector<Neighbor> neighbors;
 
@@ -89,6 +93,8 @@ namespace hare{
     //TODO implement all callbacks
     void callback(const std_msgs::StringConstPtr& msg);
     void callback(const hare::HareUpdateConstPtr& msg);
+    void callback(const nav_msgs::OdometryConstPtr& msg);
+
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
     void run();

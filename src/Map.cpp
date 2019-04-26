@@ -24,11 +24,15 @@ void hare::Map::initializeMap(){
 
 
 // update the map
-void hare::Map::updateMap(float2 location, uint8_t discription){
+void hare::Map::updateMap(float2 location, uint8_t description){
   int2 insert;
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
+<<<<<<< Updated upstream
   knownMap[insert.x][insert.y].chracteristic = discription;
+=======
+  knownMap[insert.x][insert.y].obstacle = description;
+>>>>>>> Stashed changes
   knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
   knownMap[insert.x][insert.y].traversable = true; //check if traversable
@@ -149,6 +153,8 @@ bool hare::Map::isIn(pq_node n){
   }
   return false;
 }
+
+
 
 
 

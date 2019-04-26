@@ -2,7 +2,12 @@
 
 uint8 robot_id
 
+<<<<<<< Updated upstream
 cell[] cellUpdate
+=======
+# should this be int4
+hare/Obstacle[] sensing
+>>>>>>> Stashed changes
 
 nav_msgs/Odometry robot_odom
 

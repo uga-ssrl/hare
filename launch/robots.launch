@@ -1,5 +1,9 @@
 <launch>
 
+  <!-- temporary obstacle sensing nodes -->
+  <!-- <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/> -->
+
+
   <param name="num_robots" value="3"/>
   <rosparam file="$(find hare)/config/topics.yaml"/>
   <!-- descriptions of all robots capabilities, shape, etc -->
@@ -23,7 +27,7 @@
 
     <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
 
-    <node name="Move_You" pkg="hare" type="Move_You.py" />
+    <!-- <node name="Move_You" pkg="hare" type="Move_You.py" /> -->
     <!--<node name="sensor_model" pkg="hare" type="sensor_model.py" />-->
     <!--<node name="kf_node" pkg="hare" type="kf_node.py" />-->
 
@@ -92,8 +96,10 @@
     <!-- should this be robot3?? -->
     <node pkg="twist_mux" type="twist_mux" name="twist_mux">
       <rosparam command="load" file="$(find husky_control)/config/twist_mux.yaml" />
-      <remap from="cmd_vel_out" to="robot3/husky_velocity_controller/cmd_vel"/>
+      <remap from="cmd_vel_out" to="husky_velocity_controller/cmd_vel"/>
     </node>
+
+    <!-- <remap from="robot3/husky_velocity_controller/cmd_vel" to="robot3/cmd_vel"/> -->
 
     <node pkg="interactive_marker_twist_server" type="marker_server" name="twist_marker_server" output="screen"/>
   </group>

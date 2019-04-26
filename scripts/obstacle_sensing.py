@@ -69,24 +69,23 @@ Obst_Info_DB = [
 
 pub = []
 sub = []
-height =
-width =
 
 def getObstacleIds(x,y,z):
     dat_list = []
     tup = [14,14,(69,69,69),(69,69,69)] # default empty obstacles
-    cells = a
+    # cells = a
 
-    for obst in Obst_Info_DB:
-        x_1 = obst[0][0]
-        x_2 = obst[0][1] #
-        y_1 = obst[0][2]
-        y_2 = obst[0][3]
-        draw_up = True if x_1 < x_2 else False
-        draw_right = True if y_1 < y_2 else False
-
-        while x_1 != x_2:
-            if draw_up and down:
+    # for obst in Obst_Info_DB:
+    #     x_1 = obst[0][0]
+    #     x_2 = obst[0][1] #
+    #     y_1 = obst[0][2]
+    #     y_2 = obst[0][3]
+    #     draw_up = True if x_1 < x_2 else False
+    #     draw_right = True if y_1 < y_2 else False
+    #
+    #     while x_1 != x_2:
+    #         if draw_up and down:
+    #
 
     return tup
 
