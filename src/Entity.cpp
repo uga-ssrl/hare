@@ -175,16 +175,12 @@ void hare::Robot::initSubscribers(){
 void hare::Robot::setQueueSize(uint32_t queue_size){
   this->queue_size = queue_size;
 }
-void hare::Robot::initComms(uint32_t queue_size){
-  this->queue_size = queue_size;
-  this->initPublishers();
-  this->initSubscribers();
-}
 
 void hare::Robot::init(){
   this->findNeighbors();
   this->loadCapabilties();
-  this->initComms(this->queue_size);
+  this->initPublishers();
+  this->initSubscribers();
 }
 
 void hare::Robot::callback(const std_msgs::StringConstPtr& msg){

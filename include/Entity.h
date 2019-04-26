@@ -54,6 +54,7 @@ namespace hare{
     uint32_t queue_size;
 
     Map* map;
+    std::vector<float2> path;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
@@ -80,7 +81,6 @@ namespace hare{
     ~Robot();
 
     void setQueueSize(uint32_t queue_size);
-    void initComms(uint32_t queue_size);
 
     void init();
 
