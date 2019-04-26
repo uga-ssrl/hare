@@ -24,15 +24,12 @@ void hare::Map::initializeMap(){
 
 
 // update the map
-void hare::Map::updateMap(float2 location, uint8_t description){
+void hare::Map::updateMap(float2 location, int description){
   int2 insert;
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
-<<<<<<< Updated upstream
-  knownMap[insert.x][insert.y].chracteristic = discription;
-=======
-  knownMap[insert.x][insert.y].obstacle = description;
->>>>>>> Stashed changes
+  knownMap[insert.x][insert.y].chracteristic = description;
+
   knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
   knownMap[insert.x][insert.y].traversable = true; //check if traversable

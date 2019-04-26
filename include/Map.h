@@ -55,7 +55,7 @@ namespace hare{
     void initializeMap();
 
     // updates the map at each timestep or tick or whatever
-    void updateMap(float2 location, uint8_t discription);
+    void updateMap(float2 location, int discription);
 
     void setRobot(short bot);
 

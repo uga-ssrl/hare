@@ -178,16 +178,11 @@ void hare::Robot::initPublishers(){
   this->addPublisher(twist_pub);
 
 }
-<<<<<<< Updated upstream
 void hare::Robot::initSubscribers(){
   //single point subscriptions
 
 
   //per neighbor subscriptions
-=======
-
-void hare::Robot::initSubscribers(){
->>>>>>> Stashed changes
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     std::string neighbor_ns = (*neighbor).ns;
     ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(neighbor_ns + "/test_msg", this->queue_size, &hare::Robot::callback, this);
@@ -213,10 +208,7 @@ void hare::Robot::init(){
 void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
   //ROS_INFO("received %s", msg->data.c_str());
 }
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   //this->robot_id = msg->robot_id
   //this->walls = msg->walls
@@ -234,8 +226,6 @@ void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
 
-<<<<<<< Updated upstream
-
 std::vector<map_node> hare::Robot::sense(float range){
   std::vector<int2> cells;
   int2 minBound = {floor(this->pos.x-range),floor(this->pos.y-range)};
@@ -243,9 +233,6 @@ std::vector<map_node> hare::Robot::sense(float range){
 
 }
 
-=======
-// Edit me to run
->>>>>>> Stashed changes
 void hare::Robot::run(){
   std_msgs::String str;
   hare::HareUpdate neighbor_states;
