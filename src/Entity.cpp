@@ -170,8 +170,10 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
 void hare::Robot::initPublishers(){
   ros::Publisher twist_pub = this->nh.advertise<geometry_msgs::Twist>("goal", this->queue_size);
   this->addPublisher(twist_pub);
-  ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
-  this->addPublisher(hareUpdate_pub);
+  // ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
+  // this->addPublisher(hareUpdate_pub);
+  ros::Publisher cmdVel_pub = this->nh.advertise<geometry_msgs::Twist>("cmd_vel",this->queue_size);
+  this->addPublisher(cmdVel_pub);
 }
 void hare::Robot::initSubscribers(){
   //single point subscriptions
@@ -182,8 +184,8 @@ void hare::Robot::initSubscribers(){
     std::string neighbor_ns = (*neighbor).ns;
     ros::Subscriber odom = this->nh.subscribe<nav_msgs::Odometry>(neighbor_ns + "/odom", this->queue_size, &hare::Robot::callback, this);
     this->addSubscriber(odom);
-    ros::Subscriber hareUpdate_sub = this->nh.subscribe<HareUpdate>(neighbor_ns + "/HARE_UPDATE", this->queue_size, &hare::Robot::callback, this);
-    this->addSubscriber(hareUpdate_sub);
+    // ros::Subscriber hareUpdate_sub = this->nh.subscribe<HareUpdate>(neighbor_ns + "/HARE_UPDATE", this->queue_size, &hare::Robot::callback, this);
+    // this->addSubscriber(hareUpdate_sub);
   }
 }
 void hare::Robot::setQueueSize(uint32_t queue_size){
@@ -203,16 +205,16 @@ void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
 void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
 
 
-}
-void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
-  this->map->updateMap((cellConstPtr)msg->cellUpdate.data());
-  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    if((*neighbor).id == msg->robot_id){
-      (*neighbor).odom = msg->robot_odom;
-      (*neighbor).state_indicator = msg->tree_state.data;
-    }
-  }
-}
+ }
+// void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
+//   this->map->updateMap((cellConstPtr)msg->cellUpdate.data());
+//   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+//     if((*neighbor).id == msg->robot_id){
+//       (*neighbor).odom = msg->robot_odom;
+//       (*neighbor).state_indicator = msg->tree_state.data;
+//     }
+//   }
+// }
 
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
@@ -250,7 +252,7 @@ void hare::Robot::run(){
 
   geometry_msgs::Twist goal = geometry_msgs::Twist();
   geometry_msgs::Twist start = geometry_msgs::Twist();
-
+  geometry_msgs::Twist cmdVel = geometry_msgs::Twist();
   // start.x = 0;
   // start.y = 0;
   //
@@ -270,23 +272,37 @@ void hare::Robot::run(){
   while (ros::ok()){
     //update.cellUpdate.data() = this->sense(2.0f);
     update.robot_odom = this->odom;
+    this->tree_state = 1;
 
-    switch(this->tree_state)
+
+    switch(1)
     {
-      case 1:
+      case 1: //up
         //DFS();
+        cmdVel.linear.x = 1;
+        // cmdVel.linear.x = 0;
         break;
-      case 2:
-        //msg = getPath(this->description, start, goal);
+      case 2: //right
+        cmdVel.linear.y = 1;
+        cmdVel.linear.y = 0;
         break;
-      case 3:
-        //DFS();
+      case 3: //left
+        cmdVel.linear.y = -1;
+        cmdVel.linear.y = 0;
         break;
-      default:
+      case 4: //down
+        cmdVel.linear.x = -1;
+        cmdVel.linear.x = 0;
         break;
+      // default:
+      //   cmdVel.linear.x = 0;
+      //   cmdVel.linear.x = 0;
+      //   break; //stop
     }
+    this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+    ros::Duration(0.5).sleep();
 
-    this->publish<HareUpdate>(update, "HARE_UPDATE");
+    // this->publish<HareUpdate>(update, "HARE_UPDATE");
 
     ros::spinOnce();
   }
