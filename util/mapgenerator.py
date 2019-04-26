@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-import csv
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 # left   -> right
 # bottom -> top
 # [x1,x2,y1,y2],type
@@ -18,8 +21,8 @@ LargeTunnels = [
 #height = 1
 SmallTunnels = [
     ([-6,-4,8,12],'y'),#small red
-    ([1,3,6,9],'y'),#small red
-    ([6,9,3,5],'x'),#short small green
+    ([1,3,5,9],'y'),#small red
+    ([5,9,3,5],'x'),#short small green
     ([-5,-1,-12,-10],'x'),#short wide green
     ([-7,-5,-2,2],'y'),#small red
     ([-7,-5,-10,-6],'y'),#small red
@@ -42,11 +45,17 @@ small3 = [-12,-13,8,9]
 
 Obstacles_raw = [LargeTunnels,SmallTunnels,Ramps]
 AllCells = []
-
+Obstacles = []
 for r in range(200):
+    Obstacles.append([])
     AllCells.append([])
     for c in range(200):
+        Obstacles[r].append(0)
         AllCells[r].append([-1,'true','true',[0,0,0,0]])
+
+
+
+
 
 obstacleID = 0
 
@@ -66,6 +75,7 @@ for o in LargeTunnels:
                     wall = [2,2,2,-1]
                 elif(c == 0):
                     wall = [-1,2,2,2]
+            Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = 2
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
@@ -86,6 +96,7 @@ for o in SmallTunnels:
                     wall = [1,1,1,-1]
                 elif(c == 0):
                     wall = [-1,1,1,1]
+            Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = 1
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
@@ -106,9 +117,21 @@ for o in Ramps:
                     wall = [0,0,0,-1]
                 elif(c == 0):
                     wall = [-1,0,0,0]
+            Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = 3
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
+
+
+H = np.array(Obstacles)  # added some commas and array creation code
+
+fig = plt.figure(figsize=(6, 3.2))
+
+ax = fig.add_subplot(111)
+ax.set_title('colorMap')
+plt.imshow(H)
+ax.set_aspect('equal')
+plt.show()
 
 with open('./hare.map', 'w+') as map:
     for r in range(200):

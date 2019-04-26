@@ -101,7 +101,6 @@
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0.0 -y 5.0 -z 0.1" />
     <arg name="robot_name"  value="robot3" />
-    <!-- <arg name="model" value="youbot"/> -->
   </include>
 
 </launch>
