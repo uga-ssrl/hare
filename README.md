@@ -6,24 +6,30 @@
 **ros-behavior-tree**
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
-**multi-robo-map-merge**
-- multirobot_map_merge (https://wiki.ros.org/multirobot_map_merge)
-- to install run: ```sudo apt install ros-kinetic-multirobot-map-merge ros-kinetic-explore-lite```
-
 **Enviroment Variables**
 - The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(pwd)`
 
 **Turtlebot-Navigation**
 - Just need to install `sudo apt-get install ros-kinetic-turtlebot-navigation`
 
+# Robot Dependencies
+- clone all of the following in ```~/catkin_ws/src/robot/```
+
 **robot1**
 - turtlebot_description package for launch files
 
-
 **(youbot variant)**
--[Install](https://github.com/youbot/youbot_simulation) for youbot simulation *&* [Install](https://github.com/youbot/youbot_description) the youbot platform
+- in /path/to/catkin_ws/src ```git clone https://github.com/youbot/youbot_simulation.git```
+- in /path/to/catkin_ws/src ```git clone https://github.com/youbot/youbot_description.git --branch kinetic-devel```
+
+
+
+
 **robot2**
-- clone https://github.com/husarion/rosbot_description in ```~/catkin_ws/src/robot/```
+- in /path/to/catkin_ws/src/ ```git clone  https://github.com/husarion/rosbot_description.git```
+- in /path/to/rosbot_description/urdf find the following commented line and follow the instructions to not use GPU ```  <!-- If you cant't use your GPU comment RpLidar using GPU and uncomment RpLidar using CPU
+    gazebo plugin. -->```
+
 
 **robot3**
 - To install husky packages run: ```sudo apt-get install ros-kinetic-husky-simulator```
@@ -40,11 +46,13 @@ then
 - add robots in hare/launch/robots.launch
 - create new namespace and place descriptions and include one_robot.launch
   - this can be seen in the turtlebot examples
+- you must also increment the following in robots.launch ```<param name="num_robots" value="3"/>```
 
 #ERROR <LegaceModeNS> mitigation for gazebo plugin
 - go into your ```.gazebo``` in each robot description, i.e: for youbot go into: ```youbot_description/controller/ros_controller.urdf.xacro``` and add the following snippet:
 
-```<gazebo>
+```
+<gazebo>
 <static>false</static>
 
 <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">

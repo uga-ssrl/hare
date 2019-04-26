@@ -1,12 +1,13 @@
 <launch>
 
+  <!-- temporary obstacle sensing nodes -->
+  <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/>
+
+
   <param name="num_robots" value="3"/>
   <rosparam file="$(find hare)/config/topics.yaml"/>
   <!-- descriptions of all robots capabilities, shape, etc -->
   <rosparam file="$(find hare)/config/hare_descriptions.yaml"/>
-
-  <!-- temporary obstacle sensing nodes -->
-  <node name="obstacle_sensing" pkg="hare" type="obstacle_sensing.py"/>
 
   <!-- BEGIN ROBOT 1-->
   <group ns="robot1">
@@ -22,9 +23,9 @@
 
     <node pkg="controller_manager" type="spawner" name="joint_state_controller_spawner" args="joint_state_controller" respawn="false" output="screen" />
 
-    <!-- <node name="Move_You" pkg="hare" type="Move_You.py" /> -->
-    <!-- <node name="sensor_model" pkg="hare" type="sensor_model.py" /> -->
-    <node name="kf_node" pkg="hare" type="kf_node.py" />
+    <node name="Move_You" pkg="hare" type="Move_You.py" />
+    <!--<node name="sensor_model" pkg="hare" type="sensor_model.py" />-->
+    <!--<node name="kf_node" pkg="hare" type="kf_node.py" />-->
 
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
@@ -42,20 +43,19 @@
     <param name="neighbor2" value="robot3"/>
 
 
-    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
     <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
+    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
 
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
 
   </group>
+
   <include file="$(find hare)/launch/one_robot.launch" >
     <arg name="init_pose" value="-x 0.0 -y 3.0 -z 0.07" />
     <arg name="robot_name"  value="robot2" />
   </include>
 
-
   <!-- BEGIN ROBOT 3 -->
-  <!-- <arg name="robot_namespace" default="robot3"/> -->
   <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
   <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
   <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
@@ -66,14 +66,12 @@
     <param name="neighbor2" value="robot2"/>
 
 
-    <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
-    --inorder
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find husky_description)/urdf/husky.urdf.xacro'
     robot_namespace:=robot3
-    laser_enabled:=$(optenv HUSKY_LMS1XX_ENABLED false)
-    kinect_enabled:=$(optenv HUSKY_KINECT_ENABLED false)
-    urdf_extras:=$(optenv HUSKY_URDF_EXTRAS)
+    laser_enabled:=$(arg laser_enabled)
+    kinect_enabled:=$(arg kinect_enabled)
+    urdf_extras:=$(arg urdf_extras)
     " />
-
     <!-- load controller configuration -->
     <rosparam command="load" file="$(find hare)/config/husky_control.yaml" />
 

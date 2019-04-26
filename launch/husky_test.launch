@@ -1,20 +1,23 @@
 <?xml version="1.0"?>
 <launch>
 
-  <arg name="robot_namespace" default="robot3"/>
+  <param name="num_robots" value="1"/>
+  <rosparam file="$(find hare)/config/topics.yaml"/>
+  <!-- descriptions of all robots capabilities, shape, etc -->
+  <rosparam file="$(find hare)/config/hare_descriptions.yaml"/>
+
   <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
   <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
   <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
 
-  <!-- <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" /> -->
+  <include file="$(find youbot_gazebo_worlds)/launch/empty_world.launch" />
   <group ns="robot3">
 
-    <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
-    --inorder
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find husky_description)/urdf/husky.urdf.xacro'
     robot_namespace:=robot3
-    laser_enabled:=$(optenv HUSKY_LMS1XX_ENABLED false)
-    kinect_enabled:=$(optenv HUSKY_KINECT_ENABLED false)
-    urdf_extras:=$(optenv HUSKY_URDF_EXTRAS)
+    laser_enabled:=$(arg laser_enabled)
+    kinect_enabled:=$(arg kinect_enabled)
+    urdf_extras:=$(arg urdf_extras)
     " />
     <!-- load controller configuration -->
     <rosparam command="load" file="$(find hare)/config/husky_control.yaml" />

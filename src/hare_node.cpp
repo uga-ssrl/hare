@@ -6,6 +6,9 @@ int main(int argc, char **argv){
   ros::NodeHandle nh;
 
   hare::Robot robot = hare::Robot(nh);
+  robot.setQueueSize(1);
+  robot.init();
+  ros::Duration(0.5).sleep();
   robot.run();
   return 0;
 }

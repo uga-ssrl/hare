@@ -1,7 +1,7 @@
 <launch>
   <arg name="robot_name"/>
   <arg name="init_pose"/>
-  <!-- <arg name="model" default="robot_name"/> -->
+
 
   <group ns="$(arg robot_name)">
     <!-- spawn robots -->
@@ -13,12 +13,11 @@
     <!--  robot state publishes state of robot -->
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
-      <!-- set the rate at which the state is updated-->
       <param name="publish_frequency" type="double" value="100.0"/>
     </node>
 
     <node name="hare_node" pkg="hare" type="hare_node"/>
-    <node name="action" pkg="behavior_tree_leaves" type="action_example" />
-    <node name="condition" pkg="behavior_tree_leaves" type="condition_example" />
+    <!--<node name="action" pkg="behavior_tree_leaves" type="action_example" />
+    <node name="condition" pkg="behavior_tree_leaves" type="condition_example" />-->
   </group>
 </launch>

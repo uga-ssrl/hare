@@ -51,6 +51,8 @@ namespace hare{
 
   class Robot : public Entity{
 
+    uint32_t queue_size;
+
     Map* map;
 
     ros::NodeHandle nh;
@@ -61,6 +63,9 @@ namespace hare{
     void findNeighbors();
     bool addPublisher(ros::Publisher &pub);
     bool addSubscriber(ros::Subscriber &sub);
+
+    void initPublishers();
+    void initSubscribers();
 
   public:
 
@@ -74,7 +79,10 @@ namespace hare{
     Robot(ros::NodeHandle nh);
     ~Robot();
 
+    void setQueueSize(uint32_t queue_size);
     void initComms(uint32_t queue_size);
+
+    void init();
 
     //TODO implement all callbacks
     void callback(const std_msgs::StringConstPtr& msg);
@@ -90,6 +98,7 @@ namespace hare{
   };
   template <typename T>
   void Robot::publish(T message, std::string topic){
+    topic = this->ns + "/" + topic;
     if(this->publisherMap.find(topic) == this->publisherMap.end()){
       ROS_ERROR("There is no publisher for the given topic %s", topic.c_str());
     }

@@ -39,9 +39,6 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
-  this->findNeighbors();
-  this->loadCapabilties();
-  this->initComms(500);
 }
 hare::Robot::~Robot(){
 
@@ -160,19 +157,34 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
   }
   return success;
 }
-//add publishers and subscribers in here
-void hare::Robot::initComms(uint32_t queue_size){
-  //add pubs and subs
-  ros::Publisher test_pub = this->nh.advertise<std_msgs::String>("test_msg", queue_size);
+void hare::Robot::initPublishers(){
+  ros::Publisher test_pub = this->nh.advertise<std_msgs::String>("test_msg", this->queue_size);
+  std::cout<<test_pub.getTopic()<<std::endl;
   this->addPublisher(test_pub);
-  ros::Subscriber obst_sub = this->nh.subscribe<hare::Obstacle>("obstacle_sensing", queue_size, &hare::Robot::callback, this);
+}
+void hare::Robot::initSubscribers(){
+  ros::Subscriber obst_sub = this->nh.subscribe<hare::Obstacle>("obstacle_sensing", this->queue_size, &hare::Robot::callback, this);
   this->addSubscriber(obst_sub);
 
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     std::string topic = (*neighbor).ns + "/test_msg";
-    ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, queue_size, &hare::Robot::callback, this);
+    ros::Subscriber test_sub = this->nh.subscribe<std_msgs::String>(topic, this->queue_size, &hare::Robot::callback, this);
     this->addSubscriber(test_sub);
   }
+}
+void hare::Robot::setQueueSize(uint32_t queue_size){
+  this->queue_size = queue_size;
+}
+void hare::Robot::initComms(uint32_t queue_size){
+  this->queue_size = queue_size;
+  this->initPublishers();
+  this->initSubscribers();
+}
+
+void hare::Robot::init(){
+  this->findNeighbors();
+  this->loadCapabilties();
+  this->initComms(this->queue_size);
 }
 
 void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
