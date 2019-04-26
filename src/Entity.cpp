@@ -205,7 +205,7 @@ void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
 
 }
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
-  this->map->updateMap((cellConstPtr)msg->cellUpdate.data());
+  this->map->updateMap(msg);
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     if((*neighbor).id == msg->robot_id){
       (*neighbor).odom = msg->robot_odom;
@@ -218,8 +218,8 @@ void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
 
-std::vector<hare::cellPtr> hare::Robot::sense(float range){
-  std::vector<hare::cellPtr> cells;
+std::vector<hare::cell> hare::Robot::sense(float range){
+  std::vector<hare::cell> cells;
   int2 minBound = {floor(ODOM_TO_MAP*(this->odom.pose.pose.position.x)-range),floor(ODOM_TO_MAP*(this->odom.pose.pose.position.y)-range)};
   int2 maxBound = {floor(ODOM_TO_MAP*(this->odom.pose.pose.position.x)+range),floor(ODOM_TO_MAP*(this->odom.pose.pose.position.y)+range)};
   if(minBound.x < 0) minBound.x = 0;
@@ -229,18 +229,19 @@ std::vector<hare::cellPtr> hare::Robot::sense(float range){
   for(int x = minBound.x; x < maxBound.x; ++x){
     for(int y = minBound.y; y < maxBound.y; ++y){
       hare::map_node currentNode = fullMap[x + (MAP_X/2)][y + (MAP_Y/2)];
-      hare::cellPtr currentCell = hare::cellPtr();
-      currentCell->x = x;
-      currentCell->y = y;
-      currentCell->traversable = currentNode.traversable;
-      currentCell->explored = true;
-      currentCell->wallLeft = currentNode.walls.x;
-      currentCell->wallUp = currentNode.walls.y;
-      currentCell->wallDown = currentNode.walls.z;
-      currentCell->wallRight = currentNode.walls.w;
+      hare::cell currentCell = hare::cell();
+      currentCell.x = x;
+      currentCell.y = y;
+      currentCell.traversable = currentNode.traversable;
+      currentCell.explored = true;
+      currentCell.wallLeft = currentNode.walls.x;
+      currentCell.wallUp = currentNode.walls.y;
+      currentCell.wallDown = currentNode.walls.z;
+      currentCell.wallRight = currentNode.walls.w;
       cells.push_back(currentCell);
     }
   }
+  return cells;
 }
 
 void hare::Robot::run(){
@@ -263,13 +264,25 @@ void hare::Robot::run(){
   //this->my_state = my_state;
   //this->neighbor_states = neighbor_states;
 
-  HareUpdate update;
+  hare::HareUpdate update;
   update.robot_id = this->id;
   update.tree_state.data = "starting";
 
   while (ros::ok()){
-    //update.cellUpdate.data() = this->sense(2.0f);
+    //update.cellUpdate = this->sense(2.0f);
+    std::vector<hare::cell> cells = this->sense(2.0f);
+    //NOTE FAILS WHEN TRYING TO SEND CELLS
+    for(int i = 0; i < cells.size(); ++i){
+      update.cellUpdate.push_back(cells[i]);
+    }
     update.robot_odom = this->odom;
+    //ros::Duration(0.5).sleep();
+    //FAILES HERE
+    this->publish<hare::HareUpdate>(update, "HARE_UPDATE");
+    // else{
+    //   ROS_ERROR("UPDATE FAILED FROM GLOBAL MAP");
+    // }
+    //ros::Duration(0.5).sleep();//wait for some messages
 
     switch(this->tree_state)
     {
@@ -286,7 +299,6 @@ void hare::Robot::run(){
         break;
     }
 
-    this->publish<HareUpdate>(update, "HARE_UPDATE");
 
     ros::spinOnce();
   }

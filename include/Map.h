@@ -5,6 +5,7 @@
 #include "utility.h"
 #include "HareMap.h"
 #include <hare/cell.h>
+#include <hare/HareUpdate.h>
 
 
 namespace hare{
@@ -33,6 +34,7 @@ namespace hare{
     void updateMap(int2 location, map_node* mnode);
     void updateMap(cellConstPtr cell);
     void updateMap(std::vector<cellConstPtr> cells);
+    void updateMap(const hare::HareUpdateConstPtr& msg);
 
 
     // A* algorithm

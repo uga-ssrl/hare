@@ -69,7 +69,7 @@ namespace hare{
     void initPublishers();
     void initSubscribers();
 
-    std::vector<hare::cellPtr> sense(float range = 1.0f);//range in cell count
+    std::vector<hare::cell> sense(float range = 1.0f);//range in cell count
 
   public:
 

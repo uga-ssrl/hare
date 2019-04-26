@@ -37,6 +37,8 @@ void hare::Map::updateMap(float2 location, int description){
 void hare::Map::updateMap(int2 location, hare::map_node* mnode){
   knownMap[location.x][location.y] = *mnode;
 }
+
+//NOTE THESE ARE NOT WORKING
 void hare::Map::updateMap(hare::cellConstPtr cell){
   int2 loc = {cell->x,cell->y};
   knownMap[loc.x][loc.y].explored = cell->explored;
@@ -49,6 +51,19 @@ void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
     knownMap[loc.x][loc.y].explored = (*cell)->explored;
     knownMap[loc.x][loc.y].traversable = (*cell)->traversable;
     knownMap[loc.x][loc.y].walls = {(*cell)->wallLeft,(*cell)->wallUp,(*cell)->wallDown,(*cell)->wallRight};
+  }
+}
+void hare::Map::updateMap(const hare::HareUpdateConstPtr& msg){
+  for(int i = 0; i < msg->cellUpdate.size(); ++i){
+    const hare::cell &data = msg->cellUpdate[i];
+    int2 loc = {data.x+(MAP_X/2),data.y+(MAP_Y/2)};
+    // if(loc.x > MAP_X || loc.x < 0 || loc.y > MAP_Y ||loc.y < 0){
+    //   ROS_ERROR("BAD INDICES PRODUCES TO ACCESS GLOBAL MAP");
+    // }
+    // knownMap[loc.x][loc.y].explored = data.explored;
+    // knownMap[loc.x][loc.y].traversable = data.traversable;
+    // knownMap[loc.x][loc.y].walls = {data.wallLeft,data.wallUp,
+    //    data.wallDown,data.wallRight};
   }
 }
 

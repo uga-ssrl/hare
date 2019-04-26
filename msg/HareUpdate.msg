@@ -2,7 +2,7 @@
 
 uint8 robot_id
 
-cell[] cellUpdate
+hare/cell[] cellUpdate
 
 nav_msgs/Odometry robot_odom
 
