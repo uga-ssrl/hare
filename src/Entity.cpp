@@ -23,7 +23,6 @@ hare::Neighbor::Neighbor(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
-  this->velocity = 0.0;
 }
 hare::Neighbor::~Neighbor(){
 
@@ -35,6 +34,7 @@ hare::Robot::Robot(){
   this->type = ROBOT;
   this->linear.x = 0.0;
   this->linear.y = 0.0;
+  this->map = NULL;
 }
 //set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
@@ -42,11 +42,19 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->type = ROBOT;
-  this->nh.getParam("init_x", this->odom.pose.pose.position.x);
-  this->nh.getParam("init_y", this->odom.pose.pose.position.y);
-  this->nh.getParam("init_z", this->odom.pose.pose.position.z);
+  float3 position;
+  this->nh.getParam("init_x", position.x);
+  this->nh.getParam("init_y", position.y);
+  this->nh.getParam("init_z", position.z);
+  this->path.push_back({(position.x*ODOM_TO_MAP)+(MAP_X/2),
+    (position.y*ODOM_TO_MAP)+(MAP_Y/2),
+    (position.z*ODOM_TO_MAP)});
+  this->map = new Map(this->ns);
 }
 hare::Robot::~Robot(){
+  if(this->map != NULL){
+    delete this->map;
+  }
 
 }
 //must add capabilities here if you add them to yaml file
@@ -175,13 +183,17 @@ void hare::Robot::initPublishers(){
 }
 void hare::Robot::initSubscribers(){
   //single point subscriptions
-
-
+  std::string odomTopic;
+  std::string parameter = this->ns + "_odom";
+  if(!this->nh.getParam(parameter, odomTopic)){
+      ROS_ERROR("Failed to get param %s", parameter);
+  }
+  ros::Subscriber odom_sub = this->nh.subscribe<nav_msgs::Odometry>(odomTopic, this->queue_size, &hare::Robot::callback, this);
+  this->addSubscriber(odom_sub);
+  ROS_INFO("Successfully subscribed to %s",odomTopic.c_str());
   //per neighbor subscriptions
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     std::string neighbor_ns = (*neighbor).ns;
-    ros::Subscriber odom = this->nh.subscribe<nav_msgs::Odometry>(neighbor_ns + "/odom", this->queue_size, &hare::Robot::callback, this);
-    this->addSubscriber(odom);
     ros::Subscriber hareUpdate_sub = this->nh.subscribe<HareUpdate>(neighbor_ns + "/HARE_UPDATE", this->queue_size, &hare::Robot::callback, this);
     this->addSubscriber(hareUpdate_sub);
   }
@@ -201,15 +213,24 @@ void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
 
 }
 void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
-
-
+  this->odom.header = msg->header;
+  this->odom.child_frame_id = msg->child_frame_id;
+  this->odom.twist = msg->twist;
+  // this->odom.pose = msg->pose;
+  // this->odom.pose.pose.position.x = msg->pose.pose.position.x;
+  // printf("%f,%f,%f\n",msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
 }
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
-  this->map->updateMap(msg);
+  //UPDATE MAP BASED ON CELLS
+  for(int i = 0; i < msg->cells.size(); ++i){
+    const hare::cell &data = msg->cells[i];
+    this->map->update(data);
+  }
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     if((*neighbor).id == msg->robot_id){
       (*neighbor).odom = msg->robot_odom;
       (*neighbor).state_indicator = msg->tree_state.data;
+      break;
     }
   }
 }
@@ -218,88 +239,87 @@ void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
 }
 
-std::vector<hare::cell> hare::Robot::sense(float range){
-  std::vector<hare::cell> cells;
-  int2 minBound = {floor(ODOM_TO_MAP*(this->odom.pose.pose.position.x)-range),floor(ODOM_TO_MAP*(this->odom.pose.pose.position.y)-range)};
-  int2 maxBound = {floor(ODOM_TO_MAP*(this->odom.pose.pose.position.x)+range),floor(ODOM_TO_MAP*(this->odom.pose.pose.position.y)+range)};
-  if(minBound.x < 0) minBound.x = 0;
-  if(maxBound.x > MAP_X) maxBound.x = MAP_X - 1;
-  if(minBound.y < 0) minBound.y = 0;
-  if(maxBound.y > MAP_Y) maxBound.y = MAP_Y - 1;
-  for(int x = minBound.x; x < maxBound.x; ++x){
-    for(int y = minBound.y; y < maxBound.y; ++y){
+void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
+  if(minMax.x < 0) minMax.x = 0;
+  if(minMax.z > MAP_X) minMax.z = MAP_X - 1;
+  if(minMax.y < 0) minMax.y = 0;
+  if(minMax.w > MAP_Y) minMax.w = MAP_Y - 1;
+  for(int x = minMax.x; x < minMax.z; ++x){
+    for(int y = minMax.y; y < minMax.w; ++y){
       hare::map_node currentNode = fullMap[x + (MAP_X/2)][y + (MAP_Y/2)];
-      hare::cell currentCell = hare::cell();
-      currentCell.x = x;
-      currentCell.y = y;
-      currentCell.traversable = currentNode.traversable;
-      currentCell.explored = true;
-      currentCell.wallLeft = currentNode.walls.x;
-      currentCell.wallUp = currentNode.walls.y;
-      currentCell.wallDown = currentNode.walls.z;
-      currentCell.wallRight = currentNode.walls.w;
-      cells.push_back(currentCell);
+      region.push_back(currentNode);
     }
   }
-  return cells;
 }
 
 void hare::Robot::run(){
-  std_msgs::String str;
-  // float2 goal;
-  // float2 start;
-
-  geometry_msgs::Twist goal = geometry_msgs::Twist();
-  geometry_msgs::Twist start = geometry_msgs::Twist();
-
-  // start.x = 0;
-  // start.y = 0;
-  //
-  // goal.x = 0;
-  // goal.y = 0;
-
-
-  std::vector<float2>trajectory;
-
-  //this->my_state = my_state;
-  //this->neighbor_states = neighbor_states;
-
   hare::HareUpdate update;
   update.robot_id = this->id;
   update.tree_state.data = "starting";
+  ros::Rate loop_rate(50);
+
+  std::vector<hare::map_node> sensedRegion;
+  int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
+  float sensingRange = 1.0f; unsigned int step = 0; float3 currentPosition;
 
   while (ros::ok()){
-    //update.cellUpdate = this->sense(2.0f);
-    std::vector<hare::cell> cells = this->sense(2.0f);
-    //NOTE FAILS WHEN TRYING TO SEND CELLS
-    for(int i = 0; i < cells.size(); ++i){
-      update.cellUpdate.push_back(cells[i]);
+    //THIS NEEDS TO BE TRANSLATED FROM 0,0 to 200,200
+    currentPosition = {(this->odom.pose.pose.position.x*ODOM_TO_MAP)+MAP_X/2,
+      (this->odom.pose.pose.position.y*ODOM_TO_MAP)+MAP_Y/2,
+      (this->odom.pose.pose.position.z*ODOM_TO_MAP)};
+    //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
+    if(step != 0 &&
+    this->path[this->path.size()-1].x != currentPosition.x &&
+    this->path[this->path.size()-1].y != currentPosition.y){
+      sensedRegion.clear();
+      //TODO MAKE SURE THIS IS TRANSLATED TO OUR MAP COORDS
+      //SENSE WILL MAKE SURE THAT MIN AND MAX ARE WITHIN MAP BOUNDS
+      sensoryBound = {floor(currentPosition.x-sensingRange),
+        floor(currentPosition.y-sensingRange),
+        floor(currentPosition.x+sensingRange),
+        floor(currentPosition.y+sensingRange)
+      };
+      this->sense(sensedRegion,sensoryBound);
+      this->map->update(sensoryBound,sensedRegion);
+      this->path.push_back(currentPosition);
     }
+
+    update.cells.clear();
     update.robot_odom = this->odom;
-    //ros::Duration(0.5).sleep();
-    //FAILES HERE
-    this->publish<hare::HareUpdate>(update, "HARE_UPDATE");
-    // else{
-    //   ROS_ERROR("UPDATE FAILED FROM GLOBAL MAP");
-    // }
-    //ros::Duration(0.5).sleep();//wait for some messages
-
-    switch(this->tree_state)
-    {
-      case 1:
-        //DFS();
-        break;
-      case 2:
-        //msg = getPath(this->description, start, goal);
-        break;
-      case 3:
-        //DFS();
-        break;
-      default:
-        break;
+    for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
+      for(int y = sensoryBound.y; y < sensoryBound.w; ++y){
+        hare::cell _cell;
+        _cell.x = x;
+        _cell.y = y;
+        _cell.traversable = sensedRegion[i].traversable;
+        _cell.explored = sensedRegion[i].explored;
+        _cell.wallLeft = sensedRegion[i].walls.x;
+        _cell.wallUp = sensedRegion[i].walls.y;
+        _cell.wallDown = sensedRegion[i].walls.z;
+        _cell.wallRight = sensedRegion[i].walls.w;
+        update.cells.push_back(_cell);
+        ++i;
+      }
     }
+    this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
+    // switch(this->tree_state)
+    // {
+    //   case 1:
+    //     //DFS();
+    //     break;
+    //   case 2:
+    //     //msg = getPath(this->description, start, goal);
+    //     break;
+    //   case 3:
+    //     //DFS();
+    //     break;
+    //   default:
+    //     break;
+    // }
 
     ros::spinOnce();
+    loop_rate.sleep();
+    step++;
   }
 }
