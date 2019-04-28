@@ -128,7 +128,6 @@ for o in Ramps:
                 elif(c == 0):
                     wall = [-1,0,0,0]
                     val = 5
-                print(r,c,val)
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
