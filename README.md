@@ -1,6 +1,9 @@
 # HARE
 [Heterogeneous Autonomous Multirobot Exploration Ros Node](https://github.com/uga-ssrl/hare)
 
+
+You can read the in-progress [IEEE style paper](https://github.com/uga-ssrl/hare/blob/master/doc/hare-paper.pdf) at: https://github.com/uga-ssrl/hare/blob/master/doc/hare-paper.pdf, this is also located in this repo in the `doc` folder.
+
 --------
 # Dependencies
 **ros-behavior-tree**
