@@ -1,0 +1,129 @@
+
+
+\documentclass[journal]{IEEEtran}
+
+\usepackage[]{graphicx}    % We use this package in this document
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{subfiles}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz,tikz-3dplot}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+
+\newcommand{\ignore}[1]{}  % {} empty inside = %% comment
+\graphicspath{ {./pics/} }
+
+\ifCLASSINFOpdf
+\else
+\fi
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+\title{HARE title goes here}
+
+\author{Jackson~Parker,
+        Allen~Spain,
+        and~Caleb~Adams,
+        % \IEEEauthorblockA{\IEEEauthorrefmark{1}Department of Computer Science, University of Georgia, Athens, GA},
+        % \IEEEauthorblockA{\IEEEauthorrefmark{2}yee yee yee yee}
+        \thanks{Oof yeet on that asdf asdf asdf asdf asdf }
+        }
+
+% The paper headers
+\markboth{IEEE JOURNAL XXXX, VOL. XX, NO. XX, MONTH 20XX}%
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
+
+% \markboth{IEEE JOURNAL OF SELECTED TOPICS IN APPLIED EARTH OBSERVATIONS AND REMOTE SENSING, VOL. XX, NO. XX, MONTH 20XX}
+
+
+
+% If you want to put a publisher's ID mark on the page you can do it like
+% this:
+%\IEEEpubid{0000--0000/00\$00.00~\copyright~2015 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract or keywords.
+\begin{abstract}
+  This is our abstract. Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+  minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+  commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+  esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+  non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{abstract}
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+IEEE, IEEEtran, journal, \LaTeX, paper, template.
+\end{IEEEkeywords}
+
+
+\IEEEpeerreviewmaketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subfile{tex/intro}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example Section}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subfile{tex/example} %  <-- might be best to keep the example and remake some subfiles
+
+
+
+
+% use section* for acknowledgment
+\subfile{tex/appendix}
+% \section*{Acknowledgment}
+
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+\bibliographystyle{IEEEtran}
+% \bibliography{sources}
+\bibliography{IEEEabrv,sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
+
+
+\begin{IEEEbiography}{Michael Shell}
+Biography text here.
+\end{IEEEbiography}
+
+% if you will not have a photo at all:
+\begin{IEEEbiographynophoto}{John Doe}
+Biography text here.
+\end{IEEEbiographynophoto}
+
+% insert where needed to balance the two columns on the last page with
+% biographies
+%\newpage
+
+\begin{IEEEbiographynophoto}{Jane Doe}
+Biography text here.
+\end{IEEEbiographynophoto}
+
+
+\end{document}
