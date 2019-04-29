@@ -287,6 +287,7 @@ void hare::Robot::run(){
         hare::cell _cell;
         _cell.x = x;
         _cell.y = y;
+        _cell.characteristic = sensedRegion[i].characteristic;
         _cell.traversable = sensedRegion[i].traversable;
         _cell.explored = sensedRegion[i].explored;
         _cell.wallLeft = sensedRegion[i].walls.x;

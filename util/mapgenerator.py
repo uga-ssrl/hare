@@ -51,85 +51,109 @@ for r in range(200):
     AllCells.append([])
     for c in range(200):
         Obstacles[r].append(0)
-        AllCells[r].append([-1,'true','true',[0,0,0,0]])
+        AllCells[r].append([0,'true','true',[0,0,0,0]])
 
 obstacleID = 0
 val = 0
 for o in LargeTunnels:
-    wall = [2,2,2,2]
+    wall = [3,3,3,3]
     for i in range(4):
         o[0][i] *= 4
-    for r in range(int(o[0][1]-o[0][0])):
-        for c in range(int(o[0][3]-o[0][2])):
+    xdist = int(o[0][1]-o[0][0])
+    if(o[1] == 'h'):
+        xdist += 2
+    ydist = int(o[0][3]-o[0][2])
+    if(o[1] == 'v'):
+        ydist += 2
+    for r in range(xdist):
+        for c in range(ydist):
+            if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
+                continue
             val = 3
             if(o[1] == 'h'):
-                if(r == int(o[0][1]-o[0][0]) - 1):
-                    wall = [2,-1,2,2]
-                    val = 5
-                elif(r == 0):
-                    wall = [2,2,-1,2]
-                    val = 5
+                if(r >= int(o[0][1]-o[0][0])):
+                    wall = [3,-1,3,3]
+                    val = -1
+                elif(r <= 1):
+                    wall = [3,3,-1,3]
+                    val = -1
             elif(o[1] == 'v'):
-                if(c == int(o[0][3]-o[0][2]) - 1):
-                    wall = [2,2,2,-1]
-                    val = 5
-                elif(c == 0):
-                    wall = [-1,2,2,2]
-                    val = 5
+                if(c >= int(o[0][3]-o[0][2])):
+                    wall = [3,3,3,-1]
+                    val = -1
+                elif(c <= 1):
+                    wall = [-1,3,3,3]
+                    val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
-            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
 
 for o in SmallTunnels:
-    wall = [1,1,1,1]
+    wall = [2,2,2,2]
     for i in range(4):
         o[0][i] *= 4
-    for r in range(int(o[0][1]-o[0][0])):
-        for c in range(int(o[0][3]-o[0][2])):
+    xdist = int(o[0][1]-o[0][0])
+    if(o[1] == 'h'):
+        xdist += 2
+    ydist = int(o[0][3]-o[0][2])
+    if(o[1] == 'v'):
+        ydist += 2
+    for r in range(xdist):
+        for c in range(ydist):
+            if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
+                continue
             val = 2
             if(o[1] == 'h'):
-                if(r == int(o[0][1]-o[0][0]) - 1):
-                    wall = [1,-1,1,1]
-                    val = 5
-                elif(r == 0):
-                    wall = [1,1,-1,1]
-                    val = 5
+                if(r >= int(o[0][1]-o[0][0])):
+                    wall = [2,-1,2,2]
+                    val = -1
+                elif(r <= 1):
+                    wall = [2,2,-1,2]
+                    val = -1
             if(o[1] == 'v'):
-                if(c == int(o[0][3]-o[0][2]) - 1):
-                    wall = [1,1,1,-1]
-                    val = 5
-                elif(c == 0):
-                    wall = [-1,1,1,1]
-                    val = 5
+                if(c >= int(o[0][3]-o[0][2])):
+                    wall = [2,2,2,-1]
+                    val = -1
+                elif(c <= 1):
+                    wall = [-1,2,2,2]
+                    val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
-            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
 
 for o in Ramps:
-    wall = [0,0,0,0]
+    wall = [1,1,1,1]
     for i in range(4):
         o[0][i] *= 4
-    for r in range(int(o[0][1]-o[0][0])):
-        for c in range(int(o[0][3]-o[0][2])):
+    xdist = int(o[0][1]-o[0][0])
+    if(o[1] == 'h'):
+        xdist += 2
+    ydist = int(o[0][3]-o[0][2])
+    if(o[1] == 'v'):
+        ydist += 2
+    for r in range(xdist):
+        for c in range(ydist):
+            if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
+                continue
             val = 1
             if(o[1] == 'h'):
-                if(r == int(o[0][1]-o[0][0]) - 1):
-                    wall = [0,-1,0,0]
-                    val = 5
-                elif(r == 0):
-                    wall = [0,0,-1,0]
-                    val = 5
+                if(r >= int(o[0][1]-o[0][0])):
+                    wall = [1,-1,1,1]
+                    val = -1
+                elif(r <= 1):
+                    wall = [1,1,-1,1]
+                    val = -1
             if(o[1] == 'v'):
-                if(c == int(o[0][3]-o[0][2]) - 1):
-                    wall = [0,0,0,-1]
-                    val = 5
-                elif(c == 0):
-                    wall = [-1,0,0,0]
-                    val = 5
+                if(c >= int(o[0][3]-o[0][2])):
+                    wall = [1,1,1,-1]
+                    val = -1
+                elif(c <= 1):
+                    wall = [-1,1,1,1]
+                    val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
-            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = obstacleID
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
     obstacleID += 1
 

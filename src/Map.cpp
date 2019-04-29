@@ -1,6 +1,5 @@
 #include "Map.h"
 
-
 hare::Map::Map(std::string ns){
   this->ns = ns;
 }
@@ -15,23 +14,40 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      knownMap[i][j].characteristic = UNKNOWN;
-      knownMap[i][j].explored = false;
-      knownMap[i][j].traversable = false; //only valid if expored is true
+      this->knownMap[i][j].characteristic = UNKNOWN;
+      this->knownMap[i][j].explored = false;
+      this->knownMap[i][j].traversable = false; //only valid if expored is true
     }
   }
 }
 
+
+//WARNING THIS ASSUMES THAT ODOM_TO_MAP tf is needed
 // update the map
-void hare::Map::update(int2 location, int description){
-  knownMap[location.x][location.y].walls = {description,description,description,description};
-  knownMap[location.x][location.y].explored = true;
+void hare::Map::update(float2 location, int characteristic){
+  int2 insert;
+  insert.x = (int) (ODOM_TO_MAP * location.x);
+  insert.y = (int) (ODOM_TO_MAP * location.y);
+  this->knownMap[insert.x][insert.y].walls = {characteristic,characteristic,characteristic,characteristic};
+  this->knownMap[insert.x][insert.y].characteristic = characteristic;
+  this->knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
-  knownMap[location.x][location.y].traversable = true; //check if traversable
+  this->knownMap[insert.x][insert.y].traversable = true; //check if traversable
 }
+
+// update the map
+void hare::Map::update(int2 location, int characteristic) {
+  this->knownMap[location.x][location.y].explored = true;
+  this->knownMap[location.x][location.y].characteristic = characteristic;
+  this->knownMap[location.x][location.y].walls = {characteristic,characteristic,characteristic,characteristic};
+  // TODO make sure robots can only traverse what they really can
+  this->knownMap[location.x][location.y].traversable = true; //check if traversable
+}
+
 void hare::Map::update(int2 location, const map_node& _node){
   knownMap[location.x][location.y] = _node;
 }
+
 void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
   int currentElement = 0;
   for(int x = minMax.x; x < minMax.z; ++x){
@@ -40,6 +56,7 @@ void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& re
     }
   }
 }
+
 void hare::Map::update(const hare::cell &_cell){
   int2 location = {_cell.x,_cell.y};
   this->knownMap[location.x][location.y].traversable = _cell.traversable;
@@ -52,6 +69,26 @@ void hare::Map::update(const hare::cell &_cell){
 void hare::Map::setNamespace(std::string ns){
   this->ns = ns;
 }
+
+// save the map file as an image!
+void hare::Map::saveAsString(std::string path){
+  std::ofstream myfile;
+  myfile.open (path);
+  // start at one, end after 1
+  for (int i = 1; i < (MAP_X - 1); i++){
+    for (int j = 1; j < (MAP_Y - 1); j++){
+      if (knownMap[i][j].explored){
+        myfile << knownMap[i][j].characteristic;
+        if (j < (MAP_Y - 2)) myfile << ",";
+      } else {
+        myfile << "-2";
+        if (j < (MAP_Y - 2)) myfile << ",";
+      }
+    }
+    myfile << "\n";
+  }
+}
+
 
 // Greedy heuristic algorithm
 // returns linear spline path

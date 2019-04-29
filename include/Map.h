@@ -5,6 +5,8 @@
 #include "utility.h"
 #include "HareMap.h"
 #include <hare/cell.h>
+#include <string>
+#include <fstream>
 #include <hare/HareUpdate.h>
 
 
@@ -30,12 +32,17 @@ namespace hare{
     void setNamespace(std::string ns);
 
     // updates the map at each timestep or tick or whatever
-    void update(int2 location, int description);
+
+    //WARNING float2 update is the only methods that transforms location using ODOM_TO_MAP
+    void update(float2 location, int characteristic);
+    void update(int2 location, int characteristic);
     void update(int2 location, const map_node& _node);
     void update(const int4& minMax, const std::vector<map_node>& region);
     void update(const hare::cell &_cell);
 
-
+    // for testing and such
+    // path includes name
+    void saveAsString(std::string path);
 
     // A* algorithm
     // returns linear spline path
