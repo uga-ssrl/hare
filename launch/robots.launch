@@ -49,10 +49,11 @@
     <param name="init_y"  value="3.0"/>
     <param name="init_z"  value="0.07"/>
 
-    <rosparam command="load" file="$(find joint_state_controller)/joint_state_controller.yaml" />
-    <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="joint_state_controller" />
-
     <param name="robot_description" command="$(find xacro)/xacro.py '$(find rosbot_description)/urdf/rosbot.xacro'"/>
+
+    <rosparam command="load" file="$(find hare)/config/rosbot_joint_state_controller.yaml" />
+    <node name="joint_state_controller_spawner" pkg="controller_manager" respawn="false" type="spawner" output="screen" args="joint_state_controller" />
+
 
   </group>
 

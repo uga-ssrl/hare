@@ -23,32 +23,29 @@ void hare::Map::initializeMap(){
 }
 
 // update the map
-void hare::Map::updateMap(float2 location, int description){
-  int2 insert;
-  insert.x = (int) (ODOM_TO_MAP * location.x);
-  insert.y = (int) (ODOM_TO_MAP * location.y);
-  knownMap[insert.x][insert.y].walls = {description,description,description,description};
-
-  knownMap[insert.x][insert.y].explored = true;
+void hare::Map::update(int2 location, int description){
+  knownMap[location.x][location.y].walls = {description,description,description,description};
+  knownMap[location.x][location.y].explored = true;
   // TODO make sure robots can only traverse what they really can
-  knownMap[insert.x][insert.y].traversable = true; //check if traversable
+  knownMap[location.x][location.y].traversable = true; //check if traversable
 }
-void hare::Map::updateMap(int2 location, hare::map_node* mnode){
-  knownMap[location.x][location.y] = *mnode;
+void hare::Map::update(int2 location, const map_node& _node){
+  knownMap[location.x][location.y] = _node;
 }
-void hare::Map::updateMap(hare::cellConstPtr cell){
-  int2 loc = {cell->x,cell->y};
-  knownMap[loc.x][loc.y].explored = cell->explored;
-  knownMap[loc.x][loc.y].traversable = cell->traversable;
-  knownMap[loc.x][loc.y].walls = {cell->wallLeft,cell->wallUp,cell->wallDown,cell->wallRight};
-}
-void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
-  for(auto cell = cells.begin(); cell != cells.end(); ++cell){
-    int2 loc = {(*cell)->x,(*cell)->y};
-    knownMap[loc.x][loc.y].explored = (*cell)->explored;
-    knownMap[loc.x][loc.y].traversable = (*cell)->traversable;
-    knownMap[loc.x][loc.y].walls = {(*cell)->wallLeft,(*cell)->wallUp,(*cell)->wallDown,(*cell)->wallRight};
+void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
+  int currentElement = 0;
+  for(int x = minMax.x; x < minMax.z; ++x){
+    for(int y = minMax.y; y < minMax.w; ++y){
+      this->knownMap[x][y] = region[currentElement++];
+    }
   }
+}
+void hare::Map::update(const hare::cell &_cell){
+  int2 location = {_cell.x,_cell.y};
+  this->knownMap[location.x][location.y].traversable = _cell.traversable;
+  this->knownMap[location.x][location.y].explored = _cell.explored;
+  this->knownMap[location.x][location.y].walls = {_cell.wallLeft,_cell.wallUp,
+    _cell.wallDown,_cell.wallRight};
 }
 
 // set the robot
@@ -108,7 +105,6 @@ std::vector<hare::pq_node> hare::Map::getPath(uint8_t* capabilities, float2 _sta
 float hare::Map::euclid(float2 a, float2 b){
   return sqrt((a.x - b.x)*(a.x - b.x)  + (a.y - b.y)*(a.y - b.y));
 }
-
 
 // insert into priority queue
 void hare::Map::insert_pq(hare::pq_node n, float h){
