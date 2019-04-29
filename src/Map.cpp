@@ -14,59 +14,34 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      knownMap[i][j].characteristic = UNKNOWN;
-      knownMap[i][j].explored = false;
-      knownMap[i][j].traversable = false; //only valid if expored is true
+      this->knownMap[i][j].characteristic = UNKNOWN;
+      this->knownMap[i][j].explored = false;
+      this->knownMap[i][j].traversable = false; //only valid if expored is true
     }
   }
 }
 
-// update the map
 
-void hare::Map::updateMap(float2 location, int description){
+//WARNING THIS ASSUMES THAT ODOM_TO_MAP tf is needed
+// update the map
+void hare::Map::update(float2 location, int characteristic){
   int2 insert;
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
-  knownMap[insert.x][insert.y].walls = {description,description,description,description};
-  knownMap[insert.x][insert.y].explored = true;
+  this->knownMap[insert.x][insert.y].walls = {characteristic,characteristic,characteristic,characteristic};
+  this->knownMap[insert.x][insert.y].characteristic = characteristic;
+  this->knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
-  knownMap[insert.x][insert.y].traversable = true; //check if traversable
+  this->knownMap[insert.x][insert.y].traversable = true; //check if traversable
 }
 
 // update the map
-void hare::Map::updateMap(int2 insert, int description) {
-  knownMap[insert.x][insert.y].explored = true;
-  knownMap[insert.x][insert.y].characteristic = description;
+void hare::Map::update(int2 location, int characteristic) {
+  this->knownMap[location.x][location.y].explored = true;
+  this->knownMap[location.x][location.y].characteristic = characteristic;
+  this->knownMap[location.x][location.y].walls = {characteristic,characteristic,characteristic,characteristic};
   // TODO make sure robots can only traverse what they really can
-  knownMap[insert.x][insert.y].traversable = true; //check if traversable
-}
-
-// use this boi
-void hare::Map::updateMap(int2 location, hare::map_node* mnode){
-  knownMap[location.x][location.y] = *mnode;
-}
-
-void hare::Map::updateMap(hare::cellConstPtr cell){
-  int2 loc = {cell->x,cell->y};
-  knownMap[loc.x][loc.y].explored = cell->explored;
-  knownMap[loc.x][loc.y].traversable = cell->traversable;
-  knownMap[loc.x][loc.y].walls = {cell->wallLeft,cell->wallUp,cell->wallDown,cell->wallRight};
-}
-
-void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
-  for(auto cell = cells.begin(); cell != cells.end(); ++cell){
-    int2 loc = {(*cell)->x,(*cell)->y};
-    knownMap[loc.x][loc.y].explored = (*cell)->explored;
-    knownMap[loc.x][loc.y].traversable = (*cell)->traversable;
-    knownMap[loc.x][loc.y].walls = {(*cell)->wallLeft,(*cell)->wallUp,(*cell)->wallDown,(*cell)->wallRight};
-  }
-}
-
-void hare::Map::update(int2 location, int description){
-  knownMap[location.x][location.y].walls = {description,description,description,description};
-  knownMap[location.x][location.y].explored = true;
-  // TODO make sure robots can only traverse what they really can
-  knownMap[location.x][location.y].traversable = true; //check if traversable
+  this->knownMap[location.x][location.y].traversable = true; //check if traversable
 }
 
 void hare::Map::update(int2 location, const map_node& _node){

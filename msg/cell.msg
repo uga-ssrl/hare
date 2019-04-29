@@ -1,5 +1,6 @@
 int32 x
 int32 y
+int32 characteristic
 bool traversable
 bool explored
 int8 wallLeft
