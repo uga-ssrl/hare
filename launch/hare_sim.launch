@@ -2,8 +2,10 @@
   <!-- include world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" value="$(find hare)/world/test.world"/>
+      <arg name="use_sim_time" value="true"/>
   </include>
-
+  <arg name="node_start_delay" default="1.0" />
+  <node name="listener" pkg="roscpp_tutorials" type="listener" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
   <!-- include our robots -->
   <include file="$(find hare)/launch/robots.launch"/>
 

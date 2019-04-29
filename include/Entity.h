@@ -7,6 +7,8 @@
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
 #include "Map.h"
 
 namespace hare{
@@ -27,7 +29,9 @@ namespace hare{
 
   public:
     EntityDescription description;
+
     nav_msgs::Odometry odom;
+
     std::string state_indicator;
     std::string ns;
     int id;
@@ -42,7 +46,6 @@ namespace hare{
 
   public:
     RobotDescription description;
-    float velocity;
 
     Neighbor();
     Neighbor(std::string ns);
@@ -53,9 +56,8 @@ namespace hare{
   class Robot : public Entity{
 
     uint32_t queue_size;
-
     Map* map;
-    std::vector<float2> path;
+    std::vector<float3> path;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
@@ -69,39 +71,38 @@ namespace hare{
     void initPublishers();
     void initSubscribers();
 
-    std::vector<hare::cellPtr> sense(float range = 1.0f);//range in cell count
+    //minMax is in form of fullMap indices
+    //NOTE the sensed region is from the pos of robot odom
+    void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
   public:
 
     RobotDescription description;
-    float velocity;
-    float3 orientation;
     int tree_state;
     int4 linear;
-
-
     std::vector<Neighbor> neighbors;
 
     Robot();
+    //NOTE INITIAL POSITIONS SET AS PARAMETERS IN LAUNCH FILES
+    //ARE TRANSLATED IN THE FOLLOWING CONSTRUCTOR
     Robot(ros::NodeHandle nh);
     ~Robot();
 
     void setQueueSize(uint32_t queue_size);
-
     void init();
 
     //TODO implement all callbacks
     void callback(const std_msgs::StringConstPtr& msg);
     void callback(const hare::HareUpdateConstPtr& msg);
     void callback(const nav_msgs::OdometryConstPtr& msg);
-
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
+    //NECESSITATES THAT ROBOT
+    //NOTE NEIGHBORING ROBOTS INITIAL POSITION IS SET IN FIRST LOOP
     void run();
 
     template <typename T>
     void publish(T message, std::string topic);
-
   };
   template <typename T>
   void Robot::publish(T message, std::string topic){

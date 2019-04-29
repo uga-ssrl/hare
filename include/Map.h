@@ -5,8 +5,12 @@
 #include "utility.h"
 #include "HareMap.h"
 #include <hare/cell.h>
+<<<<<<< HEAD
 #include <string>
 #include <fstream>
+=======
+#include <hare/HareUpdate.h>
+>>>>>>> 9d1db657130b0e1543a3c6e09de9e1b170036665
 
 
 namespace hare{
@@ -31,11 +35,17 @@ namespace hare{
     void setNamespace(std::string ns);
 
     // updates the map at each timestep or tick or whatever
+
     void updateMap(float2 location, int description);
     void updateMap(int2 insert, int description);
     void updateMap(int2 location, map_node* mnode);
     void updateMap(cellConstPtr cell);
     void updateMap(std::vector<cellConstPtr> cells);
+
+    void update(int2 location, int description);
+    void update(int2 location, const map_node& _node);
+    void update(const int4& minMax, const std::vector<map_node>& region);
+    void update(const hare::cell &_cell);
 
     // for testing and such
     // path includes name
