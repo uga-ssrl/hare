@@ -59,6 +59,7 @@ namespace hare{
     Map* map;
     std::vector<float3> path;
 
+
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
     std::vector<ros::Publisher> publishers;
@@ -74,6 +75,17 @@ namespace hare{
     //minMax is in form of fullMap indices
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
+
+    //HARE OPERABLE METHODS
+    //TODO implement and test
+    void investigateObject();//wall follow
+    void findCapableNeighbor();//determine who can maneuver
+    void notifyNeighbor();//tell neighbor that there is an obstacle it should visit
+    void switchWithNeighbor(); //switch locations with neighbor
+    void search();//heuristic search
+
+    bool isDone();//no more unexplored cells
+
 
   public:
 
