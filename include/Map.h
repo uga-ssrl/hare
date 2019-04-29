@@ -5,12 +5,9 @@
 #include "utility.h"
 #include "HareMap.h"
 #include <hare/cell.h>
-<<<<<<< HEAD
 #include <string>
 #include <fstream>
-=======
 #include <hare/HareUpdate.h>
->>>>>>> 9d1db657130b0e1543a3c6e09de9e1b170036665
 
 
 namespace hare{
