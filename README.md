@@ -26,6 +26,7 @@
 
 
 **robot2**
+- update update rate to 50 at line 5 of rosbot.gazebo
 - in /path/to/catkin_ws/src/ ```git clone  https://github.com/husarion/rosbot_description.git```
 - in /path/to/rosbot_description/urdf/rosbot.gazebo find the following commented line and follow the instructions to not use GPU ```  <!-- If you cant't use your GPU comment RpLidar using GPU and uncomment RpLidar using CPU
     gazebo plugin. -->```

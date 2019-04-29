@@ -215,10 +215,8 @@ void hare::Robot::callback(const std_msgs::StringConstPtr& msg){
 void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
   this->odom.header = msg->header;
   this->odom.child_frame_id = msg->child_frame_id;
+  this->odom.pose = msg->pose;
   this->odom.twist = msg->twist;
-  // this->odom.pose = msg->pose;
-  // this->odom.pose.pose.position.x = msg->pose.pose.position.x;
-  // printf("%f,%f,%f\n",msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
 }
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   //UPDATE MAP BASED ON CELLS
@@ -228,7 +226,7 @@ void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   }
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     if((*neighbor).id == msg->robot_id){
-      (*neighbor).odom = msg->robot_odom;
+      (*neighbor).odom = msg->odom;
       (*neighbor).state_indicator = msg->tree_state.data;
       break;
     }
@@ -246,7 +244,7 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   if(minMax.w > MAP_Y) minMax.w = MAP_Y - 1;
   for(int x = minMax.x; x < minMax.z; ++x){
     for(int y = minMax.y; y < minMax.w; ++y){
-      hare::map_node currentNode = fullMap[x + (MAP_X/2)][y + (MAP_Y/2)];
+      hare::map_node currentNode = fullMap[x][y];
       region.push_back(currentNode);
     }
   }
@@ -256,7 +254,6 @@ void hare::Robot::run(){
   hare::HareUpdate update;
   update.robot_id = this->id;
   update.tree_state.data = "starting";
-  ros::Rate loop_rate(50);
 
   std::vector<hare::map_node> sensedRegion;
   int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
@@ -271,9 +268,8 @@ void hare::Robot::run(){
     if(step != 0 &&
     this->path[this->path.size()-1].x != currentPosition.x &&
     this->path[this->path.size()-1].y != currentPosition.y){
+      update.odom = this->odom;
       sensedRegion.clear();
-      //TODO MAKE SURE THIS IS TRANSLATED TO OUR MAP COORDS
-      //SENSE WILL MAKE SURE THAT MIN AND MAX ARE WITHIN MAP BOUNDS
       sensoryBound = {floor(currentPosition.x-sensingRange),
         floor(currentPosition.y-sensingRange),
         floor(currentPosition.x+sensingRange),
@@ -284,8 +280,8 @@ void hare::Robot::run(){
       this->path.push_back(currentPosition);
     }
 
+
     update.cells.clear();
-    update.robot_odom = this->odom;
     for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
       for(int y = sensoryBound.y; y < sensoryBound.w; ++y){
         hare::cell _cell;
@@ -303,23 +299,9 @@ void hare::Robot::run(){
     }
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
-    // switch(this->tree_state)
-    // {
-    //   case 1:
-    //     //DFS();
-    //     break;
-    //   case 2:
-    //     //msg = getPath(this->description, start, goal);
-    //     break;
-    //   case 3:
-    //     //DFS();
-    //     break;
-    //   default:
-    //     break;
-    // }
+    //TREE STUFF
 
     ros::spinOnce();
-    loop_rate.sleep();
     step++;
   }
 }

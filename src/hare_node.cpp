@@ -7,9 +7,7 @@ int main(int argc, char **argv){
 
   hare::Robot robot = hare::Robot(nh);
   robot.setQueueSize(1000);
-  ros::Duration(5).sleep();
   robot.init();
-  ros::Duration(0.5).sleep();
   robot.run();
   return 0;
 }

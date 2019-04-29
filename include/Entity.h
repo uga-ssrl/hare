@@ -7,6 +7,8 @@
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
 #include "Map.h"
 
 namespace hare{
@@ -27,7 +29,9 @@ namespace hare{
 
   public:
     EntityDescription description;
+
     nav_msgs::Odometry odom;
+
     std::string state_indicator;
     std::string ns;
     int id;
