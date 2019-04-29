@@ -194,3 +194,12 @@ with open('./hare.map', 'w+') as map:
         if(r != 199):
             str += ','
         map.write(str)
+
+with open('./hare.cpp.map', 'w+') as map:
+    for r in range(200):
+        for c in range(200):
+            str += "%s" % AllCells[r][c][0]
+            if(c != 199):
+                str += ','
+        str += '\n'
+        map.write(str)
