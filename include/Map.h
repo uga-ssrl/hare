@@ -5,6 +5,8 @@
 #include "utility.h"
 #include "HareMap.h"
 #include <hare/cell.h>
+#include <string>
+#include <fstream>
 
 
 namespace hare{
@@ -30,10 +32,14 @@ namespace hare{
 
     // updates the map at each timestep or tick or whatever
     void updateMap(float2 location, int description);
+    void updateMap(int2 insert, int description);
     void updateMap(int2 location, map_node* mnode);
     void updateMap(cellConstPtr cell);
     void updateMap(std::vector<cellConstPtr> cells);
 
+    // for testing and such
+    // path includes name
+    void saveAsString(std::string path);
 
     // A* algorithm
     // returns linear spline path

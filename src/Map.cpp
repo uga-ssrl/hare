@@ -1,6 +1,5 @@
 #include "Map.h"
 
-
 hare::Map::Map(std::string ns){
   this->ns = ns;
 }
@@ -28,20 +27,31 @@ void hare::Map::updateMap(float2 location, int description){
   insert.x = (int) (ODOM_TO_MAP * location.x);
   insert.y = (int) (ODOM_TO_MAP * location.y);
   knownMap[insert.x][insert.y].walls = {description,description,description,description};
-
   knownMap[insert.x][insert.y].explored = true;
   // TODO make sure robots can only traverse what they really can
   knownMap[insert.x][insert.y].traversable = true; //check if traversable
 }
+
+// update the map
+void hare::Map::updateMap(int2 insert, int description) {
+  knownMap[insert.x][insert.y].explored = true;
+  knownMap[insert.x][insert.y].characteristic = description;
+  // TODO make sure robots can only traverse what they really can
+  knownMap[insert.x][insert.y].traversable = true; //check if traversable
+}
+
+// use this boi
 void hare::Map::updateMap(int2 location, hare::map_node* mnode){
   knownMap[location.x][location.y] = *mnode;
 }
+
 void hare::Map::updateMap(hare::cellConstPtr cell){
   int2 loc = {cell->x,cell->y};
   knownMap[loc.x][loc.y].explored = cell->explored;
   knownMap[loc.x][loc.y].traversable = cell->traversable;
   knownMap[loc.x][loc.y].walls = {cell->wallLeft,cell->wallUp,cell->wallDown,cell->wallRight};
 }
+
 void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
   for(auto cell = cells.begin(); cell != cells.end(); ++cell){
     int2 loc = {(*cell)->x,(*cell)->y};
@@ -55,6 +65,26 @@ void hare::Map::updateMap(std::vector<hare::cellConstPtr> cells){
 void hare::Map::setNamespace(std::string ns){
   this->ns = ns;
 }
+
+// save the map file as an image!
+void hare::Map::saveAsString(std::string path){
+  std::ofstream myfile;
+  myfile.open (path);
+  // start at one, end after 1
+  for (int i = 1; i < (MAP_X - 1); i++){
+    for (int j = 1; j < (MAP_Y - 1); j++){
+      if (knownMap[i][j].explored){
+        myfile << knownMap[i][j].characteristic;
+        if (j < (MAP_Y - 2)) myfile << ",";
+      } else {
+        myfile << "-2";
+        if (j < (MAP_Y - 2)) myfile << ",";
+      }
+    }
+    myfile << "\n";
+  }
+}
+
 
 // Greedy heuristic algorithm
 // returns linear spline path

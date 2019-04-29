@@ -159,3 +159,23 @@ with open('./hare.map', 'w+') as map:
         if(r != 199):
             str += ','
         map.write(str)
+
+# this is for c++ parsing
+# each line is 200 cells
+# each cell has 2 properties
+# comma delemited
+with open('./hare.cpp.map', 'w+') as map:
+    for r in range(200):
+        str = ''
+        for c in range(200):
+            str+= "%s" % AllCells[r][c][3][0]
+            str +=','
+            str += "%s" % AllCells[r][c][3][1]
+            str +=','
+            str += "%s" % AllCells[r][c][3][2]
+            str +=','
+            str += "%s" % AllCells[r][c][3][3]
+            if(c != 199):
+                str += ','
+        str += '\n'
+        map.write(str)
