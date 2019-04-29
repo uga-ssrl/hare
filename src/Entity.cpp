@@ -178,10 +178,8 @@ bool hare::Robot::addSubscriber(ros::Subscriber &sub){
 void hare::Robot::initPublishers(){
   ros::Publisher twist_pub = this->nh.advertise<geometry_msgs::Twist>("goal", this->queue_size);
   this->addPublisher(twist_pub);
-  // ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
-  // this->addPublisher(hareUpdate_pub);
-  ros::Publisher cmdVel_pub = this->nh.advertise<geometry_msgs::Twist>("cmd_vel",this->queue_size);
-  this->addPublisher(cmdVel_pub);
+  ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
+  this->addPublisher(hareUpdate_pub);
 }
 void hare::Robot::initSubscribers(){
   //single point subscriptions
