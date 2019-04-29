@@ -20,8 +20,9 @@ namespace hare{
     int characteristic;
     bool explored;
     bool traversable;
-    int4 walls;
+    int4 walls;//-1 == wall, 0 == no wall, 1 == short entrance, 2 == large entrance
   } map_node;
+  //walls.x = left, walls.y = up, walls.z = down, walls.w = right
   typedef struct pq_node{
     int x;
     int y;
