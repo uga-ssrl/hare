@@ -22,7 +22,6 @@ void hare::Map::initializeMap(){
   }
 }
 
-
 // update the map
 void hare::Map::updateMap(float2 location, int description){
   int2 insert;
