@@ -6,6 +6,7 @@
 #include "HareMap.h"
 #include <hare/cell.h>
 #include <string>
+#include <queue>
 #include <fstream>
 #include <hare/HareUpdate.h>
 
@@ -19,9 +20,14 @@ namespace hare{
     std::vector<pq_node> frontier;
     std::vector<pq_node> from;
 
+    // std::vector<int2> i2_path;
+    // std::queue<vector<int> > queue;
+    // std::vector<int2> i2_frontier;
+
   public:
 
     map_node knownMap[MAP_X][MAP_Y];
+    int h_map[MAP_X][MAP_Y];
 
     Map();
     Map(std::string ns);
@@ -38,7 +44,9 @@ namespace hare{
     // updates the map at each timestep or tick or whatever
 
     void update(int2 location, int terrain);
+    void update_debug(int2 location, int terrain);
     void update(int2 location, map_node& node);
+    void update_debug(int2 location, map_node& node);
     void update(const int4& minMax, const std::vector<map_node>& region);
     void update(const hare::cell &_cell);
 
@@ -46,9 +54,11 @@ namespace hare{
     // path includes name
     void saveAsString(std::string path);
 
-    // A* algorithm
-    // returns linear spline path
+    // returns path from goal to start
     std::vector<pq_node> getPath(int2 start, int2 goal);
+
+    // returns path from goal to start
+    pq_node getNextToExplore(int2 start);
 
 
   private:
@@ -61,6 +71,10 @@ namespace hare{
 
     // see if a node is in the priority queue
     bool isIn(pq_node n);
+
+    bool isValid(int2 n);
+
+    int manhattan(int2 a, int2 b);
 
   };
 }

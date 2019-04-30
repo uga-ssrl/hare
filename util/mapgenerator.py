@@ -203,6 +203,7 @@ with open('./HareMap.cpp', 'w+') as map:
             str += "%s" % AllCells[r][c][3][2]
             str +=','
             str += "%s" % AllCells[r][c][3][3]
+            str +=',false'
             str += '}}'
             if(c != 199):
                 str += ','
