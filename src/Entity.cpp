@@ -181,6 +181,11 @@ void hare::Robot::callback(const nav_msgs::OdometryConstPtr& msg){
   this->odom.child_frame_id = msg->child_frame_id;
   this->odom.pose = msg->pose;
   this->odom.twist = msg->twist;
+  float2 odomCoord = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  if(!withinBounds(odomCoord)){
+    this->stop();
+    this->treeState = IDLE;
+  }
 }
 void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   //UPDATE MAP BASED ON CELLS
@@ -218,10 +223,22 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-void hare::Robot::goUp(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y+step};
+void hare::Robot::rotate(float3 angular){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::go(float2 linear, float2 angular){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::go(float3 linear, float3 angular){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.x = linear.x;
   cmdVel.linear.y = linear.y;
@@ -231,43 +248,24 @@ void hare::Robot::goUp(float3 linear, float3 angular){
   cmdVel.angular.z = angular.z;
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
-void hare::Robot::goDown(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y-step};
+void hare::Robot::goUp(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = linear.x;
-  cmdVel.linear.y = linear.y;
-  cmdVel.linear.z = linear.z;
-  cmdVel.angular.x = angular.x;
-  cmdVel.angular.y = angular.y;
-  cmdVel.angular.z = angular.z;
+  cmdVel.linear.y = abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
-void hare::Robot::goRight(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x+step,start.y};
+void hare::Robot::goDown(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = linear.x;
-  cmdVel.linear.y = linear.y;
-  cmdVel.linear.z = linear.z;
-  cmdVel.angular.x = angular.x;
-  cmdVel.angular.y = angular.y;
-  cmdVel.angular.z = angular.z;
+  cmdVel.linear.y = -1.0f*abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
-void hare::Robot::goLeft(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x-step,start.y};
+void hare::Robot::goRight(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = linear.x;
-  cmdVel.linear.y = linear.y;
-  cmdVel.linear.z = linear.z;
-  cmdVel.angular.x = angular.x;
-  cmdVel.angular.y = angular.y;
-  cmdVel.angular.z = angular.z;
+  cmdVel.linear.x = abs(rate);
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goLeft(float rate){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = -1.0f*abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
 void hare::Robot::stop(){
@@ -280,22 +278,86 @@ void hare::Robot::stop(){
   cmdVel.angular.z = 0.0f;
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
+void hare::Robot::stop(float delay){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = 0.0f;
+  cmdVel.linear.y = 0.0f;
+  cmdVel.linear.z = 0.0f;
+  cmdVel.angular.x = 0.0f;
+  cmdVel.angular.y = 0.0f;
+  cmdVel.angular.z = 0.0f;
+  ros::Duration(delay).sleep();
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
 
-//TODO develop
+void hare::Robot::setIntialDispersionGoal(){
+  float2 centroid = {0.0f,0.0f};
+  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+    centroid.x += (*neighbor).odom.pose.pose.position.x;
+    centroid.y += (*neighbor).odom.pose.pose.position.y;
+  }
+  centroid.x /= this->neighbors.size();
+  centroid.y /= this->neighbors.size();
+  float2 v = {centroid.x-this->odom.pose.pose.position.x,centroid.y-this->odom.pose.pose.position.y};
+  int2 mapVal = odomToMap(v);
+  if(mapVal.x < 0) mapVal.x = 0;
+  if(mapVal.x >= MAP_X) mapVal.x = MAP_X;
+  if(mapVal.y < 0) mapVal.y = 0;
+  if(mapVal.y >= MAP_Y) mapVal.y = MAP_Y;
+  this->goals.push_back(mapVal);
+}
 void hare::Robot::investigateObject(){
 
 }
-void hare::Robot::findCapableNeighbor(){
-
+//TODO Fix this does nothing as it is too far away from the best node
+void hare::Robot::search(std::vector<pq_node>& gbf){
+  int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
+  if(this->goals.size() && manhattan(this->goals.front(), currentPosition) < 4){
+    this->treeState = DONE;
+    return;
+  }
+  pq_node imidiateTarget;
+  for(auto p = gbf.begin(); p != gbf.end(); ++p){
+    if((*p).h < imidiateTarget.h){
+      imidiateTarget = (*p);
+    }
+  }
+  float2 filler = {0.0f,0.0f};
+  this->go(mapToOdom({imidiateTarget.x,imidiateTarget.y}),filler);
 }
-void hare::Robot::notifyNeighbor(){
-
-}
-void hare::Robot::switchWithNeighbor(){
-
-}
-void hare::Robot::search(){
-
+void hare::Robot::search(std::vector<map_node>& sensedRegion, int4 minMax){
+  int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
+  int2 weighting = {0,0};
+  int i = 0;
+  for(int x = minMax.x; x < minMax.z; ++x){
+    for(int y = minMax.y; y < minMax.w; ++y, ++i){
+      if(find(this->description.terrain.begin(), this->description.terrain.end(), sensedRegion[i].terrain) != this->description.terrain.end()){
+        if(x < currentPosition.x) --weighting.x;
+        else ++weighting.x;
+        if(y < currentPosition.y) --weighting.y;
+        else ++weighting.y;
+      }
+      else{
+        sensedRegion[i].traversable = false;
+        if(x < currentPosition.x) weighting.x += 2;
+        else weighting.x -= 2;
+        if(y < currentPosition.y) weighting.y += 2;
+        else weighting.y -= 2;
+      }
+    }
+  }
+  while(currentPosition.x == (ODOM_TO_MAP*this->odom.pose.pose.position.x) + MAP_X/2 && currentPosition.y == (ODOM_TO_MAP*this->odom.pose.pose.position.y) + MAP_Y/2){
+    if(abs(weighting.x) > abs(weighting.y)){
+      weighting.x /=2;
+      if(weighting.x > 0) this->goRight();
+      else this->goLeft();
+    }
+    else{
+      weighting.y /=2;
+      if(weighting.y > 0) this->goUp();
+      else this->goDown();
+    }
+  }
 }
 bool hare::Robot::isDone(){
   for(int r = 0; r < MAP_X; ++r){
@@ -308,6 +370,9 @@ bool hare::Robot::isDone(){
   return true;
 }
 
+//TODO to record how rapid cell discovery is happening
+//TODO make search use sensed area
+
 void hare::Robot::run(){
   hare::HareUpdate update;
   update.robot_id = this->id;
@@ -317,15 +382,16 @@ void hare::Robot::run(){
   this->treeState = SEARCH;
   bool done = false;
   unsigned int step = 0;
-  int2 currentPosition;
+  int2 currentPosition = odomToMap(this->odom.pose.pose.position.x,
+    this->odom.pose.pose.position.y);
   int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
-  float sensingRange = 1.0f;
+  float sensingRange = 4.0f;
   this->path.clear();
   this->goals.clear();
+  this->setIntialDispersionGoal();
+  std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,this->goals.front());
 
-  //TODO ensure that husky is not out of coordinated frame (if initial pos out
-  //of 0 0 then the odom will be wrong
-
+  ros::Rate r(50);//Hz
 
   while (ros::ok()){
 
@@ -333,20 +399,19 @@ void hare::Robot::run(){
       this->odom.pose.pose.position.y);
 
     //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
-    if(step == 0) this->path.push_back(currentPosition);
-    else if(this->path[this->path.size()-1].x != currentPosition.x &&
-    this->path[this->path.size()-1].y != currentPosition.y){
-      update.odom = this->odom;
-      sensedRegion.clear();
-      sensoryBound = {floor(currentPosition.x-sensingRange),
-        floor(currentPosition.y-sensingRange),
-        floor(currentPosition.x+sensingRange),
-        floor(currentPosition.y+sensingRange)
-      };
-      this->sense(sensedRegion,sensoryBound);
-      this->map->update(sensoryBound,sensedRegion);
-      this->path.push_back(currentPosition);
-    }
+    update.odom = this->odom;
+    sensedRegion.clear();
+    sensoryBound = {floor(currentPosition.x-sensingRange),
+      floor(currentPosition.y-sensingRange),
+      floor(currentPosition.x+sensingRange),
+      floor(currentPosition.y+sensingRange)
+    };
+    this->sense(sensedRegion,sensoryBound);
+    this->map->update(sensoryBound,sensedRegion);
+    this->path.push_back(currentPosition);
+
+
+    //TEST NOTE NOTE NOTE
 
     update.cells.clear();
     for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
@@ -378,32 +443,34 @@ void hare::Robot::run(){
 
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
+    this->search(sensedRegion,sensoryBound);
+
     //TREE STUFF
-    switch(this->treeState){
-      case IDLE:{//something is wrong
-        break;
-      }
-      case SEARCH:{//simple searching
-        this->goLeft();
-        if(step == 20) this->treeState = IDLE;
-        break;
-      }
-      case RIDE:{//going to a single location
-        break;
-      }
-      case PROD:{//investigating obstacle
-        break;
-      }
-      case DONE:{//exploration complete
-        done = true;
-        break;
-      }
-    }
-    ros::Duration(0.5).sleep();
-    this->stop();
+    // switch(this->treeState){
+    //   case IDLE:{//something is wrong
+    //     break;
+    //   }
+    //   case SEARCH:{//simple searching
+    //     this->search(pathToGoal);
+    //     //ros::Duration(0.5).sleep();
+    //     break;
+    //   }
+    //   case RIDE:{//going to a single location
+    //     break;
+    //   }
+    //   case PROD:{//investigating obstacle
+    //     break;
+    //   }
+    //   case DONE:{//exploration complete
+    //     done = true;
+    //     break;
+    //   }
+    // }
     if(done) break;
     else{
       ros::spinOnce();
+      r.sleep();
+      this->stop();
       step++;
     }
   }

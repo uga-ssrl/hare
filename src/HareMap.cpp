@@ -13,6 +13,14 @@ float2 hare::mapToOdom(int x, int y){
   return {((float)x)*MAP_TO_ODOM - (((float)MAP_X)/2),((float)y)*MAP_TO_ODOM - (((float)MAP_Y)/2)};
 }
 
+bool hare::withinBounds(int2 mapCoord){
+  return mapCoord.x >= 0 && mapCoord.x < MAP_X && mapCoord.y >= 0 && mapCoord.y < MAP_Y;
+}
+bool hare::withinBounds(float2 odomCoord){
+  int2 mapCoord = odomToMap(odomCoord);
+  return mapCoord.x >= 0 && mapCoord.x < MAP_X && mapCoord.y >= 0 && mapCoord.y < MAP_Y;
+
+}
 hare::map_node hare::fullMap[MAP_X][MAP_Y] {
 	{
 		(map_node){0,true,true,(int4){0,0,0,0}},

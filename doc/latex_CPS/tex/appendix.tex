@@ -1,7 +1,88 @@
-\appendices
 \section{Using The Code From This Paper}        % first appendix
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 The code written for this paper is available at
 \url{https://github.com/uga-ssrl/hare}.
+The README.md must be read carefully in order to launch successfully, as with any other ROS package.
 
-\section*{Acknowledgment}
+Updates to this repository will occur on a weekly basis for the foreseeable future.
+
+\section{Attribute Listing}
+
+Keep in mind that these were not used during this project, just designed
+before changes and pivots were necessary. These attributes are to be used
+as descriptors of a robots capabilities and are shared with all neighboring
+robots. Many of them have associated numerical values, enumerations, or tuples
+to further detail extent of related capability. All action nodes in the behavior
+graph, along with some directive nodes, have requirements and target values associated
+with certain attributes to direct traversal. As long as requirements are fulfilled,
+the euclidean distance away from that set of target values, along with some other
+specific values like location, would be used to determine the cost of the individual
+robot taking that path forward in the behavior graph. If necessary, neighboring robots
+would communicated their cost to one another as well as take into account what the global
+objective requires to determine if one or both can take the evaluated path.
+
+\begin{center}
+  \begin{tabularx}{\textwidth}{ |X|X| }
+  \hline
+  Dimensionality & 0, 2D, 3D \\
+  FOV & angle \\ \hline
+  Global Positioning & Boolean: Good if within sensor error margin in meters \\
+  Non-spatial & sensors num, telemetry type \\
+  Visible Distance & In meters \\
+  \hline
+\end{tabularx}
+\end{center}
+
+
+\begin{center}
+\begin{tabularx}{\textwidth}{ |X|X| }
+  \hline
+  Dimensionality & directional proximity, 2D, 3D \\
+  Allowable Altitude Range & relative to lowest known ground 0 \\
+  Terrain Compatibility &  submersible, non-submersible, ground, aerial, amphibious, submersible amphibious, full \\ \hline
+  Turn Radius &  [ 0 (holonomic) , (nonholonomic) ∞) \\
+  Moving appendages &  num, dexterity levels, branch/joint specifiers \\
+  Motor Current Requirement &  Current (minimum) \\
+  \hline
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{ |X|X| }
+\hline
+Duplex & half or full \\
+Transmission FOV & angle \\
+Receiver FOV & angle \\
+Transmitter Count & num, type specifiers \\
+Receiver Count & num, type specifiers \\
+Transmission S/N ratio & num \\
+S/N receiving threshold & num \\
+Channel & Capacitynum# \\
+Range & distance \\
+Bandwidth & num \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{ |X|X| }
+\hline
+Capacity & Watt hour \\
+Chargeable & no,externally, solar \\
+Power profile/average draw & Voltage (low, medium, charged) \\
+\hline
+\end{tabularx}
+\end{center}
+
+
+\begin{center}
+\begin{tabularx}{\textwidth}{ |X|X| }
+\hline
+Number of Cores &  num \\
+Microcontroller(s)  & num, function specifiers \\
+ASIC(s)  & num, function specifiers \\
+GPU(s)  & num, function specifiers \\
+FPGA(s) &  num, function specifiers \\
+\hline
+\end{tabularx}
+\end{center}

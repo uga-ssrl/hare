@@ -71,19 +71,21 @@ namespace hare{
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
-    void goUp(float3 linear = {0.0f,1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
-    void goDown(float3 linear = {0.0f,-1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
-    void goRight(float3 linear = {1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
-    void goLeft(float3 linear = {-1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void rotate(float3 angular);
+    void go(float2 linear = {0.0f,0.0f}, float2 angular = {0.0f,0.0f});
+    void go(float3 linear = {0.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goUp(float rate = 1.0f);
+    void goDown(float rate = 1.0f);
+    void goRight(float rate = 1.0f);
+    void goLeft(float rate = 1.0f);
     void stop();
+    void stop(float delay);
 
     //HARE OPERABLE METHODS
-    //TODO implement and test
+    void setIntialDispersionGoal();
     void investigateObject();//wall follow
-    void findCapableNeighbor();//determine who can maneuver
-    void notifyNeighbor();//tell neighbor that there is an obstacle it should visit
-    void switchWithNeighbor(); //switch locations with neighbor
-    void search();//heuristic search
+    void search(std::vector<pq_node>& gbf);//heuristic search
+    void search(std::vector<map_node>& sensedRegion, int4 minMax);//heuristic search
 
     bool isDone();//no more unexplored cells
 

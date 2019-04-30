@@ -36,5 +36,5 @@ typedef struct int4{
 } int4;
 
 float euclid(const float2& a, const float2& b);
-
+int manhattan(const int2& a, const int2& b);
 #endif /* UTILITY_H */

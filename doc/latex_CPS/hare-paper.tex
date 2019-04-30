@@ -1,16 +1,19 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 
-\usepackage[]{graphicx}    % We use this package in this document
+\usepackage[]{graphicx}
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{subfiles}
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{algorithm}
-\usepackage{algorithmic}
 \usepackage{tikz,tikz-3dplot}
 \usepackage{pgfplots}
 \usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{tabularx}
 
 \newcommand{\ignore}[1]{}  % {} empty inside = %% comment
 \graphicspath{ {./pics/} }
@@ -25,57 +28,27 @@
 \begin{document}
 \onecolumn
 
-\title{Heterogenous Autonomous Robotic Exploration (HARE)}
+\title{Heterogenous Multi-Robot Testing and Exploration}
 
 \author{Jackson~Parker}
 
 % The paper headers
-\markboth{IEEE JOURNAL XXXX, VOL. XX, NO. XX, MONTH 20XX}%
+\markboth{CSEE 8300, Spring 2019, APRIL 2019}%
 {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
 
-% \markboth{IEEE JOURNAL OF SELECTED TOPICS IN APPLIED EARTH OBSERVATIONS AND REMOTE SENSING, VOL. XX, NO. XX, MONTH 20XX}
 
 
-
-% If you want to put a publisher's ID mark on the page you can do it like
-% this:
-%\IEEEpubid{0000--0000/00\$00.00~\copyright~2015 IEEE}
-% Remember, if you use this you must call \IEEEpubidadjcol in the second
-% column for its text to clear the IEEEpubid mark.
-
-
-
-% use for special paper notices
-%\IEEEspecialpapernotice{(Invited Paper)}
-
-
-
-
-% make the title area
 \maketitle
 
-% As a general rule, do not put math, special symbols or citations
-% in the abstract or keywords.
+
 \begin{abstract}
-  The Heterogenous Autonomous Robotic Exploration system (HARE) is meant as a proof
-  of concept for cooperative heterogenous systems that divide tasks based on the
-  differentiable capabilities of the robots.
+  The Heterogeneous Autonomous Robotic Exploration system (HARE) is meant as a proof
+  of concept for cooperative heterogeneous systems that divide tasks based on the
+  differentiable capabilities of the robots. This research project ended up down
+  an interesting path due to early design choices, leading to the creation of a
+  custom ROS package for simple testing of systems like this.
 \end{abstract}
 
-% Note that keywords are not normally used for peerreview papers.
-\begin{IEEEkeywords}
-IEEE, IEEEtran, journal, \LaTeX, paper, template.
-\end{IEEEkeywords}
-
-
-\IEEEpeerreviewmaketitle
-
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=0.5\textwidth]{HARE}
-  \caption{High level block diagram for HARE}
-  \label{fig:something3}
-\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -85,40 +58,26 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methodology}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subfile{tex/methodology} %  <-- might be best to keep the example and remake some subfiles
+\subfile{tex/methodology}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
+\section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subfile{tex/results} %  <-- might be best to keep the example and remake some subfiles
+\subfile{tex/discussion}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusion}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subfile{tex/conclusion} %  <-- might be best to keep the example and remake some subfiles
-
-
-% use section* for acknowledgment
+%\section{Appendix}
 \subfile{tex/appendix}
-% \section*{Acknowledgment}
 
-\ifCLASSOPTIONcaptionsoff
-  \newpage
-\fi
 
 
 
 \bibliographystyle{IEEEtran}
-% \bibliography{sources}
 \bibliography{IEEEabrv,sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
 
 
-% insert where needed to balance the two columns on the last page with
-% biographies
-%\newpage
-
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/jackson_parker.jpeg}}]{Jackson Parker}
-I work in the small satellite research lab as a systems engineer.
+Currently a Masters Student in the ECE Department at UGA, working as a systems engineer
+in the Small Satellite Research Lab
 \end{IEEEbiography}
 
 

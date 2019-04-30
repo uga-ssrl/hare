@@ -36,6 +36,9 @@ namespace hare{
   int2 odomToMap(float x, float y);
   float2 mapToOdom(int2 mapCoord);
   float2 mapToOdom(int x, int y);
+  bool withinBounds(int2 mapCoord);
+  bool withinBounds(float2 odomCoord);
+
 }
 
 #endif /* HAREMAP_H */
@@ -56,5 +59,13 @@ float2 hare::mapToOdom(int2 mapCoord){
 }
 float2 hare::mapToOdom(int x, int y){
   return {((float)x)*MAP_TO_ODOM - (((float)MAP_X)/2),((float)y)*MAP_TO_ODOM - (((float)MAP_Y)/2)};
+}
+bool withinBounds(int2 mapCoord){
+  return mapCoord.x >= 0 && mapCoord.x < MAP_X && mapCoord.y >= 0 && mapCoord.y < MAP_Y;
+}
+bool withinBounds(float2 odomCoord){
+  int2 mapCoord = odomToMap(odomCoord);
+  return mapCoord.x >= 0 && mapCoord.x < MAP_X && mapCoord.y >= 0 && mapCoord.y < MAP_Y;
+
 }
 */
