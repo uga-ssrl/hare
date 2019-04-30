@@ -99,6 +99,8 @@ namespace hare{
     void callback(const std_msgs::StringConstPtr& msg);
     void callback(const hare::HareUpdateConstPtr& msg);
     void callback(const nav_msgs::OdometryConstPtr& msg);
+    void callback(const geometry_msgs::TwistConstPtr& msg);
+
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
     //NECESSITATES THAT ROBOT
