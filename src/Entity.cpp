@@ -218,6 +218,69 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
+void hare::Robot::goUp(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x,start.y+step};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goDown(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x,start.y-step};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goRight(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x+step,start.y};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goLeft(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x-step,start.y};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::stop(){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = 0.0f;
+  cmdVel.linear.y = 0.0f;
+  cmdVel.linear.z = 0.0f;
+  cmdVel.angular.x = 0.0f;
+  cmdVel.angular.y = 0.0f;
+  cmdVel.angular.z = 0.0f;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+
 //TODO develop
 void hare::Robot::investigateObject(){
 
@@ -262,6 +325,7 @@ void hare::Robot::run(){
 
   //TODO ensure that husky is not out of coordinated frame (if initial pos out
   //of 0 0 then the odom will be wrong
+
 
   while (ros::ok()){
 
@@ -311,8 +375,8 @@ void hare::Robot::run(){
       update.goal_y = -1;
     }
 
+
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
-    this->publish<geometry_msgs::Twist>(cmd_Vel,"/cmd_vel");
 
     //TREE STUFF
     switch(this->treeState){
@@ -320,6 +384,8 @@ void hare::Robot::run(){
         break;
       }
       case SEARCH:{//simple searching
+        this->goLeft();
+        if(step == 20) this->treeState = IDLE;
         break;
       }
       case RIDE:{//going to a single location
@@ -333,6 +399,8 @@ void hare::Robot::run(){
         break;
       }
     }
+    ros::Duration(0.5).sleep();
+    this->stop();
     if(done) break;
     else{
       ros::spinOnce();

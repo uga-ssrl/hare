@@ -155,11 +155,6 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
   return from;
 }
 
-// just euclidian distance
-float hare::Map::euclid(float2 a, float2 b){
-  return abs((a.x - b.x)  + (a.y - b.y));
-}
-
 // insert into priority queue
 void hare::Map::insert_pq(hare::pq_node n){
   if (this->frontier.size()) {

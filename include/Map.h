@@ -53,9 +53,6 @@ namespace hare{
 
   private:
 
-    // float
-    float euclid(float2 a, float2 b);
-
     // insert sorted by priority
     void insert_pq(pq_node n);
 
