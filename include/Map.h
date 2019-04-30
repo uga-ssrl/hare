@@ -13,28 +13,32 @@
 namespace hare{
   class Map{
 
+    std::vector<int> parentTerrain;
     std::string ns;//parent namespace
-
-    map_node knownMap[MAP_X][MAP_Y];
 
     std::vector<pq_node> frontier;
     std::vector<pq_node> from;
 
   public:
 
-    //parent namespace
+    map_node knownMap[MAP_X][MAP_Y];
+
+    Map();
     Map(std::string ns);
+    Map(std::vector<int> parentTerrain);
+    Map(std::string ns, std::vector<int> parentTerrain);
     ~Map();
 
     // initialize the map
     void initializeMap();
 
     void setNamespace(std::string ns);
+    void setParentTerrain(std::vector<int> parentTerrain);
 
     // updates the map at each timestep or tick or whatever
 
-    void update(int2 location, int characteristic);
-    void update(int2 location, map_node _node);
+    void update(int2 location, int terrain);
+    void update(int2 location, map_node& node);
     void update(const int4& minMax, const std::vector<map_node>& region);
     void update(const hare::cell &_cell);
 
@@ -46,10 +50,8 @@ namespace hare{
     // returns linear spline path
     std::vector<pq_node> getPath(int2 start, int2 goal);
 
-  private:
 
-    // float
-    float euclid(float2 a, float2 b);
+  private:
 
     // insert sorted by priority
     void insert_pq(pq_node n);

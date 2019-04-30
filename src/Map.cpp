@@ -1,7 +1,20 @@
 #include "Map.h"
 
+hare::Map::Map(){
+  this->initializeMap();
+}
 hare::Map::Map(std::string ns){
   this->ns = ns;
+  this->initializeMap();
+}
+hare::Map::Map(std::vector<int> parentTerrain){
+  this->parentTerrain = parentTerrain;
+  this->initializeMap();
+}
+hare::Map::Map(std::string ns, std::vector<int> parentTerrain){
+  this->ns = ns;
+  this->parentTerrain = parentTerrain;
+  this->initializeMap();
 }
 hare::Map::~Map(){
 
@@ -13,47 +26,56 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      this->knownMap[i][j].characteristic = -1;
+      this->knownMap[i][j].terrain = -1;
       this->knownMap[i][j].explored = false;
       this->knownMap[i][j].traversable = false; //only valid if expored is true
+      this->knownMap[i][j].walls = {-1,-1,-1,-1};
     }
   }
 }
 
 //update the map
-void hare::Map::update(int2 location, int characteristic) {
-  this->knownMap[location.x][location.y].explored = true;
-  this->knownMap[location.x][location.y].characteristic = characteristic;
-  this->knownMap[location.x][location.y].walls = {characteristic,characteristic,characteristic,characteristic};
-  // TODO make sure robots can only traverse what they really can
-  int bot = 1;
-  if (bot == 1){ // only done for clarity
-    // big robot test
-    int guy = knownMap[location.x][location.y].characteristic;
-    if (guy == 0) {
-      this->knownMap[location.x][location.y].traversable = true; //check if traversable
-    }
-    else this->knownMap[location.x][location.y].traversable = false;
-  } else if (bot == 2) {
-    // something else
-  } else if (bot == 3) {
-    // something else
+void hare::Map::update(int2 location, int terrain) {
+  if(this->parentTerrain.size() == 0){
+    ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
   }
+  this->knownMap[location.x][location.y].explored = true;
+  this->knownMap[location.x][location.y].terrain = terrain;
+  this->knownMap[location.x][location.y].walls = {terrain,terrain,terrain,terrain};
+  this->knownMap[location.x][location.y].traversable =
+  std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+  terrain) != this->parentTerrain.end();
 }
-void hare::Map::update(int2 location, map_node _node){
-  knownMap[location.x][location.y] = _node;
+void hare::Map::update(int2 location, map_node& node){
+  if(this->parentTerrain.size() == 0){
+    ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
+  }
+  node.traversable = std::find(this->parentTerrain.begin(),this->parentTerrain.end(), node.terrain) != this->parentTerrain.end();
+  this->knownMap[location.x][location.y] = node;
 }
 void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
   int currentElement = 0;
+  if(this->parentTerrain.size() == 0){
+    ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
+  }
   for(int x = minMax.x; x < minMax.z; ++x){
     for(int y = minMax.y; y < minMax.w; ++y){
-      this->knownMap[x][y] = region[currentElement++];
+      this->knownMap[x][y] = region[currentElement];
+      this->knownMap[x][y].traversable =
+      std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+      region[currentElement].terrain) != this->parentTerrain.end();
+      currentElement++;
     }
   }
 }
 void hare::Map::update(const hare::cell &_cell){
+  if(this->parentTerrain.size() == 0){
+    ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
+  }
   int2 location = {_cell.x,_cell.y};
-  this->knownMap[location.x][location.y].traversable = _cell.traversable;
+  this->knownMap[location.x][location.y].traversable =
+  std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+  _cell.terrain) != this->parentTerrain.end();
   this->knownMap[location.x][location.y].explored = _cell.explored;
   this->knownMap[location.x][location.y].walls = {_cell.wallLeft,_cell.wallUp,
     _cell.wallDown,_cell.wallRight};
@@ -62,6 +84,9 @@ void hare::Map::update(const hare::cell &_cell){
 // set the robot
 void hare::Map::setNamespace(std::string ns){
   this->ns = ns;
+}
+void hare::Map::setParentTerrain(std::vector<int> parentTerrain){
+  this->parentTerrain = parentTerrain;
 }
 
 // save the map file as an image!
@@ -72,7 +97,7 @@ void hare::Map::saveAsString(std::string path){
   for (int i = 0; i < (MAP_X); i++){
     for (int j = 0; j < (MAP_Y); j++){
       if (knownMap[i][j].explored){
-        myfile << knownMap[i][j].characteristic;
+        myfile << knownMap[i][j].terrain;
         if (j < (MAP_Y - 1)) myfile << ",";
       } else {
         myfile << "-2";
@@ -128,11 +153,6 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
   }
 
   return from;
-}
-
-// just euclidian distance
-float hare::Map::euclid(float2 a, float2 b){
-  return abs((a.x - b.x)  + (a.y - b.y));
 }
 
 // insert into priority queue

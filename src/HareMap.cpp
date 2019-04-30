@@ -1,4 +1,18 @@
 #include "HareMap.h"
+
+int2 hare::odomToMap(float2 odomCoord){
+    return {(int)(odomCoord.x*ODOM_TO_MAP + ((float)MAP_X)/2),(int)(odomCoord.y*ODOM_TO_MAP + ((float)MAP_Y)/2)};
+}
+int2 hare::odomToMap(float x, float y){
+    return {(int)(x*ODOM_TO_MAP + ((float)MAP_X)/2),(int)(y*ODOM_TO_MAP + ((float)MAP_Y)/2)};
+}
+float2 hare::mapToOdom(int2 mapCoord){
+  return {((float)mapCoord.x)*MAP_TO_ODOM - (((float)MAP_X)/2),((float)mapCoord.y)*MAP_TO_ODOM - (((float)MAP_Y)/2)};
+}
+float2 hare::mapToOdom(int x, int y){
+  return {((float)x)*MAP_TO_ODOM - (((float)MAP_X)/2),((float)y)*MAP_TO_ODOM - (((float)MAP_Y)/2)};
+}
+
 hare::map_node hare::fullMap[MAP_X][MAP_Y] {
 	{
 		(map_node){0,true,true,(int4){0,0,0,0}},

@@ -3,12 +3,14 @@
 hare::Entity::Entity(){
   this->id = -1;
   this->ns = "/";
-  this->type = UNKNOWN;
+  this->description.type = UNKNOWN;
+  this->treeState = IDLE;
 }
 hare::Entity::Entity(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->type = UNKNOWN;
+  this->description.type = UNKNOWN;
+  this->treeState = IDLE;
 }
 hare::Entity::~Entity(){
 
@@ -17,12 +19,14 @@ hare::Entity::~Entity(){
 hare::Neighbor::Neighbor(){
   this->id = -1;
   this->ns = "/";
-  this->type = ROBOT;
+  this->description.type = ROBOT;
+  this->treeState = IDLE;
 }
 hare::Neighbor::Neighbor(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->type = ROBOT;
+  this->description.type = ROBOT;
+  this->treeState = IDLE;
 }
 hare::Neighbor::~Neighbor(){
 
@@ -31,24 +35,22 @@ hare::Neighbor::~Neighbor(){
 hare::Robot::Robot(){
   this->id = -1;
   this->ns = "/";
-  this->type = ROBOT;
-  this->linear.x = 0.0;
-  this->linear.y = 0.0;
+  this->description.type = ROBOT;
   this->map = NULL;
+  this->treeState = IDLE;
 }
 //set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
   this->nh = nh;
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->type = ROBOT;
+  this->description.type = ROBOT;
   float3 position;
+  this->treeState = IDLE;
   this->nh.getParam("init_x", position.x);
   this->nh.getParam("init_y", position.y);
   this->nh.getParam("init_z", position.z);
-  this->path.push_back({(position.x*ODOM_TO_MAP)+(MAP_X/2),
-    (position.y*ODOM_TO_MAP)+(MAP_Y/2),
-    (position.z*ODOM_TO_MAP)});
+  this->init_pose = {position.x,position.y};
   this->map = new Map(this->ns);
 }
 hare::Robot::~Robot(){
@@ -61,61 +63,21 @@ hare::Robot::~Robot(){
 // Add to publisher stack
 void hare::Robot::loadCapabilties(){
   bool received = true;
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
-    ROS_ERROR("Failed to get param turnRadius");
-    received = false;
-  }
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/weight", this->description.weight)){
-    ROS_ERROR("Failed to get param weight");
-    received = false;
-  }
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/torque", this->description.torque)){
-    ROS_ERROR("Failed to get param torque");
-    received = false;
-  }
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/canFly", this->description.canFly)){
-    ROS_ERROR("Failed to get param canFly");
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/terrain", this->description.terrain)){
+    ROS_ERROR("Failed to get param terrain");
     received = false;
   }
   if(received){
-    ROS_INFO("Successfuly loaded capabilities from yaml file");
+    ROS_INFO("Successfuly loaded terrain from yaml file");
   }
-  std::vector<float> temp;
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", temp)){
-    ROS_ERROR("Failed to get param boundingBox");
-  }
-  this->description.boundingBox.x = temp[0];
-  this->description.boundingBox.y = temp[1];
-  this->description.boundingBox.z = temp[2];
-
+  this->map->setParentTerrain(this->description.terrain);
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    received = true;
-    std::vector<float> neighborTemp;
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/turnRadius", (*neighbor).description.turnRadius)){
-      ROS_ERROR("Failed to get param turnRadius");
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/terrain", (*neighbor).description.terrain)){
+      ROS_ERROR("Failed to get param terrain");
       received = false;
     }
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/weight", (*neighbor).description.weight)){
-      ROS_ERROR("Failed to get param weight");
-      received = false;
-    }
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/torque", (*neighbor).description.torque)){
-      ROS_ERROR("Failed to get param torque");
-      received = false;
-    }
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/canFly", (*neighbor).description.canFly)){
-      ROS_ERROR("Failed to get param canFly");
-      received = false;
-    }
-    if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", neighborTemp)){
-      ROS_ERROR("Failed to get param boundingBox");
-      received = false;
-    }
-    (*neighbor).description.boundingBox.x = neighborTemp[0];
-    (*neighbor).description.boundingBox.y = neighborTemp[1];
-    (*neighbor).description.boundingBox.z = neighborTemp[2];
     if(received){
-      ROS_INFO("Successfully loaded capabilities of %s", (*neighbor).ns.c_str());
+      ROS_INFO("Successfuly loaded terrain from yaml file");
     }
   }
 }
@@ -180,6 +142,8 @@ void hare::Robot::initPublishers(){
   this->addPublisher(twist_pub);
   ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
   this->addPublisher(hareUpdate_pub);
+  ros::Publisher cmdVel = this->nh.advertise<geometry_msgs::Twist>("cmd_vel",this->queue_size);
+  this->addPublisher(cmdVel);
 }
 void hare::Robot::initSubscribers(){
   //single point subscriptions
@@ -227,10 +191,14 @@ void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     if((*neighbor).id == msg->robot_id){
       (*neighbor).odom = msg->odom;
-      (*neighbor).state_indicator = msg->tree_state.data;
+      (*neighbor).treeState = static_cast<hare::HareTreeState>(msg->tree_state);
+      (*neighbor).goal = {msg->goal_x,msg->goal_y};
       break;
     }
   }
+}
+void hare::Robot::callback(const geometry_msgs::TwistConstPtr& msg){
+
 }
 
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
@@ -250,23 +218,123 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
+void hare::Robot::goUp(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x,start.y+step};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goDown(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x,start.y-step};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goRight(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x+step,start.y};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::goLeft(float3 linear, float3 angular){
+  float step = MAP_TO_ODOM;
+  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
+  float2 end = {start.x-step,start.y};
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
+  cmdVel.angular.x = angular.x;
+  cmdVel.angular.y = angular.y;
+  cmdVel.angular.z = angular.z;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+void hare::Robot::stop(){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = 0.0f;
+  cmdVel.linear.y = 0.0f;
+  cmdVel.linear.z = 0.0f;
+  cmdVel.angular.x = 0.0f;
+  cmdVel.angular.y = 0.0f;
+  cmdVel.angular.z = 0.0f;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+
+//TODO develop
+void hare::Robot::investigateObject(){
+
+}
+void hare::Robot::findCapableNeighbor(){
+
+}
+void hare::Robot::notifyNeighbor(){
+
+}
+void hare::Robot::switchWithNeighbor(){
+
+}
+void hare::Robot::search(){
+
+}
+bool hare::Robot::isDone(){
+  for(int r = 0; r < MAP_X; ++r){
+    for(int c = 0; c < MAP_Y; ++c){
+      if(!this->map->knownMap[r][c].explored){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void hare::Robot::run(){
   hare::HareUpdate update;
   update.robot_id = this->id;
-  update.tree_state.data = "starting";
 
   std::vector<hare::map_node> sensedRegion;
+
+  this->treeState = SEARCH;
+  bool done = false;
+  unsigned int step = 0;
+  int2 currentPosition;
   int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
-  float sensingRange = 1.0f; unsigned int step = 0; float3 currentPosition;
+  float sensingRange = 1.0f;
+  this->path.clear();
+  this->goals.clear();
+
+  //TODO ensure that husky is not out of coordinated frame (if initial pos out
+  //of 0 0 then the odom will be wrong
+
 
   while (ros::ok()){
-    //THIS NEEDS TO BE TRANSLATED FROM 0,0 to 200,200
-    currentPosition = {(this->odom.pose.pose.position.x*ODOM_TO_MAP)+MAP_X/2,
-      (this->odom.pose.pose.position.y*ODOM_TO_MAP)+MAP_Y/2,
-      (this->odom.pose.pose.position.z*ODOM_TO_MAP)};
+
+    currentPosition = hare::odomToMap(this->odom.pose.pose.position.x,
+      this->odom.pose.pose.position.y);
+
     //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
-    if(step != 0 &&
-    this->path[this->path.size()-1].x != currentPosition.x &&
+    if(step == 0) this->path.push_back(currentPosition);
+    else if(this->path[this->path.size()-1].x != currentPosition.x &&
     this->path[this->path.size()-1].y != currentPosition.y){
       update.odom = this->odom;
       sensedRegion.clear();
@@ -280,14 +348,13 @@ void hare::Robot::run(){
       this->path.push_back(currentPosition);
     }
 
-
     update.cells.clear();
     for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
       for(int y = sensoryBound.y; y < sensoryBound.w; ++y){
         hare::cell _cell;
         _cell.x = x;
         _cell.y = y;
-        _cell.characteristic = sensedRegion[i].characteristic;
+        _cell.terrain = sensedRegion[i].terrain;
         _cell.traversable = sensedRegion[i].traversable;
         _cell.explored = sensedRegion[i].explored;
         _cell.wallLeft = sensedRegion[i].walls.x;
@@ -298,11 +365,46 @@ void hare::Robot::run(){
         ++i;
       }
     }
+    update.tree_state = this->treeState;
+    if(this->goals.size()){
+      update.goal_x = this->goals.front().x;
+      update.goal_y = this->goals.front().y;
+    }
+    else{
+      update.goal_x = -1;
+      update.goal_y = -1;
+    }
+
+
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
     //TREE STUFF
-
-    ros::spinOnce();
-    step++;
+    switch(this->treeState){
+      case IDLE:{//something is wrong
+        break;
+      }
+      case SEARCH:{//simple searching
+        this->goLeft();
+        if(step == 20) this->treeState = IDLE;
+        break;
+      }
+      case RIDE:{//going to a single location
+        break;
+      }
+      case PROD:{//investigating obstacle
+        break;
+      }
+      case DONE:{//exploration complete
+        done = true;
+        break;
+      }
+    }
+    ros::Duration(0.5).sleep();
+    this->stop();
+    if(done) break;
+    else{
+      ros::spinOnce();
+      step++;
+    }
   }
 }

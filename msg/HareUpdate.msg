@@ -6,4 +6,7 @@ uint8 robot_id
 
 nav_msgs/Odometry odom
 
-std_msgs/String tree_state
+int8 tree_state
+
+int32 goal_x
+int32 goal_y

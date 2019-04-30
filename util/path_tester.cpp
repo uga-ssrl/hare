@@ -82,7 +82,7 @@ int main(int argc, char **argv){
   std::cout << "path length: " << path.size() << std::endl;
 
   hare::map_node path_guy;
-  path_guy.characteristic = 10;
+  path_guy.terrain = 10;
   path_guy.explored = true;
   path_guy.traversable = true;
   path_guy.walls = {10,10,10,10};

@@ -7,35 +7,29 @@
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include <nav_msgs/Odometry.h>
-#include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include "Map.h"
 
 namespace hare{
 
   typedef struct EntityDescription{
-    float3 boundingBox;
+    EntityType type;
   } EntityDescription;
 
   typedef struct RobotDescription : public EntityDescription{
-    bool canFly;
-    bool waterResistance;//0 = not waterproof, 1 = water resistant, 2 = water proof
-    float torque;
-    float turnRadius;
-    float weight;
+    std::vector<int> terrain;
   } RobotDescription;
 
   class Entity{
 
   public:
     EntityDescription description;
-
+    HareTreeState treeState;
     nav_msgs::Odometry odom;
-
-    std::string state_indicator;
+    float2 init_pose;//in coordinate frame
     std::string ns;
     int id;
-    EntityType type;
+
     Entity();
     Entity(std::string ns);
     ~Entity();
@@ -45,6 +39,7 @@ namespace hare{
   class Neighbor : public Entity{
 
   public:
+    int2 goal;//-1 if no goal
     RobotDescription description;
 
     Neighbor();
@@ -57,7 +52,9 @@ namespace hare{
 
     uint32_t queue_size;
     Map* map;
-    std::vector<float3> path;
+    std::vector<int2> path;
+    std::vector<int2> goals;
+    std::vector<Neighbor> neighbors;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
@@ -70,17 +67,31 @@ namespace hare{
 
     void initPublishers();
     void initSubscribers();
-
     //minMax is in form of fullMap indices
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
+    void goUp(float3 linear = {0.0f,1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goDown(float3 linear = {0.0f,-1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goRight(float3 linear = {1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goLeft(float3 linear = {-1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void stop();
+
+    //HARE OPERABLE METHODS
+    //TODO implement and test
+    void investigateObject();//wall follow
+    void findCapableNeighbor();//determine who can maneuver
+    void notifyNeighbor();//tell neighbor that there is an obstacle it should visit
+    void switchWithNeighbor(); //switch locations with neighbor
+    void search();//heuristic search
+
+    bool isDone();//no more unexplored cells
+
+
   public:
 
     RobotDescription description;
-    int tree_state;
-    int4 linear;
-    std::vector<Neighbor> neighbors;
+
 
     Robot();
     //NOTE INITIAL POSITIONS SET AS PARAMETERS IN LAUNCH FILES
@@ -95,6 +106,8 @@ namespace hare{
     void callback(const std_msgs::StringConstPtr& msg);
     void callback(const hare::HareUpdateConstPtr& msg);
     void callback(const nav_msgs::OdometryConstPtr& msg);
+    void callback(const geometry_msgs::TwistConstPtr& msg);
+
     void setCallBackQueue(ros::CallbackQueue callbackQueue);
 
     //NECESSITATES THAT ROBOT
