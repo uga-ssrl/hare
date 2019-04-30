@@ -116,6 +116,8 @@ void hare::Map::saveAsString(std::string path){
 // description is the same as capabilities
 std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
 
+  std::cout << "getting path..." << std::endl;
+
   // set all path helpers false
   for (int i = 0; i < (MAP_X); i++){
     for (int j = 0; j < (MAP_Y); j++){
@@ -131,6 +133,16 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
 
   hare::pq_node pq_n = {start.x, start.y, 0.0};
   q.push(pq_n);
+
+  while (!q.empty()){
+    hare::pq_node curr = q.front();
+    int2 loc = {curr.x,curr.y};
+
+    if (loc.x == goal.x && loc.y == goal.y) break;
+
+    q.pop();
+
+  }
 
 
 
