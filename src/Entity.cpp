@@ -298,7 +298,7 @@ void hare::Robot::setIntialDispersionGoal(){
   }
   centroid.x /= this->neighbors.size();
   centroid.y /= this->neighbors.size();
-  float2 v = {centroid.x-this->odom.pose.pose.position.x,centroid.y-this->odom.pose.pose.position.y};
+  float2 v = {this->odom.pose.pose.position.x-centroid.x,this->odom.pose.pose.position.y-centroid.y};
   int2 mapVal = odomToMap(v);
   if(mapVal.x < 0) mapVal.x = 0;
   if(mapVal.x >= MAP_X) mapVal.x = MAP_X;
