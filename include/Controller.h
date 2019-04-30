@@ -7,27 +7,35 @@
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
 #include "Map.h"
 
 namespace hare{
 
   typedef struct EntityDescription{
-    EntityType type;
+    float3 boundingBox;
   } EntityDescription;
 
   typedef struct RobotDescription : public EntityDescription{
-    std::vector<int> terrain;
+    bool canFly;
+    bool waterResistance;//0 = not waterproof, 1 = water resistant, 2 = water proof
+    float torque;
+    float turnRadius;
+    float weight;
   } RobotDescription;
 
   class Entity{
 
   public:
     EntityDescription description;
-    HareTreeState treeState;
+
     nav_msgs::Odometry odom;
+
+    std::string state_indicator;
     std::string ns;
     int id;
-
+    EntityType type;
     Entity();
     Entity(std::string ns);
     ~Entity();
@@ -37,7 +45,6 @@ namespace hare{
   class Neighbor : public Entity{
 
   public:
-    int2 goal;//-1 if no goal
     RobotDescription description;
 
     Neighbor();
@@ -50,9 +57,8 @@ namespace hare{
 
     uint32_t queue_size;
     Map* map;
-    std::vector<int2> path;
-    std::vector<int2> goals;
-    std::vector<Neighbor> neighbors;
+    std::vector<float3> path;
+    float2 init_pose;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
@@ -69,20 +75,12 @@ namespace hare{
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
-    //HARE OPERABLE METHODS
-    //TODO implement and test
-    void investigateObject();//wall follow
-    void findCapableNeighbor();//determine who can maneuver
-    void notifyNeighbor();//tell neighbor that there is an obstacle it should visit
-    void switchWithNeighbor(); //switch locations with neighbor
-    void search();//heuristic search
-
-    bool isDone();//no more unexplored cells
-
-
   public:
 
     RobotDescription description;
+    int tree_state;
+    int4 linear;
+    std::vector<Neighbor> neighbors;
 
 
     Robot();

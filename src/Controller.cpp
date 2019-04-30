@@ -3,14 +3,12 @@
 hare::Entity::Entity(){
   this->id = -1;
   this->ns = "/";
-  this->description.type = UNKNOWN;
-  this->treeState = IDLE;
+  this->type = UNKNOWN;
 }
 hare::Entity::Entity(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->description.type = UNKNOWN;
-  this->treeState = IDLE;
+  this->type = UNKNOWN;
 }
 hare::Entity::~Entity(){
 
@@ -19,14 +17,12 @@ hare::Entity::~Entity(){
 hare::Neighbor::Neighbor(){
   this->id = -1;
   this->ns = "/";
-  this->description.type = ROBOT;
-  this->treeState = IDLE;
+  this->type = ROBOT;
 }
 hare::Neighbor::Neighbor(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->description.type = ROBOT;
-  this->treeState = IDLE;
+  this->type = ROBOT;
 }
 hare::Neighbor::~Neighbor(){
 
@@ -35,18 +31,18 @@ hare::Neighbor::~Neighbor(){
 hare::Robot::Robot(){
   this->id = -1;
   this->ns = "/";
-  this->description.type = ROBOT;
+  this->type = ROBOT;
+  this->linear.x = 0.0;
+  this->linear.y = 0.0;
   this->map = NULL;
-  this->treeState = IDLE;
 }
 //set queue size in here
 hare::Robot::Robot(ros::NodeHandle nh){
   this->nh = nh;
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
-  this->description.type = ROBOT;
+  this->type = ROBOT;
   float3 position;
-  this->treeState = IDLE;
   this->nh.getParam("init_x", position.x);
   this->nh.getParam("init_y", position.y);
   this->nh.getParam("init_z", position.z);
@@ -67,21 +63,61 @@ hare::Robot::~Robot(){
 // Add to publisher stack
 void hare::Robot::loadCapabilties(){
   bool received = true;
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/terrain", this->description.terrain)){
-    ROS_ERROR("Failed to get param terrain");
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/turnRadius", this->description.turnRadius)){
+    ROS_ERROR("Failed to get param turnRadius");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/weight", this->description.weight)){
+    ROS_ERROR("Failed to get param weight");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/torque", this->description.torque)){
+    ROS_ERROR("Failed to get param torque");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/canFly", this->description.canFly)){
+    ROS_ERROR("Failed to get param canFly");
     received = false;
   }
   if(received){
-    ROS_INFO("Successfuly loaded terrain from yaml file");
+    ROS_INFO("Successfuly loaded capabilities from yaml file");
   }
-  this->map->setParentTerrain(this->description.terrain);
+  std::vector<float> temp;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", temp)){
+    ROS_ERROR("Failed to get param boundingBox");
+  }
+  this->description.boundingBox.x = temp[0];
+  this->description.boundingBox.y = temp[1];
+  this->description.boundingBox.z = temp[2];
+
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/terrain", (*neighbor).description.terrain)){
-      ROS_ERROR("Failed to get param terrain");
+    received = true;
+    std::vector<float> neighborTemp;
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/turnRadius", (*neighbor).description.turnRadius)){
+      ROS_ERROR("Failed to get param turnRadius");
       received = false;
     }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/weight", (*neighbor).description.weight)){
+      ROS_ERROR("Failed to get param weight");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/torque", (*neighbor).description.torque)){
+      ROS_ERROR("Failed to get param torque");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/canFly", (*neighbor).description.canFly)){
+      ROS_ERROR("Failed to get param canFly");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + this->ns + "/boundingBox", neighborTemp)){
+      ROS_ERROR("Failed to get param boundingBox");
+      received = false;
+    }
+    (*neighbor).description.boundingBox.x = neighborTemp[0];
+    (*neighbor).description.boundingBox.y = neighborTemp[1];
+    (*neighbor).description.boundingBox.z = neighborTemp[2];
     if(received){
-      ROS_INFO("Successfuly loaded terrain from yaml file");
+      ROS_INFO("Successfully loaded capabilities of %s", (*neighbor).ns.c_str());
     }
   }
 }
@@ -193,8 +229,7 @@ void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     if((*neighbor).id == msg->robot_id){
       (*neighbor).odom = msg->odom;
-      (*neighbor).treeState = static_cast<hare::HareTreeState>(msg->tree_state);
-      (*neighbor).goal = {msg->goal_x,msg->goal_y};
+      (*neighbor).state_indicator = msg->tree_state.data;
       break;
     }
   }
@@ -217,44 +252,14 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-//TODO develop
-void hare::Robot::investigateObject(){
-
-}
-void hare::Robot::findCapableNeighbor(){
-
-}
-void hare::Robot::notifyNeighbor(){
-
-}
-void hare::Robot::switchWithNeighbor(){
-
-}
-void hare::Robot::search(){
-
-}
-bool hare::Robot::isDone(){
-  for(int r = 0; r < MAP_X; ++r){
-    for(int c = 0; c < MAP_Y; ++c){
-      if(!this->map->knownMap[r][c].explored){
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 void hare::Robot::run(){
   hare::HareUpdate update;
   update.robot_id = this->id;
+  update.tree_state.data = "starting";
 
   std::vector<hare::map_node> sensedRegion;
   int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
-  float sensingRange = 1.0f; unsigned int step = 0; int2 currentPosition;
-
-
-  this->treeState = SEARCH;
-  bool done = false;
+  float sensingRange = 1.0f; unsigned int step = 0; float3 currentPosition;
 
   while (ros::ok()){
     //THIS NEEDS TO BE TRANSLATED FROM 0,0 to 200,200
@@ -280,13 +285,14 @@ void hare::Robot::run(){
       this->path.push_back(currentPosition);
     }
 
+
     update.cells.clear();
     for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
       for(int y = sensoryBound.y; y < sensoryBound.w; ++y){
         hare::cell _cell;
         _cell.x = x;
         _cell.y = y;
-        _cell.terrain = sensedRegion[i].terrain;
+        _cell.characteristic = sensedRegion[i].characteristic;
         _cell.traversable = sensedRegion[i].traversable;
         _cell.explored = sensedRegion[i].explored;
         _cell.wallLeft = sensedRegion[i].walls.x;
@@ -297,41 +303,13 @@ void hare::Robot::run(){
         ++i;
       }
     }
-    update.tree_state = this->treeState;
-    if(this->goals.size()){
-      update.goal_x = this->goals.front().x;
-      update.goal_y = this->goals.front().y;
-    }
-    else{
-      update.goal_x = -1;
-      update.goal_y = -1;
-    }
-
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
     //TREE STUFF
-    switch(this->treeState){
-      case IDLE:{//something is wrong
-        break;
-      }
-      case SEARCH:{//simple searching
-        break;
-      }
-      case RIDE:{//going to a single location
-        break;
-      }
-      case PROD:{//investigating obstacle
-        break;
-      }
-      case DONE:{//exploration complete
-        done = true;
-        break;
-      }
-    }
-    if(done) break;
-    else{
-      ros::spinOnce();
-      step++;
-    }
+    // hare take action
+
+
+    ros::spinOnce();
+    step++;
   }
 }

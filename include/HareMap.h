@@ -31,7 +31,7 @@ namespace hare{
 
   //full map generated in a rediculous way with a python file
   extern map_node fullMap[MAP_X][MAP_Y];
-
+  
 }
 
 #endif /* HAREMAP_H */
