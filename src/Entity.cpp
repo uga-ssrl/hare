@@ -51,10 +51,6 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->nh.getParam("init_y", position.y);
   this->nh.getParam("init_z", position.z);
   this->init_pose = {position.x,position.y};
-
-  // this->path.push_back({(position.x*ODOM_TO_MAP)+(MAP_X/2),
-  //   (position.y*ODOM_TO_MAP)+(MAP_Y/2),
-  //   (position.z*ODOM_TO_MAP)});
   this->map = new Map(this->ns);
 }
 hare::Robot::~Robot(){
@@ -249,24 +245,24 @@ void hare::Robot::run(){
   update.robot_id = this->id;
 
   std::vector<hare::map_node> sensedRegion;
-  int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
-  float sensingRange = 1.0f; unsigned int step = 0; int2 currentPosition;
-
 
   this->treeState = SEARCH;
   bool done = false;
+  unsigned int step = 0;
+  int2 currentPosition;
+  int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
+  float sensingRange = 1.0f;
+  this->path.clear();
+  this->goals.clear();
 
   while (ros::ok()){
-    //THIS NEEDS TO BE TRANSLATED FROM 0,0 to 200,200
 
-    currentPosition = {
-      (this->odom.pose.pose.position.x)*(MAP_X*2 + this->init_pose.x)*(ODOM_TO_MAP),
-      (this->odom.pose.pose.position.y)*(MAP_Y*2 + this->init_pose.y)*(ODOM_TO_MAP),
-      (this->odom.pose.pose.position.z*ODOM_TO_MAP)
-    };
+    currentPosition = hare::odomToMap(this->odom.pose.pose.position.x,
+      this->odom.pose.pose.position.y);
+
     //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
-    if(step != 0 &&
-    this->path[this->path.size()-1].x != currentPosition.x &&
+    if(step == 0) this->path.push_back(currentPosition);
+    else if(this->path[this->path.size()-1].x != currentPosition.x &&
     this->path[this->path.size()-1].y != currentPosition.y){
       update.odom = this->odom;
       sensedRegion.clear();

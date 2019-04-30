@@ -25,6 +25,7 @@ namespace hare{
     EntityDescription description;
     HareTreeState treeState;
     nav_msgs::Odometry odom;
+    float2 init_pose;//in coordinate frame
     std::string ns;
     int id;
 

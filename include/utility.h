@@ -35,9 +35,5 @@ typedef struct int4{
   int w;
 } int4;
 
-namespace hare{
-  int2 transform(float x, float y);
-}
-
 
 #endif /* UTILITY_H */
