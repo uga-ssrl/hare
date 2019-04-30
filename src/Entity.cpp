@@ -182,6 +182,8 @@ void hare::Robot::initPublishers(){
   this->addPublisher(twist_pub);
   ros::Publisher hareUpdate_pub = this->nh.advertise<HareUpdate>("HARE_UPDATE",this->queue_size);
   this->addPublisher(hareUpdate_pub);
+  ros::Publisher cmdVel = this->nh.advertise<geometry_msgs::Twist>("cmd_vel",this->queue_size);
+  this->addPublisher(cmdVel);
 }
 void hare::Robot::initSubscribers(){
   //single point subscriptions
@@ -234,6 +236,9 @@ void hare::Robot::callback(const hare::HareUpdateConstPtr& msg){
     }
   }
 }
+void hare::Robot::callback(const geometry_msgs::TwistConstPtr& msg){
+
+}
 
 void hare::Robot::setCallBackQueue(ros::CallbackQueue callbackQueue){
   this->nh.setCallbackQueue(&callbackQueue);
@@ -250,6 +255,22 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
       region.push_back(currentNode);
     }
   }
+}
+
+void hare::Robot::goUp(){
+  float step = MAP_TO_ODOM;
+}
+void hare::Robot::goDown(){
+  float step = -MAP_TO_ODOM;
+
+}
+void hare::Robot::goRight(){
+  float step = MAP_TO_ODOM;
+
+}
+void hare::Robot::goLeft(){
+  float step = -MAP_TO_ODOM;
+
 }
 
 void hare::Robot::run(){
@@ -304,6 +325,13 @@ void hare::Robot::run(){
       }
     }
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
+    this->publish<geometry_msgs::Twist>(cmd_Vel,"/cmd_vel");
+
+
+
+
+
+
 
     // TREE STUFF
     // hare take action
@@ -311,6 +339,7 @@ void hare::Robot::run(){
 
 
     // MOTION MODEL:
+
 
 
 
