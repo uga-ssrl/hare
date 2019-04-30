@@ -26,7 +26,7 @@ int main(int argc, char **argv){
   std::cout << "map initialized..." << std::endl;
 
   // save as string
-  m.saveAsString("/home/parallels/Development/VM_Dev/catkin_ws/src/hare/util/test1.raw");
+  m.saveAsString("./src/hare/util/test1.raw");
 
 
   // ======================================================================== //
@@ -43,7 +43,7 @@ int main(int argc, char **argv){
   }
 
   // see if we have filled the map
-  m.saveAsString("/home/parallels/Development/VM_Dev/catkin_ws/src/hare/util/test2.raw");
+  m.saveAsString("./src/hare/util/test2.raw");
 
   // ======================================================================== //
   // test 3
@@ -59,7 +59,7 @@ int main(int argc, char **argv){
   }
 
   // see if we have filled the map
-  m.saveAsString("/home/parallels/Development/VM_Dev/catkin_ws/src/hare/util/test3.raw");
+  m.saveAsString("./src/hare/util/test3.raw");
 
 
   // ======================================================================== //
@@ -75,18 +75,17 @@ int main(int argc, char **argv){
     }
   }
 
-  float2 loc = {60 * MAP_TO_ODOM,130 * MAP_TO_ODOM};
-  // float2 goal = {115 * MAP_TO_ODOM,90 * MAP_TO_ODOM};
-  float2 goal = {62 * MAP_TO_ODOM,130 * MAP_TO_ODOM};
+  int2 loc = {125,70};
+  int2 goal = {90,115};
 
   std::vector<hare::pq_node> path = m.getPath(loc,goal);
   std::cout << "path length: " << path.size() << std::endl;
 
   hare::map_node path_guy;
-  path_guy.characteristic = 4;
+  path_guy.characteristic = 10;
   path_guy.explored = true;
   path_guy.traversable = true;
-  path_guy.walls = {4,4,4,4};
+  path_guy.walls = {10,10,10,10};
 
   // fill path
   for (int i = 0; i < path.size(); i++){
@@ -95,7 +94,7 @@ int main(int argc, char **argv){
   }
 
   // see if we have filled the map
-  m.saveAsString("/home/parallels/Development/VM_Dev/catkin_ws/src/hare/util/test4.raw");
+  m.saveAsString("./src/hare/util/test4.raw");
 
 
   return 0;

@@ -3,7 +3,6 @@
 hare::Map::Map(std::string ns){
   this->ns = ns;
 }
-
 hare::Map::~Map(){
 
 }
@@ -14,28 +13,14 @@ hare::Map::~Map(){
 void hare::Map::initializeMap(){
   for (int i = 0; i < MAP_X; i++){
     for (int j = 0; j < MAP_Y; j++){
-      this->knownMap[i][j].characteristic = UNKNOWN;
+      this->knownMap[i][j].characteristic = -1;
       this->knownMap[i][j].explored = false;
       this->knownMap[i][j].traversable = false; //only valid if expored is true
     }
   }
 }
 
-
-//WARNING THIS ASSUMES THAT ODOM_TO_MAP tf is needed
-// update the map
-void hare::Map::update(float2 location, int characteristic){
-  int2 insert;
-  insert.x = (int) (ODOM_TO_MAP * location.x);
-  insert.y = (int) (ODOM_TO_MAP * location.y);
-  this->knownMap[insert.x][insert.y].walls = {characteristic,characteristic,characteristic,characteristic};
-  this->knownMap[insert.x][insert.y].characteristic = characteristic;
-  this->knownMap[insert.x][insert.y].explored = true;
-  // TODO make sure robots can only traverse what they really can
-  this->knownMap[insert.x][insert.y].traversable = true; //check if traversable
-}
-
-// update the map
+//update the map
 void hare::Map::update(int2 location, int characteristic) {
   this->knownMap[location.x][location.y].explored = true;
   this->knownMap[location.x][location.y].characteristic = characteristic;
@@ -55,11 +40,9 @@ void hare::Map::update(int2 location, int characteristic) {
     // something else
   }
 }
-
 void hare::Map::update(int2 location, map_node _node){
   knownMap[location.x][location.y] = _node;
 }
-
 void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
   int currentElement = 0;
   for(int x = minMax.x; x < minMax.z; ++x){
@@ -68,7 +51,6 @@ void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& re
     }
   }
 }
-
 void hare::Map::update(const hare::cell &_cell){
   int2 location = {_cell.x,_cell.y};
   this->knownMap[location.x][location.y].traversable = _cell.traversable;
@@ -101,32 +83,25 @@ void hare::Map::saveAsString(std::string path){
   }
 }
 
-
+//NOTE THIS IS VERY INEFFICIENT AS IT IS - WORKS THOUGH
 // Greedy heuristic algorithm
 // returns linear spline path
 // We assume only up, down, left, right movements
 // https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
 // description is the same as capabilities
-std::vector<hare::pq_node> hare::Map::getPath(float2 _start, float2 _goal){
+std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
   std::cout << "entered getPath... " << std::endl;
-  int2 goal;
-  int2 start;
-  goal.x  = (int) (ODOM_TO_MAP * _goal.x);
-  goal.y  = (int) (ODOM_TO_MAP * _goal.y);
-  start.x = (int) (ODOM_TO_MAP * _start.x);
-  start.y = (int) (ODOM_TO_MAP * _start.y);
   pq_node curr;
   curr.x = start.x;
   curr.y = start.y;
   curr.h = 0.0;
   // the structs to be used
-  insert_pq(curr, curr.h);
+  insert_pq(curr);
   // std::vector<pq_node> path;
 
   std::cout << "initialized the stuff... " << std::endl;
   std::cout << "frontier size: " << frontier.size() << std::endl;
   while (frontier.size()){ // while frontier not empty
-    // std::cout << "doing it... " << std::endl;
     curr = frontier.back();
     frontier.pop_back();
 
@@ -144,9 +119,9 @@ std::vector<hare::pq_node> hare::Map::getPath(float2 _start, float2 _goal){
         float2 a;
         a.x = next.x;
         a.y = next.y;
-        float h = euclid(a,_goal);
+        float h = euclid(a,{(float)goal.x,(float)goal.y});
         next.h = h;
-        insert_pq(next, next.h);
+        insert_pq(next);
         from.push_back(curr);
       }
     }
@@ -161,14 +136,14 @@ float hare::Map::euclid(float2 a, float2 b){
 }
 
 // insert into priority queue
-void hare::Map::insert_pq(hare::pq_node n, float h){
-  if (frontier.size()) {
-    // std::cout << "ok" << "\t";
+void hare::Map::insert_pq(hare::pq_node n){
+  if (this->frontier.size()) {
     int i = 0;
-    while (frontier[i].h > n.h && i < frontier.size()) i++;
-    auto it = frontier.insert(frontier.begin()+i, n);
-  } else {
-    auto it = frontier.insert(frontier.begin(), n);
+    while (this->frontier[i].h > n.h && i < this->frontier.size()) i++;
+    this->frontier.insert(this->frontier.begin()+i, n);
+  }
+  else {
+    this->frontier.insert(this->frontier.begin(), n);
   }
 }
 
@@ -176,28 +151,28 @@ void hare::Map::insert_pq(hare::pq_node n, float h){
 std::vector<hare::pq_node> hare::Map::getNeighbors(hare::pq_node n){
   std::vector<pq_node> neighbors;
   // TODO potentially use explored?
-  if (knownMap[n.x][n.y + 1].traversable) {
+  if (this->knownMap[n.x][n.y + 1].traversable) {
     pq_node new_guy;
     new_guy.x = n.x;
     new_guy.y = n.y + 1;
     new_guy.h = -1.0; // needs to be updated later
     neighbors.push_back(new_guy);
   }
-  if (knownMap[n.x + 1][n.y].traversable) {
+  if (this->knownMap[n.x + 1][n.y].traversable) {
     pq_node new_guy;
     new_guy.x = n.x + 1;
     new_guy.y = n.y;
     new_guy.h = -1.0; // needs to be updated later
     neighbors.push_back(new_guy);
   }
-  if (knownMap[n.x][n.y - 1].traversable) {
+  if (this->knownMap[n.x][n.y - 1].traversable) {
     pq_node new_guy;
     new_guy.x = n.x;
     new_guy.y = n.y - 1;
     new_guy.h = -1.0; // needs to be updated later
     neighbors.push_back(new_guy);
   }
-  if (knownMap[n.x - 1][n.y].traversable) {
+  if (this->knownMap[n.x - 1][n.y].traversable) {
     pq_node new_guy;
     new_guy.x = n.x - 1;
     new_guy.y = n.y;
@@ -210,35 +185,7 @@ std::vector<hare::pq_node> hare::Map::getNeighbors(hare::pq_node n){
 // see if n is in from
 bool hare::Map::isIn(hare::pq_node n){
   for (int i = 0; i < from.size(); i++){
-    if (from[i].x == n.x && from[i].y == n.y){ return true; }
+    if (this->from[i].x == n.x && this->from[i].y == n.y){ return true; }
   }
   return false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// yeet

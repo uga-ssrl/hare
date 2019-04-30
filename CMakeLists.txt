@@ -17,8 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   geometry_msgs
   move_base_msgs
-  behavior_tree_core
-  behavior_tree_leaves
   message_generation
   actionlib
   actionlib_msgs

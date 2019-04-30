@@ -56,7 +56,6 @@ for r in range(200):
 obstacleID = 0
 val = 0
 for o in LargeTunnels:
-    wall = [3,3,3,3]
     for i in range(4):
         o[0][i] *= 4
     xdist = int(o[0][1]-o[0][0])
@@ -67,30 +66,35 @@ for o in LargeTunnels:
         ydist += 2
     for r in range(xdist):
         for c in range(ydist):
+            wall = [3,3,3,3]
+            traversable = 'true'
             if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
                 continue
             val = 3
             if(o[1] == 'h'):
                 if(r >= int(o[0][1]-o[0][0])):
+                    traversable = 'false'
                     wall = [3,-1,3,3]
                     val = -1
                 elif(r <= 1):
+                    traversable = 'false'
                     wall = [3,3,-1,3]
                     val = -1
             elif(o[1] == 'v'):
                 if(c >= int(o[0][3]-o[0][2])):
+                    traversable = 'false'
                     wall = [3,3,3,-1]
                     val = -1
                 elif(c <= 1):
+                    traversable = 'false'
                     wall = [-1,3,3,3]
                     val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][2] = traversable
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
-    obstacleID += 1
 
 for o in SmallTunnels:
-    wall = [2,2,2,2]
     for i in range(4):
         o[0][i] *= 4
     xdist = int(o[0][1]-o[0][0])
@@ -101,30 +105,35 @@ for o in SmallTunnels:
         ydist += 2
     for r in range(xdist):
         for c in range(ydist):
-            if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
+            wall = [2,2,2,2]
+            traversable = 'true'
+            if(Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] == -1):
                 continue
             val = 2
             if(o[1] == 'h'):
                 if(r >= int(o[0][1]-o[0][0])):
+                    traversable = 'false'
                     wall = [2,-1,2,2]
                     val = -1
                 elif(r <= 1):
+                    traversable = 'false'
                     wall = [2,2,-1,2]
                     val = -1
             if(o[1] == 'v'):
                 if(c >= int(o[0][3]-o[0][2])):
+                    traversable = 'false'
                     wall = [2,2,2,-1]
                     val = -1
                 elif(c <= 1):
+                    traversable = 'false'
                     wall = [-1,2,2,2]
                     val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][2] = traversable
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
-    obstacleID += 1
 
 for o in Ramps:
-    wall = [1,1,1,1]
     for i in range(4):
         o[0][i] *= 4
     xdist = int(o[0][1]-o[0][0])
@@ -135,27 +144,33 @@ for o in Ramps:
         ydist += 2
     for r in range(xdist):
         for c in range(ydist):
+            wall = [1,1,1,1]
+            traversable = 'true'
             if(AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] == -1):
                 continue
             val = 1
             if(o[1] == 'h'):
                 if(r >= int(o[0][1]-o[0][0])):
+                    traversable = 'false'
                     wall = [1,-1,1,1]
                     val = -1
                 elif(r <= 1):
+                    traversable = 'false'
                     wall = [1,1,-1,1]
                     val = -1
             if(o[1] == 'v'):
                 if(c >= int(o[0][3]-o[0][2])):
+                    traversable = 'false'
                     wall = [1,1,1,-1]
                     val = -1
                 elif(c <= 1):
+                    traversable = 'false'
                     wall = [-1,1,1,1]
                     val = -1
             Obstacles[r+int(o[0][0])+100][c+int(o[0][2])+100] = val
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][0] = val
+            AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][2] = traversable
             AllCells[r+int(o[0][0])+100][c+int(o[0][2])+100][3] = wall
-    obstacleID += 1
 
 
 H = np.array(Obstacles)  # added some commas and array creation code
@@ -168,11 +183,13 @@ plt.imshow(H)
 ax.set_aspect('equal')
 plt.show()
 
-with open('./hare.map', 'w+') as map:
+with open('./HareMap.cpp', 'w+') as map:
+    map.write('#include "HareMap.h"\n')
+    map.write('hare::map_node hare::fullMap[MAP_X][MAP_Y] {\n')
     for r in range(200):
-        str = '{\n'
+        str = '\t{\n'
         for c in range(200):
-            str += '\t(map_node){'
+            str += '\t\t(map_node){'
             str += "%s" % AllCells[r][c][0]
             str +=','
             str += "%s" % AllCells[r][c][1]
@@ -190,16 +207,9 @@ with open('./hare.map', 'w+') as map:
             if(c != 199):
                 str += ','
             str += '\n'
-        str += '}'
+        str += '\t}'
         if(r != 199):
             str += ','
-        map.write(str)
-
-with open('./hare.cpp.map', 'w+') as map:
-    for r in range(200):
-        for c in range(200):
-            str += "%s" % AllCells[r][c][0]
-            if(c != 199):
-                str += ','
         str += '\n'
         map.write(str)
+    map.write('};')

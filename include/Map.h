@@ -33,8 +33,6 @@ namespace hare{
 
     // updates the map at each timestep or tick or whatever
 
-    //WARNING float2 update is the only methods that transforms location using ODOM_TO_MAP
-    void update(float2 location, int characteristic);
     void update(int2 location, int characteristic);
     void update(int2 location, map_node _node);
     void update(const int4& minMax, const std::vector<map_node>& region);
@@ -46,7 +44,7 @@ namespace hare{
 
     // A* algorithm
     // returns linear spline path
-    std::vector<pq_node> getPath(float2 _start, float2 _goal);
+    std::vector<pq_node> getPath(int2 start, int2 goal);
 
   private:
 
@@ -54,7 +52,7 @@ namespace hare{
     float euclid(float2 a, float2 b);
 
     // insert sorted by priority
-    void insert_pq(pq_node n, float h);
+    void insert_pq(pq_node n);
 
     // grabs neightbors of node n
     std::vector<pq_node> getNeighbors(pq_node n);
