@@ -305,9 +305,8 @@ void hare::Robot::run(){
     }
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
-    // TREE STUFF
+    //TREE STUFF
     // hare take action
-    //
 
 
     ros::spinOnce();

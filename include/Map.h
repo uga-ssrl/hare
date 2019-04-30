@@ -48,6 +48,7 @@ namespace hare{
     // returns linear spline path
     std::vector<pq_node> getPath(uint8_t* capabilities, float2 _start, float2 _goal);
 
+
   private:
 
     // float
