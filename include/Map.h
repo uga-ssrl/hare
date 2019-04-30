@@ -69,6 +69,8 @@ namespace hare{
     // see if a node is in the priority queue
     bool isIn(pq_node n);
 
+    bool isValid(int2 n);
+
   };
 }
 
