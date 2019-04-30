@@ -46,6 +46,17 @@ void hare::Map::update(int2 location, int terrain) {
   std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
   terrain) != this->parentTerrain.end();
 }
+
+//update the map
+void hare::Map::update_debug(int2 location, int terrain) {
+  this->knownMap[location.x][location.y].explored = true;
+  this->knownMap[location.x][location.y].terrain = terrain;
+  this->knownMap[location.x][location.y].walls = {terrain,terrain,terrain,terrain};
+  this->knownMap[location.x][location.y].traversable =
+  std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+  terrain) != this->parentTerrain.end();
+}
+
 void hare::Map::update(int2 location, map_node& node){
   if(this->parentTerrain.size() == 0){
     ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
@@ -53,6 +64,12 @@ void hare::Map::update(int2 location, map_node& node){
   node.traversable = std::find(this->parentTerrain.begin(),this->parentTerrain.end(), node.terrain) != this->parentTerrain.end();
   this->knownMap[location.x][location.y] = node;
 }
+
+void hare::Map::update_debug(int2 location, map_node& node){
+  node.traversable = std::find(this->parentTerrain.begin(),this->parentTerrain.end(), node.terrain) != this->parentTerrain.end();
+  this->knownMap[location.x][location.y] = node;
+}
+
 void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
   int currentElement = 0;
   if(this->parentTerrain.size() == 0){

@@ -43,7 +43,9 @@ namespace hare{
     // updates the map at each timestep or tick or whatever
 
     void update(int2 location, int terrain);
+    void update_debug(int2 location, int terrain);
     void update(int2 location, map_node& node);
+    void update_debug(int2 location, map_node& node);
     void update(const int4& minMax, const std::vector<map_node>& region);
     void update(const hare::cell &_cell);
 
