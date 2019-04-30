@@ -376,19 +376,29 @@ void hare::Robot::run(){
     }
 
 
+    ///send data
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
     //TREE STUFF
     switch(this->treeState){
       case IDLE:{//something is wrong
+        if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
+        {
+          this->goLeft();
+          if(step == 20) this->treeState = RIDE;
+        }
         break;
       }
-      case SEARCH:{//simple searching
-        this->goLeft();
-        if(step == 20) this->treeState = IDLE;
+      case SEARCH:{//simple
+        if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
+        {
+          this->goRight();
+          if(step == 20) this->treeState = IDLE;
+        }
+
         break;
       }
-      case RIDE:{//going to a single location
+      case RIDE:{//going to a single locatio
         break;
       }
       case PROD:{//investigating obstacle

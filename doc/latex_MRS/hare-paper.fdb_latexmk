@@ -1,10 +1,10 @@
 # Fdb version 3
-["bibtex hare-paper"] 1556575995 "hare-paper.aux" "hare-paper.bbl" "hare-paper" 1556575997
+["bibtex hare-paper"] 1556610970 "hare-paper.aux" "hare-paper.bbl" "hare-paper" 1556610970
   "/usr/share/texlive/texmf-dist/bibtex/bib/IEEEtran/IEEEabrv.bib" 1440712899 20898 a5d2167c380db7dfff810b085c77ed63 ""
   "/usr/share/texlive/texmf-dist/bibtex/bst/IEEEtran/IEEEtran.bst" 1440712899 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
-  "hare-paper.aux" 1556575997 3918 ebaafdb4ea0159c700e0b19ed59d4674 ""
+  "hare-paper.aux" 1556610949 0 d41d8cd98f00b204e9800998ecf8427e ""
   "hare-paper.bcf" 0 -1 0 ""
-  "sources.bib" 1556575899 1222 851fca7deb62542a0d6ddc766c81a4ca ""
+  "sources.bib" 1556599746 1230 2a3cc9ba3a3f7178c8b557b0c06f5732 ""
   (generated)
   "hare-paper.bbl"
   "hare-paper.blg"
@@ -223,7 +223,7 @@
   "tex/methodology.tex" 1556575997 3408 86427aa32d7109ef0fc8f4d87156c6ae ""
   "tex/results.tex" 1556569773 1035 b2b5c4e427ab031699791ee0e86e4714 ""
   (generated)
-  "hare-paper.out"
-  "hare-paper.log"
-  "hare-paper.aux"
   "hare-paper.pdf"
+  "hare-paper.out"
+  "hare-paper.aux"
+  "hare-paper.log"
