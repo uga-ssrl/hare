@@ -6,7 +6,7 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
 
-      <arg name="world_name" value="$(find hare)/world/test.world"/>
+      <!--<arg name="world_name" value="$(find hare)/world/test.world"/>-->
 
       <arg name="use_sim_time" value="true"/>
 

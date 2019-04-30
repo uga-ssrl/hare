@@ -74,8 +74,6 @@ namespace hare{
 
     bool isValid(int2 n);
 
-    int manhattan(int2 a, int2 b);
-
   };
 }
 

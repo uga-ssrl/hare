@@ -290,7 +290,22 @@ void hare::Robot::stop(float delay){
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
 
-void hare::Robot::setIntialDispersionGoal(){
+void hare::Robot::addCentroidGoal(){
+  float2 centroid = {0.0f,0.0f};
+  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+    centroid.x += (*neighbor).odom.pose.pose.position.x;
+    centroid.y += (*neighbor).odom.pose.pose.position.y;
+  }
+  centroid.x /= this->neighbors.size();
+  centroid.y /= this->neighbors.size();
+  int2 mapVal = odomToMap(centroid);
+  if(mapVal.x < 0) mapVal.x = 0;
+  if(mapVal.x >= MAP_X) mapVal.x = MAP_X;
+  if(mapVal.y < 0) mapVal.y = 0;
+  if(mapVal.y >= MAP_Y) mapVal.y = MAP_Y;
+  this->goals.push_back(mapVal);
+}
+void hare::Robot::addDispersionGoal(){
   float2 centroid = {0.0f,0.0f};
   for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
     centroid.x += (*neighbor).odom.pose.pose.position.x;
@@ -306,24 +321,16 @@ void hare::Robot::setIntialDispersionGoal(){
   if(mapVal.y >= MAP_Y) mapVal.y = MAP_Y;
   this->goals.push_back(mapVal);
 }
-void hare::Robot::investigateObject(){
-
-}
-//TODO Fix this does nothing as it is too far away from the best node
-void hare::Robot::search(std::vector<pq_node>& gbf){
+void hare::Robot::search(std::vector<pq_node>& pathToGoal){
   int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
-  if(this->goals.size() && manhattan(this->goals.front(), currentPosition) < 4){
-    this->treeState = DONE;
-    return;
-  }
-  pq_node imidiateTarget;
-  for(auto p = gbf.begin(); p != gbf.end(); ++p){
-    if((*p).h < imidiateTarget.h){
-      imidiateTarget = (*p);
-    }
-  }
+
+  pq_node imidiateTarget = pathToGoal.back();
+  pathToGoal.pop_back();
+
   float2 filler = {0.0f,0.0f};
-  this->go(mapToOdom({imidiateTarget.x,imidiateTarget.y}),filler);
+  int2 vel = {imidiateTarget.x-currentPosition.x,imidiateTarget.y-currentPosition.y};
+  float mag = sqrtf((vel.x*vel.x) + (vel.y*vel.y));
+  this->go(mapToOdom({vel.x/mag,vel.y/mag}),filler);
 }
 void hare::Robot::search(std::vector<map_node>& sensedRegion, int4 minMax){
   int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
@@ -359,6 +366,7 @@ void hare::Robot::search(std::vector<map_node>& sensedRegion, int4 minMax){
     }
   }
 }
+
 bool hare::Robot::isDone(){
   for(int r = 0; r < MAP_X; ++r){
     for(int c = 0; c < MAP_Y; ++c){
@@ -385,13 +393,13 @@ void hare::Robot::run(){
   int2 currentPosition = odomToMap(this->odom.pose.pose.position.x,
     this->odom.pose.pose.position.y);
   int4 sensoryBound = {0,0,0,0};//{min.x,min.y,max.x,max.y} - indices in fullMap
-  float sensingRange = 4.0f;
+  float sensingRange = 2.0f;
   this->path.clear();
   this->goals.clear();
-  this->setIntialDispersionGoal();
-  std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,this->goals.front());
+  this->addCentroidGoal();
+  std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,{0,0});
 
-  ros::Rate r(50);//Hz
+  //ros::Rate r(50);//Hz
 
   while (ros::ok()){
 
@@ -400,18 +408,15 @@ void hare::Robot::run(){
 
     //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
     update.odom = this->odom;
-    sensedRegion.clear();
     sensoryBound = {floor(currentPosition.x-sensingRange),
       floor(currentPosition.y-sensingRange),
       floor(currentPosition.x+sensingRange),
       floor(currentPosition.y+sensingRange)
     };
+    sensedRegion.clear();
     this->sense(sensedRegion,sensoryBound);
     this->map->update(sensoryBound,sensedRegion);
     this->path.push_back(currentPosition);
-
-
-    //TEST NOTE NOTE NOTE
 
     update.cells.clear();
     for(int x = sensoryBound.x, i = 0; x < sensoryBound.z; ++x){
@@ -440,37 +445,33 @@ void hare::Robot::run(){
       update.goal_y = -1;
     }
 
-
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
 
-    this->search(sensedRegion,sensoryBound);
-
     //TREE STUFF
-    // switch(this->treeState){
-    //   case IDLE:{//something is wrong
-    //     break;
-    //   }
-    //   case SEARCH:{//simple searching
-    //     this->search(pathToGoal);
-    //     //ros::Duration(0.5).sleep();
-    //     break;
-    //   }
-    //   case RIDE:{//going to a single location
-    //     break;
-    //   }
-    //   case PROD:{//investigating obstacle
-    //     break;
-    //   }
-    //   case DONE:{//exploration complete
-    //     done = true;
-    //     break;
-    //   }
-    // }
+    switch(this->treeState){
+      case IDLE:{//something is wrong
+        break;
+      }
+      case SEARCH:{//simple searching
+        this->search(pathToGoal);
+        this->stop(0.5);
+        break;
+      }
+      case RIDE:{//going to a single location
+        break;
+      }
+      case PROD:{//investigating obstacle
+        break;
+      }
+      case DONE:{//exploration complete
+        done = true;
+        break;
+      }
+    }
     if(done) break;
     else{
       ros::spinOnce();
-      r.sleep();
-      this->stop();
+      //r.sleep();
       step++;
     }
   }

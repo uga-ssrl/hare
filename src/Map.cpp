@@ -246,10 +246,6 @@ hare::pq_node hare::Map::getNextToExplore(int2 start){
   return min;
 }
 
-int hare::Map::manhattan(int2 a, int2 b){
-  return (abs(a.x - b.x) + abs(a.y - b.y));
-}
-
 bool hare::Map::isValid(int2 n){
   // TODO see what the robot's stuff can do here
   // only valid if the robot
