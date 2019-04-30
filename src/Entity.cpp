@@ -310,6 +310,10 @@ void hare::Robot::run(){
     //
 
 
+    // MOTION MODEL:
+
+
+
     ros::spinOnce();
     step++;
   }
