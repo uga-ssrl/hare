@@ -46,6 +46,17 @@ void hare::Map::update(int2 location, int terrain) {
   std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
   terrain) != this->parentTerrain.end();
 }
+
+//update the map
+void hare::Map::update_debug(int2 location, int terrain) {
+  this->knownMap[location.x][location.y].explored = true;
+  this->knownMap[location.x][location.y].terrain = terrain;
+  this->knownMap[location.x][location.y].walls = {terrain,terrain,terrain,terrain};
+  this->knownMap[location.x][location.y].traversable =
+  std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+  terrain) != this->parentTerrain.end();
+}
+
 void hare::Map::update(int2 location, map_node& node){
   if(this->parentTerrain.size() == 0){
     ROS_ERROR("PARENT TERRAIN IN MAP MUST BE SET BEFORE UPDATING");
@@ -53,6 +64,12 @@ void hare::Map::update(int2 location, map_node& node){
   node.traversable = std::find(this->parentTerrain.begin(),this->parentTerrain.end(), node.terrain) != this->parentTerrain.end();
   this->knownMap[location.x][location.y] = node;
 }
+
+void hare::Map::update_debug(int2 location, map_node& node){
+  node.traversable = std::find(this->parentTerrain.begin(),this->parentTerrain.end(), node.terrain) != this->parentTerrain.end();
+  this->knownMap[location.x][location.y] = node;
+}
+
 void hare::Map::update(const int4& minMax, const std::vector<hare::map_node>& region){
   int currentElement = 0;
   if(this->parentTerrain.size() == 0){
@@ -115,44 +132,112 @@ void hare::Map::saveAsString(std::string path){
 // https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
 // description is the same as capabilities
 std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
-  std::cout << "entered getPath... " << std::endl;
-  pq_node curr;
-  curr.x = start.x;
-  curr.y = start.y;
-  curr.h = 0.0;
-  // the structs to be used
-  insert_pq(curr);
-  // std::vector<pq_node> path;
 
-  std::cout << "initialized the stuff... " << std::endl;
-  std::cout << "frontier size: " << frontier.size() << std::endl;
-  while (frontier.size()){ // while frontier not empty
-    curr = frontier.back();
-    frontier.pop_back();
+  // std::cout << "getting path..." << std::endl;
 
-    if (curr.x == goal.x && curr.y == goal.y){
-      // TODO insure correct path
-      return from;
-    }
+  // helper
+  int rowNum[] = {-1, 0, 0, 1};
+  int colNum[] = {0, -1, 1, 0};
 
-    std::vector<pq_node> neighbors;
-    neighbors = getNeighbors(curr);
-
-    for (int i = 0; i < neighbors.size(); i++){
-      pq_node next = neighbors[i];
-      if ( !isIn(next) ) {
-        float2 a;
-        a.x = next.x;
-        a.y = next.y;
-        float h = euclid(a,{(float)goal.x,(float)goal.y});
-        next.h = h;
-        insert_pq(next);
-        from.push_back(curr);
-      }
+  // set all path helpers false
+  for (int i = 0; i < (MAP_X); i++){
+    for (int j = 0; j < (MAP_Y); j++){
+      knownMap[i][j].path_helper = false;
     }
   }
 
-  return from;
+  // we are at the start cell
+  knownMap[start.x][start.y].path_helper = true;
+
+  // the q boi
+  std::queue<hare::pq_node> q;
+  // std::cout << "made q..." << std::endl;
+
+  hare::pq_node pq_n = {start.x, start.y, 0.0};
+  q.push(pq_n);
+  // std::cout << "added to q..." << std::endl;
+
+
+  while (!q.empty()){
+    // std::cout << "main loop..." << std::endl;
+    hare::pq_node curr = q.front();
+    int2 loc = {curr.x,curr.y};
+
+    // we're good
+    if (loc.x == goal.x && loc.y == goal.y) break;
+
+    q.pop();
+
+    // check neighbors
+    if (loc.x + 1 < MAP_X){
+      int2 test = {loc.x + 1,loc.y};
+      if (isValid(test) && !knownMap[test.x][test.y].path_helper){
+        knownMap[test.x][test.y].path_helper = true;
+        hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
+        q.push(adj);
+      }
+    }
+    if (loc.y + 1 < MAP_Y){
+      int2 test = {loc.x,loc.y+1};
+      if (isValid(test) && !knownMap[test.x][test.y].path_helper){
+        knownMap[test.x][test.y].path_helper = true;
+        hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
+        q.push(adj);
+      }
+    }
+    if (loc.x - 1 > 0) {
+      int2 test = {loc.x - 1,loc.y};
+      if (isValid(test) && !knownMap[test.x][test.y].path_helper){
+        knownMap[test.x][test.y].path_helper = true;
+        hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
+        q.push(adj);
+      }
+    }
+    if (loc.y - 1 > 0) {
+      int2 test = {loc.x,loc.y - 1};
+      if (isValid(test) && !knownMap[test.x][test.y].path_helper){
+        knownMap[test.x][test.y].path_helper = true;
+        hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
+        q.push(adj);
+      }
+    }
+
+    // old check neighbors
+    // for (int i = 0; i < 4; i++) {
+    //   std::cout << "neighbor loop..." << std::endl;
+    //     int2 test = {loc.x + rowNum[i],loc.y + colNum[i]};
+    //     // int row = loc.x + rowNum[i];
+    //     // int col = loc.y + colNum[i];
+    //     if (isValid(test) && !knownMap[test.x][test.y].path_helper){
+    //       knownMap[test.x][test.y].path_helper = true;
+    //       hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
+    //       q.push(adj);
+    //     }
+    // }
+  }
+
+  std::vector<hare::pq_node> temp;
+  // only to print the queue for testing
+  while (!q.empty()){
+    hare::pq_node curr = q.front();
+    // std::cout << "[" << curr.x << "," << curr.y << "],  ";
+    temp.push_back(curr);
+    q.pop();
+  }
+  std::cout << std::endl;
+
+  // TODO remove when done
+  return temp;
+
+}
+
+bool hare::Map::isValid(int2 n){
+  // TODO see what the robot's stuff can do here
+  // only valid if the robot
+  if (hare::fullMap[n.x][n.y].terrain == 0 || hare::fullMap[n.x][n.y].terrain == 2){
+    return true;
+  }
+  return false;
 }
 
 // insert into priority queue
