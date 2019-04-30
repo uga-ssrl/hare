@@ -20,6 +20,7 @@ namespace hare{
     bool explored;
     bool traversable;
     int4 walls;
+    bool path_helper;
   } map_node;
   //walls.x = left, walls.y = up, walls.z = down, walls.w = right
   typedef struct pq_node{
