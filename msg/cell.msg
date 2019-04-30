@@ -1,6 +1,6 @@
 int32 x
 int32 y
-int32 characteristic
+int32 terrain
 bool traversable
 bool explored
 int8 wallLeft

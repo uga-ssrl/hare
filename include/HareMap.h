@@ -17,7 +17,7 @@
 namespace hare{
 
   typedef struct map_node{
-    int characteristic;
+    int terrain;
     bool explored;
     bool traversable;
     int4 walls;

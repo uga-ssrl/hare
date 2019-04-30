@@ -7,35 +7,27 @@
 #include <hare/cell.h>
 #include <hare/HareUpdate.h>
 #include <nav_msgs/Odometry.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/Twist.h>
 #include "Map.h"
 
 namespace hare{
 
   typedef struct EntityDescription{
-    float3 boundingBox;
+    EntityType type;
   } EntityDescription;
 
   typedef struct RobotDescription : public EntityDescription{
-    bool canFly;
-    bool waterResistance;//0 = not waterproof, 1 = water resistant, 2 = water proof
-    float torque;
-    float turnRadius;
-    float weight;
+    std::vector<int> terrain;
   } RobotDescription;
 
   class Entity{
 
   public:
     EntityDescription description;
-
+    HareTreeState treeState;
     nav_msgs::Odometry odom;
-
-    std::string state_indicator;
     std::string ns;
     int id;
-    EntityType type;
+
     Entity();
     Entity(std::string ns);
     ~Entity();
@@ -45,6 +37,7 @@ namespace hare{
   class Neighbor : public Entity{
 
   public:
+    int2 goal;//-1 if no goal
     RobotDescription description;
 
     Neighbor();
@@ -57,8 +50,9 @@ namespace hare{
 
     uint32_t queue_size;
     Map* map;
-    std::vector<float3> path;
-
+    std::vector<int2> path;
+    std::vector<int2> goals;
+    std::vector<Neighbor> neighbors;
 
     ros::NodeHandle nh;
     std::map<std::string, int> publisherMap;
@@ -90,9 +84,6 @@ namespace hare{
   public:
 
     RobotDescription description;
-    int tree_state;
-    int4 linear;
-    std::vector<Neighbor> neighbors;
 
     Robot();
     //NOTE INITIAL POSITIONS SET AS PARAMETERS IN LAUNCH FILES

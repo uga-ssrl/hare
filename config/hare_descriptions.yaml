@@ -1,19 +1,7 @@
 static_characteristics:
   robot1:
-    turnRadius: 5.0
-    weight: 1
-    torque: 0.0
-    canFly: false
-    boundingBox: [1.0,1.5,0.25]
+    terrain: [0, 2, 3]
   robot2:
-    turnRadius: 0.0
-    weight: 1
-    torque: 0.0
-    canFly: false
-    boundingBox: [0.25,0.25,0.25]
+    terrain: [0, 1, 3]
   robot3:
-    turnRadius: 20.0
-    weight: 20
-    torque: 2.0
-    canFly: false
-    boundingBox: [2.0,2.0,2.0]
+    terrain: [0, 1, 2, 3]

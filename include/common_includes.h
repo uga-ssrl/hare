@@ -21,6 +21,8 @@ namespace hare{
   enum ObstacleType {WALL, RAMP, BOX, TUNNEL_BOX, SPHERE, CYLINDER, TUNNEL_CYLINDER, CONE};
   enum TerrainType {INDOOR_GROUND, OUTDOOR_GROUND, AIR, WATER, WATER_SURFACE};
 
+  enum HareTreeState {IDLE = -1, SEARCH = 0, RIDE = 1, PROD = 2, DONE = 3};
+
   //Comms stuff
   enum SpinnerType {SINGLE, MULTITHREADED, ASYNCRONOUS};
 
