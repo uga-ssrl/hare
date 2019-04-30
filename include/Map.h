@@ -6,6 +6,7 @@
 #include "HareMap.h"
 #include <hare/cell.h>
 #include <string>
+#include <queue>
 #include <fstream>
 #include <hare/HareUpdate.h>
 
@@ -18,6 +19,10 @@ namespace hare{
 
     std::vector<pq_node> frontier;
     std::vector<pq_node> from;
+
+    // std::vector<int2> i2_path;
+    // std::queue<vector<int> > queue;
+    // std::vector<int2> i2_frontier;
 
   public:
 

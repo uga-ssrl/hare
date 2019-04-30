@@ -115,44 +115,29 @@ void hare::Map::saveAsString(std::string path){
 // https://www.redblobgames.com/pathfinding/a-star/introduction.html#greedy-best-first
 // description is the same as capabilities
 std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
-  std::cout << "entered getPath... " << std::endl;
-  pq_node curr;
-  curr.x = start.x;
-  curr.y = start.y;
-  curr.h = 0.0;
-  // the structs to be used
-  insert_pq(curr);
-  // std::vector<pq_node> path;
 
-  std::cout << "initialized the stuff... " << std::endl;
-  std::cout << "frontier size: " << frontier.size() << std::endl;
-  while (frontier.size()){ // while frontier not empty
-    curr = frontier.back();
-    frontier.pop_back();
-
-    if (curr.x == goal.x && curr.y == goal.y){
-      // TODO insure correct path
-      return from;
-    }
-
-    std::vector<pq_node> neighbors;
-    neighbors = getNeighbors(curr);
-
-    for (int i = 0; i < neighbors.size(); i++){
-      pq_node next = neighbors[i];
-      if ( !isIn(next) ) {
-        float2 a;
-        a.x = next.x;
-        a.y = next.y;
-        float h = euclid(a,{(float)goal.x,(float)goal.y});
-        next.h = h;
-        insert_pq(next);
-        from.push_back(curr);
-      }
+  // set all path helpers false
+  for (int i = 0; i < (MAP_X); i++){
+    for (int j = 0; j < (MAP_Y); j++){
+      knownMap[i][j].path_helper = false;
     }
   }
 
-  return from;
+  // we are at the start cell
+  knownMap[start.x][start.y].path_helper = true;
+
+  // the q boi
+  std::queue<hare::pq_node> q;
+
+  hare::pq_node pq_n = {start.x, start.y, 0.0};
+  q.push(pq_n);
+
+
+
+  // TODO remove when done
+  std::vector<hare::pq_node> temp;
+  return temp;
+
 }
 
 // insert into priority queue
