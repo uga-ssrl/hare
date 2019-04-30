@@ -255,6 +255,9 @@ void hare::Robot::run(){
   this->path.clear();
   this->goals.clear();
 
+  //TODO ensure that husky is not out of coordinated frame (if initial pos out
+  //of 0 0 then the odom will be wrong
+
   while (ros::ok()){
 
     currentPosition = hare::odomToMap(this->odom.pose.pose.position.x,
