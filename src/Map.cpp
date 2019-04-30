@@ -30,6 +30,8 @@ void hare::Map::initializeMap(){
       this->knownMap[i][j].explored = false;
       this->knownMap[i][j].traversable = false; //only valid if expored is true
       this->knownMap[i][j].walls = {-1,-1,-1,-1};
+      //
+      this->h_map[i][j] = 9999999; // ¯\_(ツ)_/¯ // TODO SHOULD MAKE IT MAX INT
     }
   }
 }
@@ -135,10 +137,6 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
 
   // std::cout << "getting path..." << std::endl;
 
-  // helper
-  int rowNum[] = {-1, 0, 0, 1};
-  int colNum[] = {0, -1, 1, 0};
-
   // set all path helpers false
   for (int i = 0; i < (MAP_X); i++){
     for (int j = 0; j < (MAP_Y); j++){
@@ -166,6 +164,8 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
     // we're good
     if (loc.x == goal.x && loc.y == goal.y) break;
 
+    // Before pop, store it
+    h_map[curr.x][curr.y] = curr.h;
     q.pop();
 
     // check neighbors
@@ -201,34 +201,53 @@ std::vector<hare::pq_node> hare::Map::getPath(int2 start, int2 goal){
         q.push(adj);
       }
     }
-
-    // old check neighbors
-    // for (int i = 0; i < 4; i++) {
-    //   std::cout << "neighbor loop..." << std::endl;
-    //     int2 test = {loc.x + rowNum[i],loc.y + colNum[i]};
-    //     // int row = loc.x + rowNum[i];
-    //     // int col = loc.y + colNum[i];
-    //     if (isValid(test) && !knownMap[test.x][test.y].path_helper){
-    //       knownMap[test.x][test.y].path_helper = true;
-    //       hare::pq_node adj = {test.x,test.y, curr.h + 1.0};
-    //       q.push(adj);
-    //     }
-    // }
   }
 
   std::vector<hare::pq_node> temp;
-  // only to print the queue for testing
-  while (!q.empty()){
-    hare::pq_node curr = q.front();
-    // std::cout << "[" << curr.x << "," << curr.y << "],  ";
-    temp.push_back(curr);
-    q.pop();
+  // get the goal node:
+  hare::pq_node pos = q.front();
+  int itr = (int) pos.h;
+  temp.push_back(pos);
+  for (int i = 0; i < itr; i++){
+    if (h_map[pos.x-1][pos.y] < pos.h){
+      pos = {pos.x-1,pos.y,pos.h-1};
+    }
+    else if (h_map[pos.x+1][pos.y] < pos.h){
+      pos = {pos.x+1,pos.y,pos.h-1};
+    }
+    else if (h_map[pos.x][pos.y-1] < pos.h){
+      pos = {pos.x,pos.y-1,pos.h-1};
+    }
+    else if (h_map[pos.x][pos.y+1] < pos.h){
+      pos = {pos.x,pos.y+1,pos.h-1};
+    }
+    temp.push_back(pos);
   }
-  std::cout << std::endl;
 
-  // TODO remove when done
+
   return temp;
+}
 
+
+hare::pq_node hare::Map::getNextToExplore(int2 start){
+
+  // find closest unexplored
+  hare::pq_node min = {-1,-1,990000};
+
+  for (int i = 0; i < (MAP_X); i++){
+    for (int j = 0; j < (MAP_Y); j++){
+      // hare::map_node map_test = knownMap[i][j];
+      if (isValid({i,j}) && !knownMap[i][j].explored && manhattan({i,j},start) <= min.h){
+        min = {i,j,manhattan({i,j},start)};
+      }
+    }
+  }
+
+  return min;
+}
+
+int hare::Map::manhattan(int2 a, int2 b){
+  return (abs(a.x - b.x) + abs(a.y - b.y));
 }
 
 bool hare::Map::isValid(int2 n){

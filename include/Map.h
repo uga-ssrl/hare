@@ -27,6 +27,7 @@ namespace hare{
   public:
 
     map_node knownMap[MAP_X][MAP_Y];
+    int h_map[MAP_X][MAP_Y];
 
     Map();
     Map(std::string ns);
@@ -53,9 +54,11 @@ namespace hare{
     // path includes name
     void saveAsString(std::string path);
 
-    // A* algorithm
-    // returns linear spline path
+    // returns path from goal to start
     std::vector<pq_node> getPath(int2 start, int2 goal);
+
+    // returns path from goal to start
+    pq_node getNextToExplore(int2 start);
 
 
   private:
@@ -70,6 +73,8 @@ namespace hare{
     bool isIn(pq_node n);
 
     bool isValid(int2 n);
+
+    int manhattan(int2 a, int2 b);
 
   };
 }
