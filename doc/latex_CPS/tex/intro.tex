@@ -1,0 +1,46 @@
+\subsection{Overview}
+
+As an individual working in a cooperative operation, knowing the capabilities
+of you and your teammates is necessary to the division of tasks. This idea provides
+the basis for this proposed research. As homogeneous multi-robot systems are
+inherently limited based on the capabilities of the specific robot, it makes
+sense to venture down a heterogeneous avenue. A lot of research has gone into
+heterogeneous multi-robot systems in the past few years, but a common trend
+amongst most of them is that the model is built for the specific platforms
+that are to be used. This proposed research is meant to provide the groundwork
+for a heterogeneous model that allows for the insertion of a robots with different
+skill sets with the purpose of enhancing the overall capability of the system.
+This framework would allow for a variety of models to be built on top of it,
+with a variety of hardware. Researchers wanting to build a specific system
+could allocate funds and resources to build each member to accomplish a portion
+of the overall task, possibly allowing for more cost efficiency and remove
+unnecessary redundancy. The main challenge in this research will be finding
+the optimal way to reassign tasks based on defined capabilities of each robot
+in the system. This brings up a secondary, more basic, challenge of defining
+robot’s characteristics in a simple yet comprehensive manor. All-in-all,
+this research acts as a proof of concept for task division based on member
+attributes, or individual robots capabilities, and will allow for a high degree
+of heterogeneous utilization and multi-robot model expansion.
+
+\subsection{Background}
+
+The basis of this research is in the definition of attributes which is detailed
+in the methodology section. This section is meant to detail previous research
+that will be used in proving that the fundamental idea of task division based
+on individual capabilities. As this research is meant to strictly provide a basis
+for heterogeneous task division and capability utilization, the model built on
+top of it could take many forms. In this case, a multi-robot behavior tree will
+be constructed to guide operations and define command sequences at a high level like
+proposed in [3] which is an expansion of research in [2]. To implement such a
+system the DSL buzz [6] will be used which provides a level of abstraction that
+allows for focus on high level cooperation, information sharing, and simple
+behavioral definitions. The researchers that developed this language have created a
+ROS package that will be utilized, called ROSbuzz, in this proof-of-concept system.
+Control mechanisms and communication in multirobot systems have been a center of
+research for a while and updates/innovation in this corner of the field are practically
+constant. The Robot Operating System (ROS) [4] provides a large variety of packages
+that can be put together to form fully functioning and unique control mechanisms as
+well as providing easy to use communication packages. Exploration and path finding
+are widely researched and implemented using ROS packages, as components are pretty
+broad and can help illuminate edge cases in multi-robot systems as agents have to
+operate without global knowledge of their environment.

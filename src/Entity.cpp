@@ -250,6 +250,33 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
+
+void hare::Robot::investigateObject(){
+
+}
+void hare::Robot::findCapableNeighbor(){
+
+}
+void hare::Robot::notifyNeighbor(){
+
+}
+void hare::Robot::switchWithNeighbor(){
+
+}
+void hare::Robot::search(){
+
+}
+bool hare::Robot::isDone(){
+  for(int r = 0; r < MAP_X; ++r){
+    for(int c = 0; c < MAP_Y; ++c){
+      if(!this->map->knownMap[r][c].explored){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void hare::Robot::run(){
   hare::HareUpdate update;
   update.robot_id = this->id;
