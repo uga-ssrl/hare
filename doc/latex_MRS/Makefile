@@ -1,8 +1,8 @@
 all:
 	pdflatex hare-paper.tex
 	bibtex hare-paper
-	pdflatex hare-paper.tex
-	pdflatex hare-paper.tex
+	# pdflatex hare-paper.tex
+	# pdflatex hare-paper.tex
 	rm -f *.aux
 	rm -f *.toc
 	# rm -f *.pdf

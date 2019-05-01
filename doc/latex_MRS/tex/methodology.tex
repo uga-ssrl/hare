@@ -1,7 +1,7 @@
 \subsection{Approach}
 
-dsfasdfasdfasdfasdf
-roll assignment with algorithms 
+
+roll assignment with algorithms
 
 
 \subsection{Role Assignment}
@@ -28,7 +28,7 @@ illustrate attribute sets necessary for that exploration.
     \centering
     \begin{subfigure}[b]{0.15\textwidth}
         \includegraphics[width=\textwidth]{bot1}
-        \caption{Husky bot}
+        \caption{Husky}
         \label{fig:bot1}
     \end{subfigure}
     \begin{subfigure}[b]{0.15\textwidth}
@@ -81,24 +81,43 @@ heterogeneous utilization and multi-robot model expansion.
 \end{figure}
 
 \subsection{Algorithms}
+For navigation we used two methods. The first is a Breadth First Search (BFS) which explores the cells adjacent to the robots
+current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node\cite{pound}.
 
-The exploration model is a heuristic based algorithm that encourages the robot to explore
-away from its neighbors to ensure maximum coverage and remove possibility of initial
-redundant searches.
 
-- DFS
-- A*
+\begin{algorithm}[H]
+\caption{Breath First Search}
+\begin{algorithmic}[1]
+\Procedure{getPath}{$start,goal$}
+    \State $knownap[i][j].initializeToZero()$
+    \State $q \leftarrow initializeQueue()$
+    \State $q_{n} \leftarrow initializeQueue(init_x, init_y, 0)$
+    \While{$q != empty$}
+        \State $loc = \{ curr.x, curr.y \}$
+        \If{$(loc = goal)$}
+          \State $break$ \Comment{reached goal}
+        \EndIf
+          \State $h_{map}[curr.x, curr.y] = curr.h$ \Comment{store element before popping}
+          \State $q.pop()$ \Comment{pop last element}
+        \If{$isInBounds(loc+step)$}  \Comment{check you are in map bounds}
+          \State $test \leftarrow loc + step$
+          \If{$isValid(test) \& cellEmpty()$}  \Comment{check cell unexplored and in bounds}
+            \State $adj \leftarrow {loc + step, h + 1}$ \Comment{update hueristic}
+            \State $q.push(adj)$ \Comment{add to queue}
+            \label{path}
+          \EndIf
+        \EndIf
+    \EndWhile
+    \State $temp \leftarrow orderedQ(q)$ \Comment{order elements based on hueristic}
+    \State $return \leftarrow temp$ \Comment{order elements based on hueristic}
+\EndProcedure
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
-esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{algorithmic}
+\end{algorithm}
 
 % this section has 3 figures together
 
-\subsection{Testing Framework}
+\subsection{Multi-Agent Testing Framework}
 
 After exploring a set of options to test this idea, the best place to go was to the drawing
 board. Taking a step back it was decided that pushing to get straight into hardware testing
