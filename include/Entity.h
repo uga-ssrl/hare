@@ -18,6 +18,8 @@ namespace hare{
 
   typedef struct RobotDescription : public EntityDescription{
     std::vector<int> terrain;
+    bool holonomic;
+    float turnRadius;//in odom
   } RobotDescription;
 
   class Entity{
@@ -60,8 +62,9 @@ namespace hare{
     std::map<std::string, int> publisherMap;
     std::vector<ros::Publisher> publishers;
     std::vector<ros::Subscriber> subscribers;
-    void loadCapabilties();
+
     void findNeighbors();
+    void loadCapabilties();
     bool addPublisher(ros::Publisher &pub);
     bool addSubscriber(ros::Subscriber &sub);
 
@@ -71,15 +74,22 @@ namespace hare{
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
-    void rotate(float3 angular);
-    void go(float2 linear = {0.0f,0.0f}, float2 angular = {0.0f,0.0f});
-    void go(float3 linear = {0.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
-    void goUp(float rate = 1.0f);
-    void goDown(float rate = 1.0f);
+    void turn(float3 angular);
+    void turnRight(float rate = 1.0f);
+    void turnLeft(float rate = 1.0f);
+
+    void go(float2 linear, float2 angular);
+    void go(float3 linear, float3 angular);
+
+    void goForward(float rate = 1.0f);
+    void goBackward(float rate = 1.0f);
     void goRight(float rate = 1.0f);
     void goLeft(float rate = 1.0f);
+
     void stop();
     void stop(float delay);
+
+    void takeStep(std::vector<pq_node>& path);
 
     //HARE OPERABLE METHODS
     void addCentroidGoal();

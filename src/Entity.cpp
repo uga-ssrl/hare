@@ -26,6 +26,8 @@ hare::Neighbor::Neighbor(std::string ns){
   this->ns = ns;
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->description.type = ROBOT;
+  this->description.holonomic = false;
+  this->description.terrain.push_back(0);
   this->treeState = IDLE;
 }
 hare::Neighbor::~Neighbor(){
@@ -36,6 +38,8 @@ hare::Robot::Robot(){
   this->id = -1;
   this->ns = "/";
   this->description.type = ROBOT;
+  this->description.holonomic = false;
+  this->description.terrain.push_back(0);
   this->map = NULL;
   this->treeState = IDLE;
 }
@@ -45,6 +49,8 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->ns = nh.getNamespace();
   this->id = std::stoi(this->ns.substr(this->ns.length() - 1, 1));
   this->description.type = ROBOT;
+  this->description.holonomic = false;
+  this->description.terrain.push_back(0);
   float3 position;
   this->treeState = IDLE;
   this->nh.getParam("init_x", position.x);
@@ -52,6 +58,7 @@ hare::Robot::Robot(ros::NodeHandle nh){
   this->nh.getParam("init_z", position.z);
   this->init_pose = {position.x,position.y};
   this->map = new Map(this->ns);
+  this->init();
 }
 hare::Robot::~Robot(){
   if(this->map != NULL){
@@ -60,27 +67,6 @@ hare::Robot::~Robot(){
 
 }
 //must add capabilities here if you add them to yaml file
-// Add to publisher stack
-void hare::Robot::loadCapabilties(){
-  bool received = true;
-  if(!this->nh.getParam("/static_characteristics" + this->ns + "/terrain", this->description.terrain)){
-    ROS_ERROR("Failed to get param terrain");
-    received = false;
-  }
-  if(received){
-    ROS_INFO("Successfuly loaded terrain from yaml file");
-  }
-  this->map->setParentTerrain(this->description.terrain);
-  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
-    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/terrain", (*neighbor).description.terrain)){
-      ROS_ERROR("Failed to get param terrain");
-      received = false;
-    }
-    if(received){
-      ROS_INFO("Successfuly loaded terrain from yaml file");
-    }
-  }
-}
 void hare::Robot::findNeighbors(){
   int numNeighbors = 0;
   std::string param_name;
@@ -110,6 +96,39 @@ void hare::Robot::findNeighbors(){
     }
   }
 }
+void hare::Robot::loadCapabilties(){
+  bool received = true;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/terrain", this->description.terrain)){
+    ROS_ERROR("Failed to get param terrain");
+    received = false;
+  }
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/holonomic", this->description.holonomic)){
+    ROS_ERROR("Failed to get param terrain");
+    received = false;
+  }
+  std::cout<<"holonomic: "<<this->description.holonomic<<std::endl;
+  if(!this->nh.getParam("/static_characteristics" + this->ns + "/turn_radius", this->description.turnRadius)){
+    ROS_ERROR("Failed to get param terrain");
+    received = false;
+  }
+  this->map->setParentTerrain(this->description.terrain);
+  for(auto neighbor = this->neighbors.begin(); neighbor != this->neighbors.end(); ++neighbor){
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/terrain", (*neighbor).description.terrain)){
+      ROS_ERROR("Failed to get param terrain");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/holonomic", (*neighbor).description.holonomic)){
+      ROS_ERROR("Failed to get param holonomic");
+      received = false;
+    }
+    if(!this->nh.getParam("/static_characteristics" + (*neighbor).ns + "/turn_radius", (*neighbor).description.turnRadius)){
+      ROS_ERROR("Failed to get param turn_radius");
+      received = false;
+    }
+  }
+}
+
+// Add to publisher & subscriber stack
 bool hare::Robot::addPublisher(ros::Publisher &pub){
   bool success = true;
   if(!pub){
@@ -223,74 +242,92 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-void hare::Robot::goUp(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y+1};
+//TODO use turn radius in go left and go right
+//NOTE CALEB AND ALLEN MAY HAVE GOTTEN TERRAIN WRONG
+
+void hare::Robot::turn(float3 angular){
   geometry_msgs::Twist cmdVel;
   cmdVel.angular.x = angular.x;
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
+  float speed = sqrtf((angular.x*angular.x)+(angular.y*angular.y)+(angular.z*angular.z));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  ros::Duration(step*abs(cmdVel.linear.y)).sleep();
-  stop();
+  this->stop(1.57/abs(speed));
 }
-void hare::Robot::goDown(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y-1};
+void hare::Robot::turnRight(float rate){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.angular.z = abs(rate);
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  this->stop(1.57/abs(rate));
+}
+void hare::Robot::turnLeft(float rate){
+  geometry_msgs::Twist cmdVel;
+  cmdVel.angular.z = -1.0f*abs(rate);
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  this->stop(1.57/abs(rate));
+}
+
+void hare::Robot::go(float2 linear, float2 angular){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.x = linear.x;
   cmdVel.linear.y = linear.y;
   cmdVel.angular.x = angular.x;
   cmdVel.angular.y = angular.y;
+  float speed = sqrtf((linear.x*linear.x)+(linear.y*linear.y));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  ros::Duration(step*abs(cmdVel.linear.y)).sleep();
-  stop();
+  this->stop(MAP_TO_ODOM*speed);
 }
-void hare::Robot::goRight(float3 linear, float3 angular){
-  // float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x+1,start.y};
+void hare::Robot::go(float3 linear, float3 angular){
   geometry_msgs::Twist cmdVel;
+  cmdVel.linear.x = linear.x;
+  cmdVel.linear.y = linear.y;
+  cmdVel.linear.z = linear.z;
   cmdVel.angular.x = angular.x;
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
-
+  float speed = sqrtf((linear.x*linear.x)+(linear.y*linear.y)+(linear.z*linear.z));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
-  ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
-  this->goUp();
+  this->stop(MAP_TO_ODOM*speed);
 }
-void hare::Robot::goLeft(float3 linear, float3 angular){
-  // float step = MAP_TO_ODOM;
-  float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x-1,start.y};
+void hare::Robot::goForward(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.angular.x = angular.x;
-  cmdVel.angular.y = angular.y;
-  cmdVel.angular.z = angular.z;
-
+  cmdVel.linear.y = abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
-  ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
-  this->goUp();
+  this->stop(MAP_TO_ODOM*abs(rate));
 }
-void hare::Robot::goDown(float rate){
+void hare::Robot::goBackward(float rate){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.y = -1.0f*abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  this->stop(MAP_TO_ODOM*abs(rate));
 }
 void hare::Robot::goRight(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = abs(rate);
-  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  if(this->description.holonomic){
+     this->stop();
+     cmdVel.linear.x = abs(rate);
+     this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+     this->stop(MAP_TO_ODOM*abs(rate));
+  }
+  else{
+    this->turnRight(2.0f*rate);
+    this->goForward(2.0f*rate);
+  }
 }
 void hare::Robot::goLeft(float rate){
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = -1.0f*abs(rate);
-  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  if(this->description.holonomic){
+     this->stop();
+     cmdVel.linear.x = -1.0f*abs(rate);
+     this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+     this->stop(MAP_TO_ODOM*abs(rate));
+  }
+  else{
+    this->turnLeft(2.0f*rate);
+    this->goForward(2.0f*rate);
+  }
 }
+
 void hare::Robot::stop(){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.x = 0.0f;
@@ -311,6 +348,34 @@ void hare::Robot::stop(float delay){
   cmdVel.angular.z = 0.0f;
   ros::Duration(delay).sleep();
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+}
+
+//TODO test
+void hare::Robot::takeStep(std::vector<pq_node>& path){
+  int2 currentPosition =  odomToMap(this->odom.pose.pose.position.x,
+    this->odom.pose.pose.position.y);
+  int2 before = currentPosition;
+  pq_node waypoint = path.front();
+  if (waypoint.x < currentPosition.x){
+    this->goLeft();
+  }
+  else if (waypoint.x > currentPosition.x){
+    this->goRight();
+  }
+  else{
+    if (waypoint.y < currentPosition.y){
+      this->goBackward(); // -y (cmd vel) moves up in map
+    }
+    else if (waypoint.y > currentPosition.y){
+      this->goForward(); // +y (cmd vel) moves down in map
+    }
+  }
+  if(euclid(currentPosition,before) > 1.0f){
+    this->takeStep(path);
+  }
+  else if(euclid({waypoint.x,waypoint.y},currentPosition) < 1.0f){
+    path.erase(path.begin());
+  }
 }
 
 void hare::Robot::addCentroidGoal(){
@@ -344,6 +409,7 @@ void hare::Robot::addDispersionGoal(){
   if(mapVal.y >= MAP_Y) mapVal.y = MAP_Y;
   this->goals.push_back(mapVal);
 }
+
 void hare::Robot::search(std::vector<pq_node>& pathToGoal){
   int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
 
@@ -384,8 +450,8 @@ void hare::Robot::search(std::vector<map_node>& sensedRegion, int4 minMax){
     }
     else{
       weighting.y /=2;
-      if(weighting.y > 0) this->goUp();
-      else this->goDown();
+      if(weighting.y > 0) this->goForward();
+      else this->goBackward();
     }
   }
 }
@@ -422,11 +488,11 @@ void hare::Robot::run(){
   this->addCentroidGoal();
   std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,{0,0});
 
-  //ros::Rate r(50);//Hz
+  ros::Rate r(2);//Hz
 
   while (ros::ok()){
 
-    currentPosition = hare::odomToMap(this->odom.pose.pose.position.x,
+    currentPosition = odomToMap(this->odom.pose.pose.position.x,
       this->odom.pose.pose.position.y);
 
     //MAKE SURE TO TRANSLATE THIS POSITION TO OUR COORDINATE FRAME
@@ -468,79 +534,36 @@ void hare::Robot::run(){
       update.goal_y = -1;
     }
 
-
     ///send data
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
-    std::vector<hare::pq_node> action;
-    int2 goal = {4,4}; // Map goal
-    bool moved = false;
 
-    action = this->map->getPath(currentPosition,goal);
+    //this->takeStep(pathToGoal);
+    this->turnRight();
 
-    for(auto &position : action)
-    {
-      int2 m_pose = {position.x, position.y};
-      if (moved) break;
 
-      if (m_pose.x < currentPosition.x)
-      {
-        this->goLeft();
-        moved = true;
+    switch(this->treeState){
+      case IDLE:{//something is wrong
+        break;
       }
-      else if (m_pose.y < currentPosition.y)
-      {
-        this->goDown(); // -y (cmd vel) moves up in map
-        moved = true;
+      case SEARCH:{//simple search
+        break;
       }
-      else if (m_pose.x > currentPosition.x)
-      {
-        this->goRight();
-        moved = true;
+      case RIDE:{//going to a single locatio
+        break;
       }
-      else if (m_pose.y > currentPosition.y)
-      {
-        this->goUp(); // +y (cmd vel) moves down in map
-        moved = true;
+      case PROD:{//investigating obstacle
+        break;
       }
-
-        // switch(this->treeState){
-        //   case IDLE:{//something is wrong
-        //     if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
-        //     {
-        //       this->goLeft();
-        //       if(step == 20) this->treeState = SEARCH;
-        //     }
-        //     break;
-        //   }
-        //   case SEARCH:{//simple
-        //     if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
-        //     {
-        //       this->goRight();
-        //       if(step == 20) this->treeState = IDLE;
-        //     }
-        //
-        //     break;
-        //   }
-        //   case RIDE:{//going to a single locatio
-        //     break;
-        //   }
-        //   case PROD:{//investigating obstacle
-        //     break;
-        //   }
-        //   case DONE:{//exploration complete
-        //     done = true;
-        //     break;
-        //   }
-        // }
-
-
-      ros::Duration(0.5).sleep();
-      if(done) break;
-      else{
-        ros::spinOnce();
-        step++;
+      case DONE:{//exploration complete
+        done = true;
+        break;
       }
     }
-
+    if(done) break;
+    else{
+      ros::spinOnce();
+      r.sleep();
+      step++;
+    }
   }
 }

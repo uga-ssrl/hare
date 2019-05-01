@@ -1,7 +1,13 @@
 static_characteristics:
   robot1:
     terrain: [0, 2, 3]
+    holonomic: true
+    turn_radius: 0.0
   robot2:
     terrain: [0, 1, 3]
+    holonomic: false
+    turn_radius: 0.0
   robot3:
     terrain: [0, 1, 2, 3]
+    holonomic: false
+    turn_radius: 1.5
