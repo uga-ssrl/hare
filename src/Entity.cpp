@@ -242,10 +242,19 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-//TODO use turn radius in go left and go right times
+//TODO use turn radius in go left and go right as well as turn methods
 //NOTE CALEB AND ALLEN MAY HAVE GOTTEN TERRAIN WRONG
 //TODO make stop relative to the robots step size or wheel diameter
-
+void hare::Robot::align(float2 focus){
+  float2 alignment = {focus.x - this->odom.pose.pose.position.x,focus.y - this->odom.pose.pose.position.y};
+  float angle = atan(alignment.y/alignment.x);
+  std::cout<<angle<<std::endl;
+  if(abs(angle) < 0.017453293) return;
+  geometry_msgs::Twist cmdVel;
+  cmdVel.angular.z = 1.0f;
+  this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  this->stop(abs(angle));
+}
 void hare::Robot::turn(float3 angular){
   geometry_msgs::Twist cmdVel;
   cmdVel.angular.x = angular.x;
@@ -253,7 +262,7 @@ void hare::Robot::turn(float3 angular){
   cmdVel.angular.z = angular.z;
   float speed = sqrtf((angular.x*angular.x)+(angular.y*angular.y)+(angular.z*angular.z));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  this->stop(1.57/abs(speed));
+  this->stop(speed);
 }
 void hare::Robot::turnRight(float rate){
   geometry_msgs::Twist cmdVel;
@@ -276,7 +285,7 @@ void hare::Robot::go(float2 linear, float2 angular){
   cmdVel.angular.y = angular.y;
   float speed = sqrtf((linear.x*linear.x)+(linear.y*linear.y));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  this->stop(MAP_TO_ODOM*speed);
+  this->stop(speed);
 }
 void hare::Robot::go(float3 linear, float3 angular){
   geometry_msgs::Twist cmdVel;
@@ -288,19 +297,19 @@ void hare::Robot::go(float3 linear, float3 angular){
   cmdVel.angular.z = angular.z;
   float speed = sqrtf((linear.x*linear.x)+(linear.y*linear.y)+(linear.z*linear.z));
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  this->stop(MAP_TO_ODOM*speed);
+  this->stop(speed);
 }
 void hare::Robot::goForward(float rate){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.y = abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  this->stop(MAP_TO_ODOM*abs(rate));
+  this->stop(abs(rate));
 }
 void hare::Robot::goBackward(float rate){
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.y = -1.0f*abs(rate);
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  this->stop(MAP_TO_ODOM*abs(rate));
+  this->stop(abs(rate));
 }
 void hare::Robot::goRight(float rate){
   geometry_msgs::Twist cmdVel;
@@ -308,7 +317,7 @@ void hare::Robot::goRight(float rate){
      this->stop();
      cmdVel.linear.x = abs(rate);
      this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-     this->stop(MAP_TO_ODOM*abs(rate));
+     this->stop(abs(rate));
   }
   else{
     this->turnRight(2.0f*rate);
@@ -321,7 +330,7 @@ void hare::Robot::goLeft(float rate){
      this->stop();
      cmdVel.linear.x = -1.0f*abs(rate);
      this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-     this->stop(MAP_TO_ODOM*abs(rate));
+     this->stop(abs(rate));
   }
   else{
     this->turnLeft(2.0f*rate);
@@ -351,28 +360,20 @@ void hare::Robot::stop(float delay){
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
 }
 
-//TODO test
 void hare::Robot::takeStep(std::vector<pq_node>& path){
   int2 currentPosition =  odomToMap(this->odom.pose.pose.position.x,
     this->odom.pose.pose.position.y);
   pq_node waypoint = path.front();
+  waypoint.x = MAP_X/2;
+  waypoint.y = MAP_Y/2;
   int2 dist = {waypoint.x - currentPosition.x, waypoint.y - currentPosition.y};
-  while(abs(dist.x) > 1.0f && abs(dist.y) > 1.0f){
-    if(dist.x < 1.0f){
-      this->goLeft();
-    }
-    else if(dist.x > 1.0f){
-      this->goRight();
-    }
-    else if(dist.y < 1.0f){
-      this->goBackward(); // -y (cmd vel) moves up in map
-    }
-    else if(dist.y > 1.0f){
+  bool waypointReached = false;
+  while(!waypointReached){
+      this->align({waypoint.x,waypoint.y});//make sure not 0,0
       this->goForward(); // +y (cmd vel) moves down in map
-    }
-    else{
+    if(abs(dist.x) < 1 && abs(dist.y) < 1){
       path.erase(path.begin());
-      return;
+      waypointReached = true;
     }
     currentPosition =  odomToMap(this->odom.pose.pose.position.x,
       this->odom.pose.pose.position.y);
@@ -442,12 +443,12 @@ void hare::Robot::run(){
   this->path.clear();
   this->goals.clear();
   //this->addCentroidGoal();
-  this->goals.push_back({0,0});
+  this->goals.push_back({MAP_X/2 + 4,MAP_Y/2 + 4});
   std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,this->goals.front());
 
-  ros::Rate r(2);//Hz
-
+  //ros::Rate r(10);//Hz
   while (ros::ok()){
+    this->align({10.0f,10.0f});
 
     currentPosition = odomToMap(this->odom.pose.pose.position.x,
       this->odom.pose.pose.position.y);
@@ -493,7 +494,7 @@ void hare::Robot::run(){
 
     ///send data
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
-    this->takeStep(pathToGoal);
+    // this->takeStep(pathToGoal);
     switch(this->treeState){
       case IDLE:{//something is wrong
         break;
@@ -519,7 +520,7 @@ void hare::Robot::run(){
     if(done) break;
     else{
       ros::spinOnce();
-      r.sleep();
+      //r.sleep();
       step++;
     }
   }

@@ -74,6 +74,7 @@ namespace hare{
     //NOTE the sensed region is from the pos of robot odom
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
+    void align(float2 focus);
     void turn(float3 angular);
     void turnRight(float rate = 1.0f);
     void turnLeft(float rate = 1.0f);
@@ -94,7 +95,7 @@ namespace hare{
     //HARE OPERABLE METHODS
     void addCentroidGoal();
     void addDispersionGoal();
-  
+
     bool isDone();//no more unexplored cells
 
 
