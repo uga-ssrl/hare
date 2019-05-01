@@ -82,7 +82,7 @@ heterogeneous utilization and multi-robot model expansion.
 
 \subsection{Algorithms}
 For navigation we used two methods. The first is a Breadth First Search (BFS) which explores the cells adjacent to the robots
-current positions, before exploring the second level of adjacent cells \cite{BFS}. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node.
+current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node\cite{pound}.
 
 
 \begin{algorithm}[H]
