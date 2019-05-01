@@ -11,7 +11,7 @@ def Move_You():
 
 
     # print("namespace: ",resolved_name)
-    pub = rospy.Publisher("robot1/cmd_vel", Twist, queue_size=10)
+    pub = rospy.Publisher("robot3/husky_velocity_controller/cmd_vel", Twist, queue_size=10)
     rospy.init_node('Move_You', anonymous=True)
     rate = rospy.Rate(1) # 1hz
 
