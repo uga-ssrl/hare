@@ -72,8 +72,8 @@ namespace hare{
     void sense(std::vector<hare::map_node>& region, int4 &minMax);
 
     // units m/s and rad/s
-    void goUp(float3 linear = {0.0f,1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
-    void goDown(float3 linear = {0.0f,-1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goForward(float3 linear = {1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
+    void goBackward(float3 linear = {-1.0f,1.0f,0.0f}, float3 angular = {0.0f,0.0f,0.0f});
     void goRight(float3 linear = {1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,2.0f});
     void goLeft(float3 linear = {-1.0f,0.0f,0.0f}, float3 angular = {0.0f,0.0f,-2.0f});
     void stop();

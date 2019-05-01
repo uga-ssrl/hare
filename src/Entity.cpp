@@ -218,7 +218,7 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-void hare::Robot::goUp(float3 linear, float3 angular){
+void hare::Robot::goForward(float3 linear, float3 angular){
   float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
   float2 end = {start.x,start.y+1};
@@ -230,10 +230,11 @@ void hare::Robot::goUp(float3 linear, float3 angular){
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
-  ros::Duration(step*abs(cmdVel.linear.y)).sleep();
-  stop();
+  // ros::Duration(step*abs(cmdVel.linear.y)).sleep();
+  ros::Duration(1).sleep();
+  // stop();
 }
-void hare::Robot::goDown(float3 linear, float3 angular){
+void hare::Robot::goBackward(float3 linear, float3 angular){
   float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
   float2 end = {start.x,start.y-1};
@@ -260,7 +261,7 @@ void hare::Robot::goRight(float3 linear, float3 angular){
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
   double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
   ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
-  this->goUp();
+  this->goForward();
 }
 void hare::Robot::goLeft(float3 linear, float3 angular){
   // float step = MAP_TO_ODOM;
@@ -274,7 +275,7 @@ void hare::Robot::goLeft(float3 linear, float3 angular){
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
   double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
   ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
-  this->goUp();
+  this->goForward();
 }
 void hare::Robot::stop(){
   geometry_msgs::Twist cmdVel;
@@ -395,26 +396,28 @@ void hare::Robot::run(){
       int2 m_pose = {position.x, position.y};
       if (moved) break;
 
-      if (m_pose.x < currentPosition.x)
-      {
-        this->goLeft();
-        moved = true;
-      }
-      else if (m_pose.y < currentPosition.y)
-      {
-        this->goDown(); // -y (cmd vel) moves up in map
-        moved = true;
-      }
-      else if (m_pose.x > currentPosition.x)
-      {
-        this->goRight();
-        moved = true;
-      }
-      else if (m_pose.y > currentPosition.y)
-      {
-        this->goUp(); // +y (cmd vel) moves down in map
-        moved = true;
-      }
+
+      this->goForward();
+      // if (m_pose.x < currentPosition.x)
+      // {
+      //   this->goLeft();
+      //   moved = true;
+      // }
+      // else if (m_pose.y < currentPosition.y)
+      // {
+      //   this->goDown(); // -y (cmd vel) moves up in map
+      //   moved = true;
+      // }
+      // else if (m_pose.x > currentPosition.x)
+      // {
+      //   this->goRight();
+      //   moved = true;
+      // }
+      // else if (m_pose.y > currentPosition.y)
+      // {
+      //   this->goUp(); // +y (cmd vel) moves down in map
+      //   moved = true;
+      // }
 
         // switch(this->treeState){
         //   case IDLE:{//something is wrong

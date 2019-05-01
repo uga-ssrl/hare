@@ -33,7 +33,7 @@
 
   </group>
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 0.0 -y 5.0 -z 0.07" />
+    <arg name="init_pose" value="-x 0.0 -y 4.0 -z 0.07" />
     <arg name="robot_name"  value="robot1" />
   </include>
 
@@ -57,7 +57,7 @@
   </group>
 
   <include file="$(find hare)/launch/one_robot.launch" >
-    <arg name="init_pose" value="-x 0.0 -y 3.0 -z 0.07" />
+    <arg name="init_pose" value="-x 0.0 -y 2.0 -z 0.07" />
     <arg name="robot_name"  value="robot2" />
   </include>
 
