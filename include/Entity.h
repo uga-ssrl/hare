@@ -94,9 +94,7 @@ namespace hare{
     //HARE OPERABLE METHODS
     void addCentroidGoal();
     void addDispersionGoal();
-    void search(std::vector<pq_node>& pathToGoal);//heuristic search
-    void search(std::vector<map_node>& sensedRegion, int4 minMax);//heuristic search
-
+  
     bool isDone();//no more unexplored cells
 
 

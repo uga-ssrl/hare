@@ -78,8 +78,8 @@ int main(int argc, char **argv){
     }
   }
 
-  int2 loc = {125,70};
-  int2 goal = {90,115};
+  int2 loc = {MAP_X/2,MAP_Y/2};
+  int2 goal = {MAP_X,MAP_Y};
 
   std::vector<hare::pq_node> path = m.getPath(loc,goal);
   std::cout << "[Test 4] path length: " << path.size() << std::endl;

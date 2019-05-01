@@ -242,8 +242,9 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-//TODO use turn radius in go left and go right
+//TODO use turn radius in go left and go right times
 //NOTE CALEB AND ALLEN MAY HAVE GOTTEN TERRAIN WRONG
+//TODO make stop relative to the robots step size or wheel diameter
 
 void hare::Robot::turn(float3 angular){
   geometry_msgs::Twist cmdVel;
@@ -354,27 +355,28 @@ void hare::Robot::stop(float delay){
 void hare::Robot::takeStep(std::vector<pq_node>& path){
   int2 currentPosition =  odomToMap(this->odom.pose.pose.position.x,
     this->odom.pose.pose.position.y);
-  int2 before = currentPosition;
   pq_node waypoint = path.front();
-  if (waypoint.x < currentPosition.x){
-    this->goLeft();
-  }
-  else if (waypoint.x > currentPosition.x){
-    this->goRight();
-  }
-  else{
-    if (waypoint.y < currentPosition.y){
+  int2 dist = {waypoint.x - currentPosition.x, waypoint.y - currentPosition.y};
+  while(abs(dist.x) > 1.0f && abs(dist.y) > 1.0f){
+    if(dist.x < 1.0f){
+      this->goLeft();
+    }
+    else if(dist.x > 1.0f){
+      this->goRight();
+    }
+    else if(dist.y < 1.0f){
       this->goBackward(); // -y (cmd vel) moves up in map
     }
-    else if (waypoint.y > currentPosition.y){
+    else if(dist.y > 1.0f){
       this->goForward(); // +y (cmd vel) moves down in map
     }
-  }
-  if(euclid(currentPosition,before) > 1.0f){
-    this->takeStep(path);
-  }
-  else if(euclid({waypoint.x,waypoint.y},currentPosition) < 1.0f){
-    path.erase(path.begin());
+    else{
+      path.erase(path.begin());
+      return;
+    }
+    currentPosition =  odomToMap(this->odom.pose.pose.position.x,
+      this->odom.pose.pose.position.y);
+    dist = {waypoint.x - currentPosition.x, waypoint.y - currentPosition.y};
   }
 }
 
@@ -410,52 +412,6 @@ void hare::Robot::addDispersionGoal(){
   this->goals.push_back(mapVal);
 }
 
-void hare::Robot::search(std::vector<pq_node>& pathToGoal){
-  int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
-
-  pq_node imidiateTarget = pathToGoal.back();
-  pathToGoal.pop_back();
-
-  float2 filler = {0.0f,0.0f};
-  int2 vel = {imidiateTarget.x-currentPosition.x,imidiateTarget.y-currentPosition.y};
-  float mag = sqrtf((vel.x*vel.x) + (vel.y*vel.y));
-  this->go(mapToOdom({vel.x/mag,vel.y/mag}),filler);
-}
-void hare::Robot::search(std::vector<map_node>& sensedRegion, int4 minMax){
-  int2 currentPosition = odomToMap({this->odom.pose.pose.position.x, this->odom.pose.pose.position.y});
-  int2 weighting = {0,0};
-  int i = 0;
-  for(int x = minMax.x; x < minMax.z; ++x){
-    for(int y = minMax.y; y < minMax.w; ++y, ++i){
-      if(find(this->description.terrain.begin(), this->description.terrain.end(), sensedRegion[i].terrain) != this->description.terrain.end()){
-        if(x < currentPosition.x) --weighting.x;
-        else ++weighting.x;
-        if(y < currentPosition.y) --weighting.y;
-        else ++weighting.y;
-      }
-      else{
-        sensedRegion[i].traversable = false;
-        if(x < currentPosition.x) weighting.x += 2;
-        else weighting.x -= 2;
-        if(y < currentPosition.y) weighting.y += 2;
-        else weighting.y -= 2;
-      }
-    }
-  }
-  while(currentPosition.x == (ODOM_TO_MAP*this->odom.pose.pose.position.x) + MAP_X/2 && currentPosition.y == (ODOM_TO_MAP*this->odom.pose.pose.position.y) + MAP_Y/2){
-    if(abs(weighting.x) > abs(weighting.y)){
-      weighting.x /=2;
-      if(weighting.x > 0) this->goRight();
-      else this->goLeft();
-    }
-    else{
-      weighting.y /=2;
-      if(weighting.y > 0) this->goForward();
-      else this->goBackward();
-    }
-  }
-}
-
 bool hare::Robot::isDone(){
   for(int r = 0; r < MAP_X; ++r){
     for(int c = 0; c < MAP_Y; ++c){
@@ -485,8 +441,9 @@ void hare::Robot::run(){
   float sensingRange = 2.0f;
   this->path.clear();
   this->goals.clear();
-  this->addCentroidGoal();
-  std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,{0,0});
+  //this->addCentroidGoal();
+  this->goals.push_back({0,0});
+  std::vector<pq_node> pathToGoal = this->map->getPath(currentPosition,this->goals.front());
 
   ros::Rate r(2);//Hz
 
@@ -536,16 +493,16 @@ void hare::Robot::run(){
 
     ///send data
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
-
-    //this->takeStep(pathToGoal);
-    this->turnRight();
-
-
+    this->takeStep(pathToGoal);
     switch(this->treeState){
       case IDLE:{//something is wrong
         break;
       }
       case SEARCH:{//simple search
+        // this->takeStep(pathToGoal);
+        // if(euclid(odomToMap({this->odom.pose.pose.position.x,this->odom.pose.pose.position.y}),this->goals.front()) < 1.0f){
+        //   this->treeState = IDLE;
+        // }
         break;
       }
       case RIDE:{//going to a single locatio

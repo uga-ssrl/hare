@@ -127,7 +127,7 @@ void hare::Map::saveAsString(std::string path){
   }
 }
 
-//NOTE THIS IS VERY INEFFICIENT AS IT IS - WORKS THOUGH
+//NOTE THIS QUERIES FULL MAP IN isValid - cheating - needs to be changed eventually
 // Greedy heuristic algorithm
 // returns linear spline path
 // We assume only up, down, left, right movements
@@ -246,13 +246,10 @@ hare::pq_node hare::Map::getNextToExplore(int2 start){
   return min;
 }
 
+//NOTE THIS USES FULL MAP BUT THIS NEEDS TO BE CHANGED TO USE KNOWNMAP
 bool hare::Map::isValid(int2 n){
-  // TODO see what the robot's stuff can do here
-  // only valid if the robot
-  if (hare::fullMap[n.x][n.y].terrain == 0 || hare::fullMap[n.x][n.y].terrain == 2){
-    return true;
-  }
-  return false;
+  return std::find(this->parentTerrain.begin(),this->parentTerrain.end(),
+  fullMap[n.x][n.y].terrain) != this->parentTerrain.end();
 }
 
 // insert into priority queue
