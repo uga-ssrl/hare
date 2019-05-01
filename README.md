@@ -10,7 +10,7 @@ You can read the in-progress [IEEE style paper](https://github.com/uga-ssrl/hare
 - git clone https://github.com/miccol/ROS-Behavior-Tree.git in ~/catkin_ws/src/
 
 **Enviroment Variables**
-- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(pwd)`
+- The `GAZEBO_MODEL_PATH` needs to point to the `world` folder in the hare repository. This should be a global / absolute path. **OR!** simply go to the world folder in this repo and type: `export GAZEBO_MODEL_PATH=$(catkin_ws)/src/hare/world`
 
 **Turtlebot-Navigation**
 - Just need to install `sudo apt-get install ros-kinetic-turtlebot-navigation`
@@ -24,8 +24,6 @@ You can read the in-progress [IEEE style paper](https://github.com/uga-ssrl/hare
 **(youbot variant)**
 - in /path/to/catkin_ws/src ```git clone https://github.com/youbot/youbot_simulation.git```
 - in /path/to/catkin_ws/src ```git clone https://github.com/youbot/youbot_description.git --branch kinetic-devel```
-
-
 
 
 **robot2**
@@ -70,13 +68,9 @@ then
 
 # TODOs
 **nodes to be added**
-- multi_robot_collision_avoidance (https://wiki.ros.org/multi_robot_collision_avoidance)
-- explore_multirobot?
-- tuw_multi_robot?
-- MULTIMASTER (POUND - see doc/pound.pdf)
-- rosbot localization
 - Odom in global frame to use obstacle sensing
-- path planning (meander or command based)
-
+- work on steering mode
+- more reliable controller for heterogeneous types
 **nodes to be implemented**
-- hare (actual exploration part)
+- explore_multirobot
+- tree node
