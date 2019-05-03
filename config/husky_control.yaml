@@ -7,8 +7,8 @@ husky_velocity_controller:
   left_wheel: ['front_left_wheel', 'rear_left_wheel']
   right_wheel: ['front_right_wheel', 'rear_right_wheel']
   publish_rate: 50
-  pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
-  twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+  pose_covariance_diagonal: [0.000, 0.000, 0.000, 0.000, 0.000, 0.00]
+  twist_covariance_diagonal: [0.000, 0.000, 0.000, 0.000, 0.000, 0.00]
   cmd_vel_timeout: 1
   velocity_rolling_window_size: 2
 
@@ -44,21 +44,21 @@ husky_velocity_controller:
 /gazebo_ros_control:
   pid_gains:
     front_left_wheel:
-      p: 100
-      i: 0
+      p: 20
+      i: 10
       d: 0
 
     front_right_wheel:
-      p: 100
-      i: 0
+      p: 20
+      i: 10
       d: 0
 
     rear_left_wheel:
-      p: 100
-      i: 0
+      p: 20
+      i: 10
       d: 0
 
     rear_right_wheel:
-      p: 100
-      i: 0
+      p: 20
+      i: 10
       d: 0

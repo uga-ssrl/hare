@@ -218,10 +218,10 @@ void hare::Robot::sense(std::vector<hare::map_node>& region, int4 &minMax){
   }
 }
 
-void hare::Robot::goUp(float3 linear, float3 angular){
+void hare::Robot::goForward(float3 linear, float3 angular){
   float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y+step};
+  float2 end = {start.x,start.y+1};
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.x = linear.x;
   cmdVel.linear.y = linear.y;
@@ -230,11 +230,14 @@ void hare::Robot::goUp(float3 linear, float3 angular){
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  // ros::Duration(step*abs(cmdVel.linear.y)).sleep();
+  ros::Duration(1).sleep();
+  // stop();
 }
-void hare::Robot::goDown(float3 linear, float3 angular){
+void hare::Robot::goBackward(float3 linear, float3 angular){
   float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x,start.y-step};
+  float2 end = {start.x,start.y-1};
   geometry_msgs::Twist cmdVel;
   cmdVel.linear.x = linear.x;
   cmdVel.linear.y = linear.y;
@@ -243,32 +246,36 @@ void hare::Robot::goDown(float3 linear, float3 angular){
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  ros::Duration(step*abs(cmdVel.linear.y)).sleep();
+  stop();
 }
 void hare::Robot::goRight(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
+  // float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x+step,start.y};
+  float2 end = {start.x+1,start.y};
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = linear.x;
-  cmdVel.linear.y = linear.y;
-  cmdVel.linear.z = linear.z;
   cmdVel.angular.x = angular.x;
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
+
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
+  ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
+  this->goForward();
 }
 void hare::Robot::goLeft(float3 linear, float3 angular){
-  float step = MAP_TO_ODOM;
+  // float step = MAP_TO_ODOM;
   float2 start = {this->odom.pose.pose.position.x,this->odom.pose.pose.position.y};
-  float2 end = {start.x-step,start.y};
+  float2 end = {start.x-1,start.y};
   geometry_msgs::Twist cmdVel;
-  cmdVel.linear.x = linear.x;
-  cmdVel.linear.y = linear.y;
-  cmdVel.linear.z = linear.z;
   cmdVel.angular.x = angular.x;
   cmdVel.angular.y = angular.y;
   cmdVel.angular.z = angular.z;
+
   this->publish<geometry_msgs::Twist>(cmdVel,"cmd_vel");
+  double time_step = (double)(1.57/(double)abs(cmdVel.angular.z));
+  ros::Duration(time_step).sleep(); // 1.57 rad = 90 degree
+  this->goForward();
 }
 void hare::Robot::stop(){
   geometry_msgs::Twist cmdVel;
@@ -376,35 +383,80 @@ void hare::Robot::run(){
     }
 
 
+    ///send data
     this->publish<hare::HareUpdate>(update,"HARE_UPDATE");
+    std::vector<hare::pq_node> action;
+    int2 goal = {4,4}; // Map goal
+    bool moved = false;
 
-    //TREE STUFF
-    switch(this->treeState){
-      case IDLE:{//something is wrong
-        break;
-      }
-      case SEARCH:{//simple searching
-        this->goLeft();
-        if(step == 20) this->treeState = IDLE;
-        break;
-      }
-      case RIDE:{//going to a single location
-        break;
-      }
-      case PROD:{//investigating obstacle
-        break;
-      }
-      case DONE:{//exploration complete
-        done = true;
-        break;
+    action = this->map->getPath(currentPosition,goal);
+
+    for(auto &position : action)
+    {
+      int2 m_pose = {position.x, position.y};
+      if (moved) break;
+
+
+      this->goForward();
+      // if (m_pose.x < currentPosition.x)
+      // {
+      //   this->goLeft();
+      //   moved = true;
+      // }
+      // else if (m_pose.y < currentPosition.y)
+      // {
+      //   this->goDown(); // -y (cmd vel) moves up in map
+      //   moved = true;
+      // }
+      // else if (m_pose.x > currentPosition.x)
+      // {
+      //   this->goRight();
+      //   moved = true;
+      // }
+      // else if (m_pose.y > currentPosition.y)
+      // {
+      //   this->goUp(); // +y (cmd vel) moves down in map
+      //   moved = true;
+      // }
+
+        // switch(this->treeState){
+        //   case IDLE:{//something is wrong
+        //     if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
+        //     {
+        //       this->goLeft();
+        //       if(step == 20) this->treeState = SEARCH;
+        //     }
+        //     break;
+        //   }
+        //   case SEARCH:{//simple
+        //     if(this->map->knownMap[currentPosition.y + 1][currentPosition.x].terrain == -1)
+        //     {
+        //       this->goRight();
+        //       if(step == 20) this->treeState = IDLE;
+        //     }
+        //
+        //     break;
+        //   }
+        //   case RIDE:{//going to a single locatio
+        //     break;
+        //   }
+        //   case PROD:{//investigating obstacle
+        //     break;
+        //   }
+        //   case DONE:{//exploration complete
+        //     done = true;
+        //     break;
+        //   }
+        // }
+
+
+      ros::Duration(0.5).sleep();
+      if(done) break;
+      else{
+        ros::spinOnce();
+        step++;
       }
     }
-    ros::Duration(0.5).sleep();
-    this->stop();
-    if(done) break;
-    else{
-      ros::spinOnce();
-      step++;
-    }
+
   }
 }

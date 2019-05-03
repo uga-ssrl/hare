@@ -25,7 +25,7 @@ def Move_You():
     msg.angular.z = 0
 
     while True:
-        input = raw_input("Please enter your command as either N, S, E, W, or P to stop the robot. Any other key will exit the program.\n")
+        input = raw_input("Please enter your command as either N, S, E, W, R or P to stop the robot. Any other key will exit the program.\n")
         if input == "N":
             msg.linear.x = 1
         elif input == "S":
@@ -34,21 +34,32 @@ def Move_You():
             msg.linear.y = 1
         elif input == "W":
             msg.linear.y = -1
+        elif input =="R":
+            msg.angular.z = 2 #two radaians per seconds
         elif input == "P":
             msg.linear.x = 0
             msg.linear.y = 0
             msg.linear.z = 0
+            msg.angular.x = 0
+            msg.angular.y = 0
+            msg.angular.z = 0
         else:
             break;
+
 
         rospy.loginfo(msg)
         pub.publish(msg)
         print("just published\n")
         #Sleeping for 1 second and resetting the msg contents to stop the robot
-        time.sleep(1)
+        time.sleep(1.57)
         msg.linear.x = 0
         msg.linear.y = 0
-        msg.linear.z = 0
+        msg.linear.x = 0
+
+        msg.angular.x = 0
+        msg.angular.y = 0
+        msg.angular.z = 0
+
         rospy.loginfo(msg)
         pub.publish(msg)
 
