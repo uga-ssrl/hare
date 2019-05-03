@@ -32,7 +32,7 @@
 
 \title{Heterogenous Autonomous Robotic Exploration (HARE)}
 
-\author{Jackson~Parker}
+\author{Jackson~Parker, Allen Spain, Caleb Adams}
 
 % The paper headers
 \markboth{IEEE JOURNAL XXXX, VOL. XX, NO. XX, MONTH 20XX}%
@@ -62,14 +62,13 @@
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-  The Heterogenous Autonomous Robotic Exploration system (HARE) is meant as a proof
-  of concept for cooperative heterogenous systems that divide tasks based on the
-  differentiable capabilities of the robots.
+  The purpose of this research is to prove that subtask division can be accomplished based on knowledge of robot capabilities. To prove this, we are developing an exploration system in which robots with different hardware and capabilities will work together to accurately explore and map a complex region of space. Through the definition of individual attributes and the sharing of those attributes, each robot will search and map regions of space that it is capable of maneuvering. Instead of simple binary mapping of the region, 1 = free space and 0 = obstacle, each robot will mark the region that it has explored and can maneuver through this a specific identifier. This gives the region itself a bit of information as well as allows other robots to help determine if they are capable of maneuvering as well.
+  Once a robot comes to an obstacle or region that it cannot maneuver around, it will evaluate which team members are capable of doing so and mark that space for the capable robots to explore. Due to time limitations on this project, instead of relying on complex perceptive capabilities to evaluate which robots could explore that region, the utilization of object id which can be surveyed by the robots sensors to compare its own attributes with the attributes necessary for exploration.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-IEEE, IEEEtran, journal, \LaTeX, paper, template.
+IEEE, IEEEtran, journal, \LaTeX, paper, template, Multi-Robot Systems, exploration, autonmous mobile robots, heterogenous, BFS, behavior trees
 \end{IEEEkeywords}
 
 
@@ -128,7 +127,7 @@ I work in the small satellite research lab as a systems engineer.
 
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/allen}}]{Allen Spain}
-Lead Hardware Engineer Small Satellite Research Lab
+Lead Hardware Engineer Small Satellite Research Laboratory.
 \end{IEEEbiography}
 
 
