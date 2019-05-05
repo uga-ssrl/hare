@@ -7,7 +7,7 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{algorithm}
-% \usepackage{algorithmic}
+
 \usepackage{tikz,tikz-3dplot}
 \usepackage{pgfplots}
 \usepackage{subcaption}
@@ -18,8 +18,10 @@
 \usepackage[utf8]{inputenc}
 
 
+
+
 \newcommand{\ignore}[1]{}  % {} empty inside = %% comment
-\graphicspath{ {./pics/} }
+\graphicspath{ {/Users/allenspain/Documents/Development/hare/doc/latex_MRS/pics/} }
 
 \ifCLASSINFOpdf
 \else
@@ -35,8 +37,8 @@
 \author{Jackson~Parker, Allen Spain, Caleb Adams}
 
 % The paper headers
-\markboth{IEEE JOURNAL XXXX, VOL. XX, NO. XX, MONTH 20XX}%
-{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
+% \markboth{IEEE JOURNAL XXXX, VOL. XX, NO. XX, MONTH 20XX}%
+% {Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
 
 % \markboth{IEEE JOURNAL OF SELECTED TOPICS IN APPLIED EARTH OBSERVATIONS AND REMOTE SENSING, VOL. XX, NO. XX, MONTH 20XX}
 
@@ -103,7 +105,7 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template, Multi-Robot Systems, explorati
 
 
 % use section* for acknowledgment
-\subfile{tex/appendix}
+% \subfile{tex/appendix}
 % \section*{Acknowledgment}
 
 \ifCLASSOPTIONcaptionsoff
@@ -112,23 +114,27 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template, Multi-Robot Systems, explorati
 
 
 
+% \bibliographystyle{IEEEtran}
+% \bibliographystyle{/Users/allenspain/Documents/Development/hare doc/latex_MRS/sources}
+
 \bibliographystyle{IEEEtran}
-% \bibliography{sources}
-\bibliography{IEEEabrv,sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
+% \bibliography{/Users/allenspain/Documents/Development/hare/doc/latex_MRS/sources}
+\bibliography{IEEEabrv,/Users/allenspain/Documents/Development/hare/doc/latex_MRS/sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
+
 
 
 % insert where needed to balance the two columns on the last page with
 % biographies
 %\newpage
-
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/jackson_parker}}]{Jackson Parker}
-I work in the small satellite research lab as a systems engineer.
-\end{IEEEbiography}
-
-
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/allen}}]{Allen Spain}
-Lead Hardware Engineer Small Satellite Research Laboratory.
-\end{IEEEbiography}
+%
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/jackson_parker}}]{Jackson Parker}
+% I work in the small satellite research lab as a systems engineer.
+% \end{IEEEbiography}
+%
+%
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/allen}}]{Allen Spain}
+% Lead Hardware Engineer Small Satellite Research Laboratory.
+% \end{IEEEbiography}
 
 
 

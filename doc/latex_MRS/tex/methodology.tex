@@ -1,6 +1,4 @@
 \subsection{Approach}
-
-
 roll assignment with algorithms
 
 
@@ -64,39 +62,39 @@ heterogeneous utilization and multi-robot model expansion.
 \end{figure}
 
 \subsection{Algorithms}
-For navigation we used two methods. The first is a Breadth First Search (BFS) which explores the cells adjacent to the robots
-current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node\cite{pound}.
+For navigation we used two methods. The first is a Breadth First Search as shown in algorithm \ref{BFS}(BFS) which explores the cells adjacent to the robots
+current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node \cite{pound}.
 
 
-\begin{algorithm}[H]
-\caption{Breath First Search}
-\begin{algorithmic}[1]
-\Procedure{getPath}{$start,goal$}
-    \State $knownap[i][j].initializeToZero()$
-    \State $q \leftarrow initializeQueue()$
-    \State $q_{n} \leftarrow initializeQueue(init_x, init_y, 0)$
-    \While{$q != empty$}
-        \State $loc = \{ curr.x, curr.y \}$
-        \If{$(loc = goal)$}
-          \State $break$ \Comment{reached goal}
-        \EndIf
-          \State $h_{map}[curr.x, curr.y] = curr.h$ \Comment{store element before popping}
-          \State $q.pop()$ \Comment{pop last element}
-        \If{$isInBounds(loc+step)$}  \Comment{check you are in map bounds}
-          \State $test \leftarrow loc + step$
-          \If{$isValid(test) \& cellEmpty()$}  \Comment{check cell unexplored and in bounds}
-            \State $adj \leftarrow {loc + step, h + 1}$ \Comment{update hueristic}
-            \State $q.push(adj)$ \Comment{add to queue}
-            \label{path}
-          \EndIf
-        \EndIf
-    \EndWhile
-    \State $temp \leftarrow orderedQ(q)$ \Comment{order elements based on hueristic}
-    \State $return \leftarrow temp$ \Comment{order elements based on hueristic}
-\EndProcedure
-
-\end{algorithmic}
-\end{algorithm}
+% \begin{algorithm}[H]
+% \caption{Breath First Search} \label{BFS}
+% \begin{algorithmic}[1]
+% \Procedure{getPath}{$start,goal$}
+%     \State $knownap[i][j].initializeToZero()$
+%     \State $q \leftarrow initializeQueue()$
+%     \State $q_{n} \leftarrow initializeQueue(init_x, init_y, 0)$
+%     \While{$q != empty$}
+%         \State $loc = \{ curr.x, curr.y \}$
+%         \If{$(loc = goal)$}
+%           \State $break$ \Comment{reached goal}
+%         \EndIf
+%           \State $h_{map}[curr.x, curr.y] = curr.h$ \Comment{store element before popping}
+%           \State $q.pop()$ \Comment{pop last element}
+%         \If{$isInBounds(loc+step)$}  \Comment{check you are in map bounds}
+%           \State $test \leftarrow loc + step$
+%           \If{$isValid(test) \& cellEmpty()$}  \Comment{check cell unexplored and in bounds}
+%             \State $adj \leftarrow {loc + step, h + 1}$ \Comment{update hueristic}
+%             \State $q.push(adj)$ \Comment{add to queue}
+%             \label{path}
+%           \EndIf
+%         \EndIf
+%     \EndWhile
+%     \State $temp \leftarrow orderedQ(q)$ \Comment{order elements based on hueristic}
+%     \State $return \leftarrow temp$ \Comment{order elements based on hueristic}
+% \EndProcedure
+%
+% \end{algorithmic}
+% \end{algorithm}
 
 % this section has 3 figures together
 
