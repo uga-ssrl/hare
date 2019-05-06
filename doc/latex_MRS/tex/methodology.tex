@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-=======
-\subsection{Approach}
-roll assignment with algorithms
-
-
->>>>>>> 1bb19a97940e366f61c849c7f49a0ff26f88a49f
 \subsection{Role Assignment}
 As aforementioned role assignment was predefined for the robot set. In the project three robots were given static characteristics, these characteristics were defined based on robot attributes. The simplified set of attributes taken into consideration were maneuverability and robot height. These attributes corresponded to terrain traversability, the terrain was indexed as follows: 0 - open terrain, 1 - ramp, 2 - short tunnels, and 3 - tall tunnels. Given the set of robots and attributes capabilities were defined. Robot 1 (Youbot) could traverse terrain 0, 2, and 3. Robot 2 (Rosbot) could traverse terrain 0, 1, and 3. Robot 3 (Husky) could traverse terrain all terrains in the terrain set, the robots and terrain is illustrated in figure \ref{fig:map}.
 
@@ -26,7 +19,8 @@ As aforementioned role assignment was predefined for the robot set. In the proje
         \caption{Youbot}
         \label{fig:bot3}
     \end{subfigure}
-    \caption{Three commonly used robots with very different shapes and sizes.}\label{fig:bots}
+    \caption{Three commonly used robots with very different shapes and sizes.}
+    \label{fig:bots}
 \end{figure}
 
 As an individual working in a cooperative operation, knowing the capabilities
@@ -58,17 +52,16 @@ heterogeneous utilization and multi-robot model expansion.
   \label{fig:map}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-    \includegraphics[width=0.5\textwidth]{map1}
-  \caption{Robots in gazebo stage showin terrain set.}
-  \label{fig:stage}
-\end{figure}
+% \begin{figure}[H]
+%   \centering
+%     \includegraphics[width=0.5\textwidth]{map1}
+%   \caption{Robots in gazebo stage showin terrain set.}
+%   \label{fig:stage}
+% \end{figure}
 
 \subsection{Algorithms}
-<<<<<<< HEAD
 For navigation we used two methods. The first is a Breadth First Search (BFS) which explores the cells adjacent to the robots
-current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called for exploration by simpling passing in a goal represented as the nearest unexplored node a summary of the path planning algorithm can be called with the goal being the nearest global unexplored node as shown in Algorithm \ref{fig:a-star}.
+current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called for exploration by simpling passing in a goal represented as the nearest unexplored node a summary of the path planning algorithm can be called with the goal being the nearest global unexplored node as shown in the algorithm in figure \ref{fig:a-star}.
  The use cases for this method are as follows: a) robot needs to swap locations, b) robot finds an obstacle it cannot explore and needs another robot to explore it 3) the robot's tree-state is such that exploration needs to take place.
 
  \begin{figure}[H]
@@ -78,42 +71,6 @@ current positions, before exploring the second level of adjacent cells. After de
  \end{figure}
 
 
-
-=======
-For navigation we used two methods. The first is a Breadth First Search as shown in algorithm \ref{BFS}(BFS) which explores the cells adjacent to the robots
-current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node \cite{pound}.
-
-
-% \begin{algorithm}[H]
-% \caption{Breath First Search} \label{BFS}
-% \begin{algorithmic}[1]
-% \Procedure{getPath}{$start,goal$}
-%     \State $knownap[i][j].initializeToZero()$
-%     \State $q \leftarrow initializeQueue()$
-%     \State $q_{n} \leftarrow initializeQueue(init_x, init_y, 0)$
-%     \While{$q != empty$}
-%         \State $loc = \{ curr.x, curr.y \}$
-%         \If{$(loc = goal)$}
-%           \State $break$ \Comment{reached goal}
-%         \EndIf
-%           \State $h_{map}[curr.x, curr.y] = curr.h$ \Comment{store element before popping}
-%           \State $q.pop()$ \Comment{pop last element}
-%         \If{$isInBounds(loc+step)$}  \Comment{check you are in map bounds}
-%           \State $test \leftarrow loc + step$
-%           \If{$isValid(test) \& cellEmpty()$}  \Comment{check cell unexplored and in bounds}
-%             \State $adj \leftarrow {loc + step, h + 1}$ \Comment{update hueristic}
-%             \State $q.push(adj)$ \Comment{add to queue}
-%             \label{path}
-%           \EndIf
-%         \EndIf
-%     \EndWhile
-%     \State $temp \leftarrow orderedQ(q)$ \Comment{order elements based on hueristic}
-%     \State $return \leftarrow temp$ \Comment{order elements based on hueristic}
-% \EndProcedure
-%
-% \end{algorithmic}
-% \end{algorithm}
->>>>>>> 1bb19a97940e366f61c849c7f49a0ff26f88a49f
 
 % this section has 3 figures together
 
