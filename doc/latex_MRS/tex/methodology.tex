@@ -1,11 +1,5 @@
-\subsection{Approach}
-
-
-roll assignment with algorithms
-
-
 \subsection{Role Assignment}
-As aforementioned role assignment was predefined for the robot set. In the project three robots were given static characteristics, these characteristics were defined based on robot attributes. The simplified set of attributes taken into consideration were maneuverability and robot height. These attributes corresponded to terrain traversability, the terrain was indexed as follows: 0 - open terrain, 1 - ramp, 2 - short tunnels, and 3 - tall tunnels. Given the set of robots and attributes capabilities were defined. Robot 1 (Youbot) could traverse terrain 0, 2, and 3. Robot 2 (Rosbot) could traverse terrain 0, 1, and 3. Robot 3 (Husky) could traverse terrain all terrains in the terrain set, the robots and terrain is illustrated in \ref{fig:map}.
+As aforementioned role assignment was predefined for the robot set. In the project three robots were given static characteristics, these characteristics were defined based on robot attributes. The simplified set of attributes taken into consideration were maneuverability and robot height. These attributes corresponded to terrain traversability, the terrain was indexed as follows: 0 - open terrain, 1 - ramp, 2 - short tunnels, and 3 - tall tunnels. Given the set of robots and attributes capabilities were defined. Robot 1 (Youbot) could traverse terrain 0, 2, and 3. Robot 2 (Rosbot) could traverse terrain 0, 1, and 3. Robot 3 (Husky) could traverse terrain all terrains in the terrain set, the robots and terrain is illustrated in figure \ref{fig:map}.
 
 
 \begin{figure}
@@ -53,7 +47,8 @@ heterogeneous utilization and multi-robot model expansion.
 \begin{figure}[H]
   \centering
     \includegraphics[width=0.5\textwidth]{map2}
-  \caption{Gazebo map, with different terrain. Open terrain in gray, short tunnels in red and green, tall tunnels in blue.} \label{fig:map}
+  \caption{Gazebo map, with different terrain. Open terrain in gray, short tunnels in red and green, tall tunnels in blue.}
+  \label{fig:map}
 \end{figure}
 
 \begin{figure}[H]
@@ -65,38 +60,17 @@ heterogeneous utilization and multi-robot model expansion.
 
 \subsection{Algorithms}
 For navigation we used two methods. The first is a Breadth First Search (BFS) which explores the cells adjacent to the robots
-current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called with the goal being the nearest global unexplored node\cite{pound}.
+current positions, before exploring the second level of adjacent cells. After determinining explorable cells method getPath as described in Algorithm 1 will compute the a hueristic based on the manhattan distance to determine a set of cells that make up an optimal path. For robot exploration getPath can be called for exploration by simpling passing in a goal represented as the nearest unexplored node a summary of the path planning algorithm can be called with the goal being the nearest global unexplored node as shown in Algorithm \ref{fig:a-star}.
+ The use cases for this method are as follows: a) robot needs to swap locations, b) robot finds an obstacle it cannot explore and needs another robot to explore it 3) the robot's tree-state is such that exploration needs to take place.
+
+ \begin{figure}[H]
+   \centering
+     \includegraphics[width=0.5\textwidth]{a-star}
+   \caption{An overview of the A* Algorithm \cite{a-star}} \label{fig:a-star}
+ \end{figure}
 
 
-\begin{algorithm}[H]
-\caption{Breath First Search}
-\begin{algorithmic}[1]
-\Procedure{getPath}{$start,goal$}
-    \State $knownap[i][j].initializeToZero()$
-    \State $q \leftarrow initializeQueue()$
-    \State $q_{n} \leftarrow initializeQueue(init_x, init_y, 0)$
-    \While{$q != empty$}
-        \State $loc = \{ curr.x, curr.y \}$
-        \If{$(loc = goal)$}
-          \State $break$ \Comment{reached goal}
-        \EndIf
-          \State $h_{map}[curr.x, curr.y] = curr.h$ \Comment{store element before popping}
-          \State $q.pop()$ \Comment{pop last element}
-        \If{$isInBounds(loc+step)$}  \Comment{check you are in map bounds}
-          \State $test \leftarrow loc + step$
-          \If{$isValid(test) \& cellEmpty()$}  \Comment{check cell unexplored and in bounds}
-            \State $adj \leftarrow {loc + step, h + 1}$ \Comment{update hueristic}
-            \State $q.push(adj)$ \Comment{add to queue}
-            \label{path}
-          \EndIf
-        \EndIf
-    \EndWhile
-    \State $temp \leftarrow orderedQ(q)$ \Comment{order elements based on hueristic}
-    \State $return \leftarrow temp$ \Comment{order elements based on hueristic}
-\EndProcedure
 
-\end{algorithmic}
-\end{algorithm}
 
 % this section has 3 figures together
 

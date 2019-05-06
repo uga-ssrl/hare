@@ -58,6 +58,8 @@
 
 % make the title area
 \maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
 
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
@@ -76,7 +78,7 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template, Multi-Robot Systems, explorati
 
 \begin{figure}[H]
   \centering
-    \includegraphics[width=0.5\textwidth]{HARE}
+    \includegraphics[width=0.5\textwidth]{hare}
   \caption{High level block diagram for HARE}
   \label{fig:something3}
 \end{figure}
@@ -114,21 +116,27 @@ IEEE, IEEEtran, journal, \LaTeX, paper, template, Multi-Robot Systems, explorati
 
 \bibliographystyle{IEEEtran}
 % \bibliography{sources}
-\bibliography{IEEEabrv,sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
+\bibliography{sources}
+% \bibliography{IEEEabrv,sources} % ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibtex/IEEEtran_bst_HOWTO.pdf
 
 
 % insert where needed to balance the two columns on the last page with
 % biographies
-%\newpage
+% \newpage
 
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/jackson_parker}}]{Jackson Parker}
-I work in the small satellite research lab as a systems engineer.
-\end{IEEEbiography}
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/jackson_parker}}]{Jackson Parker}
+% I work in the small satellite research lab as a systems engineer.
+% \end{IEEEbiography}
+%
+%
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/allen_spain}}]{Allen Spain}
+% Lead Hardware Engineer Small Satellite Research Laboratory.
+% \end{IEEEbiography}
+%
+% \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/caleb_adams}}]{Caleb Adams}
+% I work in the small satellite research lab as a systems engineer.
+% \end{IEEEbiography}
 
-
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{pics/allen}}]{Allen Spain}
-Lead Hardware Engineer Small Satellite Research Laboratory.
-\end{IEEEbiography}
 
 
 
