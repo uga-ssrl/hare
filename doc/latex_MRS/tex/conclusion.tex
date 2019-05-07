@@ -6,7 +6,7 @@ their Algorithms, with sensing and realistic robot maneuvering. Before this syst
 we will provide a more robust steering mechanissdm which will take into account the robot model,
 this will abstract out the difficulty associated with navigating to a goal or following a line.
 In addition to abstracting out the motion models, this framework is designed to support complex
-multiagent decision making like those represented in behavioral trees.
+multiagent decision making like those represented in behavioral trees, however the current project uses a simple switch statement to determine its next action.
 
 robots to share their information states including the enountered
 terrain in order for the robot team to best explore and traverse a
@@ -14,6 +14,7 @@ given heterogenous environment. The resultant decision that is derived
 from an agents neighbor's states namely TREE STATE, this variable
 represents the robots decision, which could entail further investigation
 (PROD) or stopping all motion and entering into a low power mode (IDLE).
+for a full description of table states see table \ref{tabl:tree-states}.
 
 
 \begin{figure}[H]

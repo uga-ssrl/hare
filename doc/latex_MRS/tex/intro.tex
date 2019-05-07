@@ -29,13 +29,13 @@ in the methodology section. This section is meant to detail previous research
 that will be used in proving that the fundamental idea of task division based
 on individual capabilities. As this research is meant to strictly provide a basis
 for heterogeneous task division and capability utilization, the model built on
-top of it could take many forms. In this case, a multi-robot behavior tree will
-be constructed to guide operations and define command sequences at a high level like
-proposed in [3] which is an expansion of research in [2]. To implement such a
-system the DSL buzz [6] will be used which provides a level of abstraction that
+top of it could take many forms. This project was inspired by multiagent decision making
+using behavioral trees constructed to guide operations and define command sequences at a high level like
+proposed in \cite{beh-tree}. To implement such a
+system the DSL buzz will be used which provides a level of abstraction that
 allows for focus on high level cooperation, information sharing, and simple
 behavioral definitions. The researchers that developed this language have created a
-ROS package that will be utilized, called ROSbuzz, in this proof-of-concept system.
+ROS package that will be utilized, called ROSbuzz \cite{rosbuzz}, in this proof-of-concept system.
 Control mechanisms and communication in multirobot systems have been a center of
 research for a while and updates/innovation in this corner of the field are practically
 constant. The Robot Operating System (ROS) \cite{ROS} provides a large variety of packages
@@ -43,4 +43,12 @@ that can be put together to form fully functioning and unique control mechanisms
 well as providing easy to use communication packages. Exploration and path finding
 are widely researched and implemented using ROS packages, as components are pretty
 broad and can help illuminate edge cases in multi-robot systems as agents have to
-operate without global knowledge of their environment.
+operate without global knowledge of their environment. This research served as a
+foundation for multirobot decision making, communication and high level design framework
+required to operate a decentralized swarm. However after experimenting with ROSbuzz and ROS
+in the gazebo environment, the bottom up approach proved to be a better method for the proposed
+project. This approach utilizes rospackages for point to point communication
+but uses a class structure to abstract node creation, sensing, and motion. This paper
+will discuss more on the testing framework created as well as the results from small
+scale simulations, which were designed to test the communication
+architecture and improve the proposed sensing and steering models.

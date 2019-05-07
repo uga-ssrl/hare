@@ -1,7 +1,166 @@
 \appendices
 \section{Using The Code From This Paper}        % first appendix
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-The code written for this paper is available at
+The code written for this paper is available at, this repository will be updated on a periodic basis in order to
+complete proposed objective.
 \textbf{\url{https://github.com/uga-ssrl/hare}}.
 
 % \section*{Acknowledgment}
+\begin{table}[htbp]
+\caption{Terrain index description}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Terrain}&{\textbf{Index}} \\
+\cline{2-4}
+\hline
+Unknown & -2 \\
+\hline
+Wall & -1\\
+\hline
+Open Space & 0\\
+\hline
+Ramp & 1 \\
+\hline
+Short Tunnel & 2 \\
+\hline
+Tall Tunnel & 3 \\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tabl:terrain}
+\end{center}
+\end{table}
+
+
+\begin{table}[H]
+\caption{Decision state description}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{STATE}&{\textbf{Decision State}} \\
+\cline{2-4}
+\hline
+IDLE& Default, low power, malfunction\\
+\hline
+SEARCH& Explore unknown frontier\\
+\hline
+RIDE& Seek goal\\
+\hline
+PROD& Investigation, check tunnel with unknown terrain\\
+\hline
+DONE& All traversable tunnels prodded, search space explored, out of goals\\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tabl:tree-states}
+\end{center}
+\end{table}
+
+
+
+\begin{table}[H]
+\caption{Robot Characterization}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Attributes}&{\textbf{Considerations}} \\
+\cline{2-4}
+\hline
+Dimensionality & directional proximity, 2D, 3D \\
+Sight FoV & horizontal angle, vertical angle \\
+\hline
+GPS & error in meters\\
+Telemetry & sensor input, telemetry type\\
+Visible Range & distance in meters\\
+\hline
+Altitude & relative to state space minima\\
+Safe Terrain & submersible, non-submersible, ground, aerial, amphibious, all\\
+\hline
+Appendages& num, type, joint specifiers, degrees of freedom\\
+Tools& bucket, wedge, shovel, pike, clamp\\
+Maneuverability& 3 - holonomic, 2 or 1 nonholonomic, 0\\
+\hline
+Communication Type & full/half duplex\\
+Reciever FoV & angle horizontal, angle vertical\\
+Transmitter FoV & angle horizontal, angle vertical\\
+Reciever Range & meter distance\\
+Transmitter Range & distance in meters\\
+SNR & ratio\\
+Channel(s) & number\\
+Bandwidth & frequency in Hz\\
+\hline
+CPU & number cores, clock speed, type\\
+GPU & number, clock speed, type\\
+ASIC & number, type\\
+FPGA & number, type\\
+\hline
+% \multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\end{tabular}
+\label{tabl:attributes}
+\end{center}
+\end{table}
+
+
+%
+%
+%
+% \vspace{10cm}
+%
+%
+%
+%
+% \begin{center}
+% \begin{tabularx}{\textwidth}{ |X|X| }
+%   \hline
+%   Dimensionality & directional proximity, 2D, 3D \\
+%   Allowable Altitude Range & relative to lowest known ground 0 \\
+%   Terrain Compatibility &  submersible, non-submersible, ground, aerial, amphibious, submersible amphibious, full \\ \hline
+%   Turn Radius &  [ 0 (holonomic) , (nonholonomic) ∞) \\
+%   Moving appendages &  num, dexterity levels, branch/joint specifiers \\
+%   Motor Current Requirement &  Current (minimum) \\
+%   \hline
+% \end{tabularx}
+% \end{center}
+%
+% \newpage
+%
+% \begin{center}
+% \begin{tabularx}{\textwidth}{ |X|X| }
+% \hline
+% Duplex & half or full \\
+% Transmission FOV & angle \\
+% Receiver FOV & angle \\
+% Transmitter Count & num, type specifiers \\
+% Receiver Count & num, type specifiers \\
+% Transmission S/N ratio & num \\
+% S/N receiving threshold & num \\
+% Channel & Capacitynum# \\
+% Range & distance \\
+% Bandwidth & num \\
+% \hline
+% \end{tabularx}
+% \end{center}
+%
+% \begin{center}
+% \begin{tabularx}{\textwidth}{ |X|X| }
+% \hline
+% Capacity & Watt hour \\
+% Chargeable & no,externally, solar \\
+% Power profile/average draw & Voltage (low, medium, charged) \\
+% \hline
+% \end{tabularx}
+% \end{center}
+%
+%
+% \begin{center}
+% \begin{tabularx}{\textwidth}{ |X|X| }
+% \hline
+% Number of Cores &  num \\
+% Microcontroller(s)  & num, function specifiers \\
+% ASIC(s)  & num, function specifiers \\
+% GPU(s)  & num, function specifiers \\
+% FPGA(s) &  num, function specifiers \\
+% \hline
+% \end{tabularx}
+% \end{center}
